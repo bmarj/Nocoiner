@@ -1,14 +1,13 @@
 # coding: utf-8
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.mssql import BIT, DATETIMEOFFSET, MONEY, TINYINT, XML
-
+from sqlalchemy.dialects.mssql import BIT
 
 db = SQLAlchemy()
 
 
-
 class FulfillmentWarehouse(db.Model):
     __tablename__ = 'fulfillment_warehouse'
+    __bind_key__ = 'ordersDB'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False)
@@ -16,9 +15,9 @@ class FulfillmentWarehouse(db.Model):
     enabled = db.Column(BIT, nullable=False, server_default=db.FetchedValue())
 
 
-
 class Order(db.Model):
     __tablename__ = 'order'
+    __bind_key__ = 'ordersDB'
 
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Unicode(50), nullable=False)
@@ -51,13 +50,19 @@ class Order(db.Model):
     is_premium = db.Column(BIT, nullable=False, server_default=db.FetchedValue())
     shipping_priority = db.Column(db.Unicode(128))
 
-    order_status = db.relationship('OrderStatus', primaryjoin='Order.id_order_status == OrderStatus.id', backref='orders')
-    sales_channel = db.relationship('SalesChannel', primaryjoin='Order.id_sales_channel == SalesChannel.id', backref='orders')
-
+    order_status = db.relationship(
+        'OrderStatus',
+        primaryjoin='Order.id_order_status == OrderStatus.id',
+        backref='orders')
+    sales_channel = db.relationship(
+        'SalesChannel',
+        primaryjoin='Order.id_sales_channel == SalesChannel.id',
+        backref='orders')
 
 
 class OrderLine(db.Model):
     __tablename__ = 'order_line'
+    __bind_key__ = 'ordersDB'
 
     id = db.Column(db.Integer, primary_key=True)
     sku = db.Column(db.String(159, 'SQL_Latin1_General_CP1_CI_AS'))
@@ -83,32 +88,41 @@ class OrderLine(db.Model):
     is_premium = db.Column(BIT, nullable=False, server_default=db.FetchedValue())
     shipping_priority = db.Column(db.Unicode(128))
 
-    fulfillment_warehouse = db.relationship('FulfillmentWarehouse', primaryjoin='OrderLine.id_fulfillment_warehouse == FulfillmentWarehouse.id', backref='order_lines')
-    order = db.relationship('Order', primaryjoin='OrderLine.id_order == Order.id', backref='order_lines')
-    order_line_status = db.relationship('OrderLineStatus', primaryjoin='OrderLine.id_order_line_status == OrderLineStatus.id', backref='order_lines')
-
+    fulfillment_warehouse = db.relationship(
+        'FulfillmentWarehouse',
+        primaryjoin='OrderLine.id_fulfillment_warehouse == FulfillmentWarehouse.id',
+        backref='order_lines')
+    order = db.relationship(
+        'Order',
+        primaryjoin='OrderLine.id_order == Order.id',
+        backref='order_lines')
+    order_line_status = db.relationship(
+        'OrderLineStatus',
+        primaryjoin='OrderLine.id_order_line_status == OrderLineStatus.id',
+        backref='order_lines')
 
 
 class OrderLineStatus(db.Model):
     __tablename__ = 'order_line_status'
+    __bind_key__ = 'ordersDB'
 
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(20, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False, unique=True)
     description = db.Column(db.Unicode(500), nullable=False)
 
 
-
 class OrderStatus(db.Model):
     __tablename__ = 'order_status'
+    __bind_key__ = 'ordersDB'
 
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.Unicode(20), nullable=False, unique=True)
     description = db.Column(db.Unicode(500), nullable=False)
 
 
-
 class SalesChannel(db.Model):
     __tablename__ = 'sales_channel'
+    __bind_key__ = 'ordersDB'
 
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.Unicode(100), nullable=False)
@@ -120,9 +134,9 @@ class SalesChannel(db.Model):
     is_cross_insert = db.Column(BIT, nullable=False, server_default=db.FetchedValue())
 
 
-
 class ShipServiceLevel(db.Model):
     __tablename__ = 'ship_service_level'
+    __bind_key__ = 'ordersDB'
 
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.Unicode(20), nullable=False, unique=True)
