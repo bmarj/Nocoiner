@@ -1,8 +1,19 @@
 # coding: utf-8
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.mssql import BIT
+from sqlalchemy.dialects.mssql import BIT, DECIMAL, NUMERIC
 
-db = SQLAlchemy()
+
+class LfhSQLAlchemy(SQLAlchemy):
+    """
+    Fix Decimal type for serialization problem,
+    with asdecimal=False as default
+    If using original class, use type Numeric(10, 2, asdecimal=False)
+    """
+    class Numeric(NUMERIC):
+        def __init__(self, precision=None, scale=None, decimal_return_scale=None, asdecimal=False):
+            super().__init__(precision, scale, decimal_return_scale, asdecimal)
+
+db = LfhSQLAlchemy()
 
 
 class FulfillmentWarehouse(db.Model):

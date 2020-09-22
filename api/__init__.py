@@ -4,7 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from api.config import config
 
-from api.model.Orders import db
+from api.models import db
 # db = SQLAlchemy()
 
 def create_app(test_config=None):

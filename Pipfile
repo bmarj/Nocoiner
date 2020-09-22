@@ -8,6 +8,7 @@ Flask = "*"
 Flask-SQLAlchemy = "*"
 flask-sqlacodegen = "*"
 pyodbc = "*"
+marshmallow-sqlalchemy = "*"
 
 [dev-packages]
 flake8 = "*"
