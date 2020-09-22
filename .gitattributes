@@ -1,0 +1,74 @@
+# Sourced from https://github.com/alexkaratarakis/gitattributes/
+
+# Auto detect
+##   Handle line endings automatically for files detected as
+##   text and leave all files detected as binary untouched.
+##   This will handle all files NOT defined below.
+*                 text=auto
+
+# Source code
+*.bash            text eol=lf
+*.sh              text eol=lf
+*.bat             text eol=crlf
+*.cmd             text eol=crlf
+*.css             text
+*.html            text diff=html
+*.js              text
+*.jsx             text
+*.py              text diff=python
+*.sql             text
+*.xml             text
+*.xsd             text
+*.xslt            text
+*.xsl             text
+
+# Docker
+Dockerfile        text
+
+# Documentation
+*.md              text
+CHANGELOG         text
+*README*          text
+*.txt             text
+
+# Templates
+*.jinja
+
+# Configs
+.env              text
+.gitattributes    text
+.gitconfig        text
+*.ini             text
+*.json            text
+*.toml            text
+*.yaml            text
+*.yml             text
+*.conf            text
+
+# Graphics
+*.ai              binary
+*.jpg             binary
+*.jpeg            binary
+*.pdf             binary
+*.png             binary
+*.gif             binary
+*.gifv            binary
+# SVG treated as an asset (binary) by default.
+*.svg             text
+# If you want to treat it as binary,
+# use the following line instead.
+# *.svg           binary
+*.wbmp            binary
+*.webp            binary
+*.ico             binary
+*.psd             binary
+
+# Archives
+*.7z              binary
+*.gz              binary
+*.tar             binary
+*.zip             binary
+*.tgz             binary
+
+# Ignore files (like .npmignore or .gitignore)
+*.*ignore         text

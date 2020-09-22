@@ -1,0 +1,10 @@
+.idea/
+.vscode/
+__pycache__/
+*.pyc
+*.bak
+*.log
+api/config.ini
+tests/integration_tests/env/.env
+tests/integration_tests/test_config.ini
+
