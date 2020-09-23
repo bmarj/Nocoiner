@@ -1,7 +1,8 @@
 from flask import Blueprint, session, jsonify
-from api.orders.schemas import db, Order, OrderDetailSchema
+from api.orders.schemas import db, Order, OrderLine, OrderDetailSchema
 from api.basic_schemas import FulfillmentWarehouse, FulfillmentWarehouseSchema, OrderSchema
-
+import marshmallow
+from flask_sqlalchemy import orm
 
 orders = Blueprint('orders', __name__,
                    template_folder='templates',
@@ -11,7 +12,11 @@ orders = Blueprint('orders', __name__,
 @orders.route('/', methods=['GET'])
 def index():
     response_schema = OrderDetailSchema(many=True)
-    o = Order.query.enable_eagerloads(True).limit(10).all()
+
+    # eager loading order lines for orders
+    o = Order.query\
+        .options(orm.subqueryload(Order.order_lines))\
+        .paginate(1, 200).items
     return jsonify(response_schema.dump(o))
 
 @orders.route('/order/<int:id>', methods=['GET'])
@@ -25,6 +30,13 @@ def order(id):
     # order = response_schema.load(o)
     # from marshmallow import pprint
     # pprint(response_schema.dump(o))
+    return jsonify(response_schema.dump(o))
+
+@orders.route('/order/<int:id>/update/', methods=['GET', 'POST'])
+def order_update(id):
+    response_schema = OrderDetailSchema()
+    o = Order.query.get_or_404(id)
+
     return jsonify(response_schema.dump(o))
 
 @orders.route('/warehouse/<int:id>', methods=['GET'])

@@ -21,8 +21,8 @@ class FulfillmentWarehouse(db.Model):
     __bind_key__ = 'ordersDB'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False)
-    code = db.Column(db.String(20, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False, unique=True)
+    name = db.Column(db.String(64), nullable=False)
+    code = db.Column(db.String(20), nullable=False, unique=True)
     enabled = db.Column(BIT, nullable=False, server_default=db.FetchedValue())
 
 
@@ -63,12 +63,13 @@ class Order(db.Model):
 
     order_status = db.relationship(
         'OrderStatus',
-        primaryjoin='Order.id_order_status == OrderStatus.id',
-        backref='orders')
+        backref='orders', lazy='select')
     sales_channel = db.relationship(
         'SalesChannel',
-        primaryjoin='Order.id_sales_channel == SalesChannel.id',
         backref='orders')
+    # moved from Orders to support Order.order_lines eager loading
+    order_lines = db.relationship(
+        'OrderLine')
 
 
 class OrderLine(db.Model):
@@ -76,7 +77,7 @@ class OrderLine(db.Model):
     __bind_key__ = 'ordersDB'
 
     id = db.Column(db.Integer, primary_key=True)
-    sku = db.Column(db.String(159, 'SQL_Latin1_General_CP1_CI_AS'))
+    sku = db.Column(db.String(159))
     id_order = db.Column(db.ForeignKey('order.id'), nullable=False)
     qty_ordered = db.Column(db.Integer, nullable=False)
     qty_shipped = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
@@ -101,15 +102,11 @@ class OrderLine(db.Model):
 
     fulfillment_warehouse = db.relationship(
         'FulfillmentWarehouse',
-        primaryjoin='OrderLine.id_fulfillment_warehouse == FulfillmentWarehouse.id',
         backref='order_lines')
     order = db.relationship(
-        'Order',
-        primaryjoin='OrderLine.id_order == Order.id',
-        backref='order_lines')
+        'Order')
     order_line_status = db.relationship(
         'OrderLineStatus',
-        primaryjoin='OrderLine.id_order_line_status == OrderLineStatus.id',
         backref='order_lines')
 
 
@@ -118,7 +115,7 @@ class OrderLineStatus(db.Model):
     __bind_key__ = 'ordersDB'
 
     id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(20, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False, unique=True)
+    code = db.Column(db.String(20), nullable=False, unique=True)
     description = db.Column(db.Unicode(500), nullable=False)
 
 
