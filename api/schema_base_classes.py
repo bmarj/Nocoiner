@@ -5,6 +5,7 @@ from flask_marshmallow.sqla import (
     SQLAlchemyAutoSchema, SQLAlchemySchema, SQLAlchemyAutoSchemaOpts)
 from api.models import db
 
+
 class BasicMeta:
     """
     with session.
@@ -54,6 +55,45 @@ class NamespacedSchema(SQLAlchemyAutoSchema):
     def wrap_with_envelope(self, data, many, **kwargs):
         key = self.opts.plural_name if many else self.opts.name
         return {key: data}
+
+
+class AliasedFieldsSchema(SQLAlchemyAutoSchema):
+    """
+    Enumerate related fields in Meta class like:
+    fields = ('order.order_id')
+    options:
+    field_alias_dict = {}
+    auto_flatten_fields = True
+    Use field_alias_dict to map fields from one namespace to another or root.     
+    Use auto_flatten_fields=True and fields will be serialized in the same namespace as root.
+    If field_alias_dict is used with auto_flatten_fields, only fields without alias are flattened.
+    """
+
+    field_alias_dict = {}
+    auto_flatten_fields = True
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     for k, v in OrderSchema._declared_fields.items():
+    #         self._declared_fields.update({'order.' + k: v})
+
+    def on_bind_field(self, field_name, field_obj):
+        if self.field_alias_dict and self.field_alias_dict.get(field_name):
+            mapped_name = self.field_alias_dict.get(field_name)
+            if self.declared_fields.get(mapped_name):
+                raise Exception("Field already exists. Alias: '"
+                                + mapped_name
+                                + "' for field '" + field_name + "'")
+            field_obj.data_key = mapped_name
+        elif self.auto_flatten_fields and '.' in field_name:
+            parts = field_name.split('.')
+            prop_name = parts[len(parts) - 1]
+            if not self.declared_fields.get(prop_name):
+                field_obj.data_key = prop_name
+            else:
+                raise Exception("Field already exists. Alias: '"
+                                + prop_name
+                                + "' for field '" + field_name + "'")
 
 
 class Reach(fields.Field):

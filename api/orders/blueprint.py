@@ -22,16 +22,17 @@ def index():
         .paginate(1, 200).items
     return jsonify(response_schema.dump(o))
 
+
 @orders.route('/order_feed_serverside', methods=['GET'])
 def orderList():
     response_schema = OrderFeedsSchema(many=True)
     # eager loading order lines for orders
-    o = OrderLine.query\
-        .paginate(1, 10).items
+    q = OrderLine.query
 
     return jsonify(
-        {'data': {'itemsPerPage': 10, 'page': 1, 'totalRecords': len(o),
-                  'order_lines': response_schema.dump(o)}}
+        {'data': {'itemsPerPage': 10, 'page': 1, 'totalRecords': q.count(),
+                  'order_lines':
+                  response_schema.dump(q.paginate(1, 10).items)}}
     )
 
 @orders.route('/order/<int:id>', methods=['GET'])
