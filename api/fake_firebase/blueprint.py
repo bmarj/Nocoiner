@@ -1,0 +1,12 @@
+from flask import Blueprint, session, jsonify, make_response
+import json
+
+firebase = Blueprint('firebase', __name__,
+                 template_folder='templates',
+                 static_folder='static', static_url_path='/static')
+
+
+@firebase.route('/get_readwrite_token', methods=['GET'])
+def get_rw_token():
+    return 'Firebase cred not found', 500
+    # return 'eyJhbGciOiAiUlMyNTYiLCAidHlwIjogIkpXVCIsICJraWQiOiAiMzJjOTIxYjEzMTQ3NjNlNmU1NmVmZTQwOTQ0ODEyMmExMTNjMzdkNSJ9.eyJ1aWQiOiAiU3RhZ2luZ0NvbXBhbnk6bWd1dHoiLCAiaXNzIjogImNiLXJ0ZGItaW52ZW50b3J5LXJlYWR3cml0ZUBvbW5pLXdhcmVob3VzZS5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsICJleHAiOiAxNTk4ODk4NTY2LCAiY2xhaW1zIjogeyJ1c2VybmFtZSI6ICJtZ3V0eiIsICJhcHBfc2VjdGlvbiI6IG51bGwsICJ1c2VyX2NvbXBhbnkiOiAiU3RhZ2luZ0NvbXBhbnkiLCAiY2FuX3dyaXRlIjogdHJ1ZX0sICJpYXQiOiAxNTk4ODk0OTY2LCAiYXVkIjogImh0dHBzOi8vaWRlbnRpdHl0b29sa2l0Lmdvb2dsZWFwaXMuY29tL2dvb2dsZS5pZGVudGl0eS5pZGVudGl0eXRvb2xraXQudjEuSWRlbnRpdHlUb29sa2l0IiwgInN1YiI6ICJjYi1ydGRiLWludmVudG9yeS1yZWFkd3JpdGVAb21uaS13YXJlaG91c2UuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20ifQ.scPp6z4xyc3No2jogXiNxpba7keN-tqLQfXn43_b3oM6HHIxMX2QC1ujAvT78vDrrRD4TwaZugFr-EUqgd5n35c2f04BsUayaor5_Yt8_3NOiiJJFHDWrcI4_Y_RMWoqK9ERzsH1DXhpxURxvmc-faU3WkwmYxxCXUQ3WIhFBabAMkOLA1fYYeGhiFW4JLgUVkJL_tRBfzOC4rQ0CuG9D2b8IQMRFIMV_oxvaLjPdPpVKCRJ5-1cnpQbxMY6QFqZTq7c-VMHsUOR84_yF_JGXy0hFjvXs-A2tLFHB8EVwMNH_eIXI1qHBLzrCV9HSNFi52JZ0l7O4FFMy7BQHmQmOw', 200

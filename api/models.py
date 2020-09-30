@@ -63,7 +63,7 @@ class Order(db.Model):
 
     order_status = db.relationship(
         'OrderStatus',
-        backref='orders', lazy='select')
+        lazy='select')
     sales_channel = db.relationship(
         'SalesChannel',
         backref='orders')

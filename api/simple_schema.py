@@ -1,18 +1,16 @@
+from flask_marshmallow import Marshmallow
+from flask_marshmallow.fields import fields
+from flask_marshmallow.sqla import SQLAlchemyAutoSchema
+
 from api.models import (
-    db,
     Order, OrderLine,
     OrderStatus, OrderLineStatus,
     SalesChannel, ShipServiceLevel,
     FulfillmentWarehouse)
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, fields
+from api.schema_base_classes import SimpleMeta
 
-class SimpleMeta:
-    """
-    Simple table schema rules
-    """
-    include_relationships = False
-    include_fk = False
-    load_instance = True
+ma = Marshmallow()
+
 
 class OrderSchema(SQLAlchemyAutoSchema):
     class Meta(SimpleMeta):
