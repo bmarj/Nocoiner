@@ -88,12 +88,15 @@ class AliasedFieldsSchema(SQLAlchemyAutoSchema):
         elif self.auto_flatten_fields and '.' in field_name:
             parts = field_name.split('.')
             prop_name = parts[len(parts) - 1]
-            if not self.declared_fields.get(prop_name):
-                field_obj.data_key = prop_name
-            else:
+            if self.declared_fields.get(prop_name):
                 raise Exception("Field already exists. Alias: '"
                                 + prop_name
                                 + "' for field '" + field_name + "'")
+            field_obj.data_key = prop_name
+
+    # def get_translated(self, data, **kwargs):
+    #     temp = self.load(data, **kwargs)
+    #     return self.load(self.dump(temp), **kwargs)
 
 
 class Reach(fields.Field):

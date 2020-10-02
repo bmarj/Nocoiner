@@ -1,11 +1,12 @@
 from api.schema_base_classes import (
+    SQLAlchemyAutoSchemaOpts,
     fields, SQLAlchemyAutoSchema, SQLAlchemySchema,
     BasicMeta, AliasedFieldsSchema)
 from api.simple_schema import (
     SalesChannelSchema, OrderLineSchema, OrderSchema)
 from api.models import (Order, OrderLine)
 from marshmallow_sqlalchemy import fields_for_model, auto_field, field_for, property2field
-
+from marshmallow import pre_load
 
 class OrderDetailSchema(SQLAlchemyAutoSchema):
     class Meta(BasicMeta):
@@ -46,7 +47,8 @@ class OrderFeedsSchema(AliasedFieldsSchema):
                   "tax", "username")
     field_alias_dict = {'order.ship_address': 'ship_address_1',
                         'purchase_order_number': 'sales_order_number',
-                        'order.buyer_name': 'buyer_name'}
+                        'order.buyer_name': 'buyer_name',
+                        'id': 'guid_order_line'}
     auto_flatten_fields = True
 
 
@@ -61,3 +63,44 @@ class OrderFeedsSchema(AliasedFieldsSchema):
     # order_id = field_for(Order, "order_id")
     # order_id = auto_field("order_id", model = Order)
     # order_id = auto_field("order_id", model=Order)
+
+
+class BaseUpdateSchemaOpts(SQLAlchemyAutoSchemaOpts):
+    def __init__(self, meta, **kwargs):
+        SQLAlchemyAutoSchemaOpts.__init__(self, meta, **kwargs)
+        self.update_fields = getattr(meta, 'update_fields', set())
+
+class BaseUpdateSchema(SQLAlchemyAutoSchema):
+    OPTIONS_CLASS = BaseUpdateSchemaOpts
+
+    @pre_load()
+    def check_update_fields(self, data, many, **kwargs):
+        non_update_fields = set(self.fields) - set(self.opts.update_fields)
+        return {
+            key: value for key, value in data.items()
+            if key not in non_update_fields
+        }
+
+
+# class UpdateOrderLineSchema2(BaseUpdateSchema):
+#     class Meta(BasicMeta):
+#         model = OrderLine
+#         include_relationships = True
+#         include_fk = True
+#         load_instance = True
+#         fields = ("id", "purchase_order_number", "notes",
+#                   "fulfillment_warehouse", 'guid_order_line')
+#         update_fields = ("id", "purchase_order_number", "notes",
+#                          "fulfillment_warehouse")
+
+
+class UpdateOrderLineSchema(SQLAlchemyAutoSchema):
+    class Meta(BasicMeta):
+        model = OrderLine
+        include_relationships = True
+        include_fk = True
+        load_instance = True
+        fields = ("id", "purchase_order_number", "notes",
+                  "fulfillment_warehouse", 'guid_order_line')
+    # field_alias_dict = {'notes': 'username'}
+

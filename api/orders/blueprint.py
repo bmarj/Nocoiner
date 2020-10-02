@@ -1,4 +1,4 @@
-from flask import Blueprint, session, jsonify
+from flask import Blueprint, session, jsonify, request
 from flask_sqlalchemy import orm
 from marshmallow import EXCLUDE
 # from marshmallow.exceptions import ValidationError
@@ -8,7 +8,8 @@ from api.models import (
 from api.simple_schema import (
     FulfillmentWarehouse, FulfillmentWarehouseSchema, OrderSchema)
 from api.orders.schemas import (
-    OrderDetailSchema, OrderLineSchema, OrderFeedsSchema)
+    OrderDetailSchema, OrderLineSchema, OrderFeedsSchema,
+    UpdateOrderLineSchema)
 
 orders = Blueprint('orders', __name__,
                    template_folder='templates',
@@ -24,7 +25,7 @@ def index():
 
 
 @orders.route('/order_feed_serverside', methods=['GET'])
-def orderList():
+def order_feed_serverside():
     response_schema = OrderFeedsSchema(many=True)
     # eager loading order lines for orders
     q = OrderLine.query
@@ -34,6 +35,38 @@ def orderList():
                   'order_lines':
                   response_schema.dump(q.paginate(1, 10).items)}}
     )
+
+@orders.route('/update_flag', methods=['POST'])
+def update_flag():
+    object_id = request.values.get("guid_order_line")
+    input_data = request.values
+
+    # first option:
+    input_schema = UpdateOrderLineSchema()
+    # fetch object from db
+    update_obj = OrderLine.query.get_or_404(object_id)
+    # update object with values
+    oo = input_schema.load(input_data, instance=update_obj, partial=True, unknown=EXCLUDE)
+    # commit to db
+    db.session.commit()
+
+    return jsonify(
+        {'data': {'submitted': 1, 'succeeded': 1, 'failed': 0}}
+    )
+
+    # # reference: https://realpython.com/flask-connexion-rest-api-part-2/#
+    # # turn the passed in data into a db object
+    # request_schema = UpdateOrderLineSchema()
+    # update = request_schema.load(input_data, unknown=EXCLUDE)
+    # # Set the id to the person we want to update
+    # update.id = object_id
+    # # merge the new object into the old and commit it to the db
+    # db.session.merge(update)
+    # db.session.commit()
+
+    # return jsonify(
+    #     {'data': {'submitted': 1, 'succeeded': 1, 'failed': 0}}
+    # )
 
 @orders.route('/order/<int:id>', methods=['GET'])
 def order(id):
