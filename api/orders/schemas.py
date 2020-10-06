@@ -26,15 +26,15 @@ class OrderFeedsSchema(AliasedFieldsSchema):
         load_instance = True
         # works like this:
         fields = ("created_date", "currency_code", "date_exported", "exported",
-                  "fulfillment_warehouse", "id", "id_fulfillment_warehouse",
-                  "id_order", "id_order_line_status", "is_premium",
+                  "fulfillment_warehouse", "id", "fulfillment_warehouse_id",
+                  "order_id", "order_line_status_id", "is_premium",
                   "line_type", "notes", "order.buyer_address",
                   "order.buyer_address_2", "order.buyer_city",
                   "order.buyer_country", "order.buyer_email",
                   "order.buyer_name", "order.buyer_phone",
                   "order.buyer_postal_code", "order.buyer_state",
                   "order.created_timestamp",  # "order.is_premium",
-                  "order.is_prime", "order.order_id",
+                  "order.is_prime", # "order.order_id",
                   "order.processing_status", "order.purchase_date",
                   "order.referring_order", "order.ship_address",
                   "order.ship_address_2", "order.ship_city",
@@ -55,7 +55,7 @@ class OrderFeedsSchema(AliasedFieldsSchema):
     #fields = ('line_type','sku','shipping_price', 'order.order_id')
     #fields = ('line_type','sku','shipping_price', 'qty_ordered', 'username', 'promise_date')
     # order_id = Reach(fields.Str(), data_key="order", path="address.street")
-    # order = fields.Nested(OrderSchema)
+    order = fields.Nested(OrderSchema)
     # order_id = Reach(fields.Str(), data_key="order_id", path="order.order_id")
     # order_id = ma.Pluck(OrderSchema, 'order_id')
     # order_id = fields.Str()
