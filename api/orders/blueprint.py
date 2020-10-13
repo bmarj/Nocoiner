@@ -9,6 +9,7 @@ from api.simple_schema import (
     FulfillmentWarehouse, FulfillmentWarehouseSchema, OrderSchema)
 from api.orders.schemas import (
     OrderDetailSchema, OrderLineSchema, OrderFeedsSchema,
+    OrderLineDetailSchema,
     UpdateOrderLineSchema)
 
 orders = Blueprint('orders', __name__,
@@ -26,7 +27,8 @@ def index():
 
 @orders.route('/order_feed_serverside', methods=['GET'])
 def order_feed_serverside():
-    response_schema = OrderFeedsSchema(many=True)
+    # response_schema = OrderFeedsSchema(many=True)
+    response_schema = OrderLineDetailSchema(many=True)
     # eager loading order lines for orders
     q = OrderLine.query
 

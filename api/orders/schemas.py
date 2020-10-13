@@ -64,6 +64,13 @@ class OrderFeedsSchema(AliasedFieldsSchema):
     # order_id = auto_field("order_id", model = Order)
     # order_id = auto_field("order_id", model=Order)
 
+class OrderLineDetailSchema(SQLAlchemyAutoSchema):
+    class Meta(BasicMeta):
+        model = OrderLine
+        include_relationships = True
+        include_fk = True
+        load_instance = True
+    order = fields.Nested(OrderSchema)
 
 class BaseUpdateSchemaOpts(SQLAlchemyAutoSchemaOpts):
     def __init__(self, meta, **kwargs):
