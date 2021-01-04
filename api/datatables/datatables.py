@@ -6,11 +6,9 @@ import json
 from sqlalchemy import Text, func, or_
 from sqlalchemy.dialects import mysql, postgresql, sqlite
 
-from .datatables_clean_regex import clean_regex
-from .datatables_search_methods import SEARCH_METHODS
-
-
-from .model_helpers import get_column_in_models
+from api.datatables.datatables_clean_regex import clean_regex
+from api.datatables.datatables_search_methods import SEARCH_METHODS
+from api.datatables.model_helpers import get_column_in_models
 
 class DataTables:
     """Class defining a DataTables object.

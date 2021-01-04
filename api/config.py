@@ -33,7 +33,7 @@ class DevelopmentConfig(Config):
 
     # SQLALCHEMY_DATABASE_URI = ""
     SQLALCHEMY_ECHO = True
-
+    TEMPLATE_AUTO_RELOAD = True
     DEBUG = True
 
 
