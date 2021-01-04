@@ -4,7 +4,7 @@ from marshmallow import EXCLUDE
 # from marshmallow.exceptions import ValidationError
 
 
-from api.models.datatables import DataTables
+from api.datatables import DataTables
 from api.models.combined import OrderLines, TbProducts
 from api.models import combined as m
 # from api.models import (
@@ -36,9 +36,8 @@ orders_dt = Blueprint('orders_dt', __name__,
 
 
 @orders_dt.route("/")
-def dt_110x():
-    """List users with DataTables <= 1.10.x."""
-    return render_template("dt.jinja", project="dt_110x")
+def index():
+    return render_template("dt.jinja")
 
 @orders_dt.route("/data")
 def order_feeds():
@@ -58,7 +57,7 @@ def order_feeds():
          'data': response_schema.dump(results.items)}
     )
 
-
+5
 @orders_dt.route("/dataDT")
 def order_feedsDT():
 

@@ -1,8 +1,8 @@
-{% include 'base.jinja' %}
+{% extends 'base.jinja' %}
 
 {% block extra_stylesheets %}
   <link href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.css" rel="stylesheet">
-{% endblock %}
+{% endblock extra_stylesheets %}
 
 {% block content %}
   <div class="row">
@@ -21,7 +21,7 @@
     </table>
   </div>
 </div>
-{% endblock %}
+{% endblock content %}
 
 {% block extra_javascripts %}  
   <script type="text/javascript" charset="utf-8">
@@ -47,4 +47,4 @@
           data;
     };
   </script>
-{% endblock %}
+{% endblock extra_javascripts %}
