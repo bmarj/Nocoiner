@@ -5,8 +5,8 @@ from flask import Flask
 # from flask_marshmallow import Marshmallow
 from api.config import config
 
-from api.models import db
-from api.simple_schema import ma
+from api.models.model_base import db
+from api.models.simple_schema import ma
 # db = SQLAlchemy()
 # ma = Marshmallow()
 
@@ -61,5 +61,8 @@ def create_app(test_config=None):
 
     from api.fake_firebase.blueprint import firebase
     app.register_blueprint(firebase, url_prefix='/firebase')
+
+    from api.orders_dt.blueprint import orders_dt
+    app.register_blueprint(orders_dt, url_prefix='/order_lines')
 
     return app

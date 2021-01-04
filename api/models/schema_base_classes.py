@@ -3,7 +3,7 @@ from marshmallow.utils import get_value, set_value
 from flask_marshmallow.fields import fields
 from flask_marshmallow.sqla import (
     SQLAlchemyAutoSchema, SQLAlchemySchema, SQLAlchemyAutoSchemaOpts)
-from api.models import db
+from api.models.combined import db
 
 
 class BasicMeta:
