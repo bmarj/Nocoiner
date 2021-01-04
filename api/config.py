@@ -19,7 +19,7 @@ class Config:
     # CHANGE SECRET_KEY!! I would use sha256 to generate one and set this as an environment variable
     # Exmaple to retrieve env variable `SECRET_KEY`: os.environ.get("SECRET_KEY")    
     SECRET_KEY = os.urandom(80).hex()
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # SQLALCHEMY_TRACK_MODIFICATIONS = False
     LOG_FILE = "api.log"  # where logs are outputted to
 
 
@@ -33,7 +33,8 @@ class DevelopmentConfig(Config):
 
     # SQLALCHEMY_DATABASE_URI = ""
     SQLALCHEMY_ECHO = True
-    TEMPLATE_AUTO_RELOAD = True
+    # SQLALCHEMY_TRACK_MODIFICATIONS = False
+    TEMPLATES_AUTO_RELOAD = True  # for jinja2 development
     DEBUG = True
 
 
