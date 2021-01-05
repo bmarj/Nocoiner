@@ -1,0 +1,34 @@
+
+.table-warning,
+.table-warning > th,
+.table-warning > td {
+  background-color: #ffeeca; }
+
+.table-warning th,
+.table-warning td,
+.table-warning thead th,
+.table-warning tbody + tbody {
+  border-color: #ffdf9c; }
+
+.table-hover .table-warning:hover {
+  background-color: #ffe6b1; }
+.table-hover .table-warning:hover > td,
+.table-hover .table-warning:hover > th {
+    background-color: #ffe6b1; }
+
+.table-warning .sorting_1 {
+    background-color: #ffeeca !important;
+}
+
+.table-warning .sorting_1:hover {
+    background-color: #ffe6b1 !important;
+}
+
+tr.row-selected .draggable a {
+    visibility: visible;
+}
+
+tr:not(.row-selected) .draggable a {
+    visibility: hidden;
+}
+

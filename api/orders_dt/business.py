@@ -14,59 +14,30 @@ from .schemas import OrderFeedsSchema, UpdateOrderLineFlagsSchema
 
 def order_lines_query():
 
-    # q = db.session.query(OrderLines)\
-    #     .options(joinedload(OrderLines.shipments),
-    #              joinedload(OrderLines.order),
-    #              joinedload(OrderLines.order_line_flags),
-    #              joinedload(OrderLines.product),
-    #              raiseload("*"))
-
-    # q = db.session.query(OrderLines)
-
-    # q = db.session.query(OrderLines)\
-    #     .options(
-    #         orm.joinedload(OrderLines.order_line_flags))
-
-    q = db.session.query(OrderLines)\
-        .join(OrderLineFlags)
-
-    # q = db.session.query(OrderLines)\
-    #     .options(joinedload(OrderLines.shipments))\
-    #     .options(joinedload(OrderLines.order))\
-    #     .options(joinedload(OrderLines.order_line_flags))\
-    #     .options(joinedload(OrderLines.product))
-    #     .options(
-    #         joinedload(OrderLines.order)
-    #         #.joinedload(OrderLines.order_line_flags)
-    #         #.joinedload(OrderLines.product)
-    #         .joinedload(Orders.order_flags)
-    #         #.joinedload(OrderLineFlags.fulfillment_warehouse)
-    # ).options(
-    #         #.joinedload(OrderLines.product)
-    #         joinedload(OrderLines.order_line_flags)
-    #         .joinedload(OrderLineFlags.fulfillment_warehouse)
-    # )
-    #.options(contains_eager(OrderLines.order))
-    # .join(Orders)\
-    # .outerjoin(OrderFlags)\
-    # .outerjoin(OrderLineFlags)\
-    # .outerjoin(Warehouses)
-
-    return q
-
-
-def get_order_lines(filtering, sorting, paging):
-
     q = OrderLines.query\
         .join(Orders)\
         .outerjoin(OrderFlags)\
         .outerjoin(OrderLineFlags)\
         .outerjoin(Warehouses)
 
-    q = filter_query(q, filtering)
-    q = sort_query(q, sorting)
+    return q
 
-    return paginate_query(q, paging)
+def get_order_lines_by_id(object_id):
+
+    q = OrderLines.query\
+        .join(OrderLineFlags)\
+        .filter(OrderLines.guid_order_line == object_id)\
+        .first()
+
+    return q
+
+
+def get_order_line_flags_by_id(object_id):
+
+    q = OrderLineFlags.query\
+        .get_or_404(object_id)
+
+    return q
 
 def update_order_line_flags(update_object):
 

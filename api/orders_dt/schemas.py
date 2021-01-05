@@ -67,7 +67,7 @@ class OrderFeedsSchema(SQLAlchemyAutoSchema):
     #                     }
     #auto_flatten_fields = True
 
-    # order = fields.Nested(OrdersSchema)
+    order = fields.Nested(OrdersSchema)
     order_line_flags = fields.Nested(OrderLineFlagsSchema)
     product = fields.Nested(TbProductsSchema)
     #markup = fields.Method("get_markup")
@@ -102,7 +102,8 @@ class UpdateOrderLineFlagsSchema(SQLAlchemyAutoSchema):
         include_relationships = True
         include_fk = True
         load_instance = True
-        fields = ('line_type',
+        fields = ('guid_order_line',
+                  'line_type',
                   'qty_shipped',
                   'purchase_order_number',
                   'order_line_status',
