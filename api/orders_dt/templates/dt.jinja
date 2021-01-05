@@ -52,6 +52,10 @@
           '<b>' + data + '</b>' :
           data;
     };
+
+    function table_reload() {
+      $('#datatable').DataTable().ajax.reload();
+    };
   </script>
 
 {% endblock extra_javascripts %}
