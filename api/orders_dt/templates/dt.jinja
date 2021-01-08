@@ -10,18 +10,10 @@
       </div>
       <hr/>
       <table id="datatable" class="display table-hover clickable-rows" cellspacing="0" width="100%">
-        <thead>
-          <tr>
-            <th>SKU</th>
-            <th>PO#</th>
-            <th>Brand</th>
-          </tr>
-        </thead>
-      <tbody>
-      </tbody>
-    </table>
+      </table>
   </div>
 </div>
+
 <!-- modal dialog placeholder -->
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
 </div>
@@ -40,9 +32,9 @@
         "ajax": "{{ url_for('.order_feedsDT') }}",
         "rowId": 'guid_order_line',
         "columns": [
-            { data: "sku", defaultContent: "", searchable: 'false'},
-            { data: "order_line_flags.purchase_order_number", defaultContent: "" },
-            { data: "product.brand", defaultContent: "", searchable: 'false', orderable: false, render: cell_template},
+            { data:"sku", title:"SKU", defaultContent:"", searchable:"false"},
+            { data:"order_line_flags.purchase_order_number", title:"PO #", defaultContent:"" },
+            { data:"product.brand", title:"Brand", defaultContent:"", searchable:"false", orderable:false, render:cell_template},
         ]
       });
     });

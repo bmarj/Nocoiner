@@ -11,6 +11,7 @@ pyodbc = "*"
 marshmallow-sqlalchemy = "*"
 flask-marshmallow = "*"
 JSONMapper = "*"
+flask-wtf = "*"
 
 [dev-packages]
 flake8 = "*"
