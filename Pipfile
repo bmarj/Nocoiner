@@ -12,6 +12,7 @@ marshmallow-sqlalchemy = "*"
 flask-marshmallow = "*"
 JSONMapper = "*"
 flask-wtf = "*"
+python-dateutil = "*"
 
 [dev-packages]
 flake8 = "*"

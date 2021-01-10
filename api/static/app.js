@@ -350,18 +350,23 @@ function findRelatedTable(sender) {
         else return null;
     }
 
-    // strategy 3: inside table >thead>tr>th>div
-    var table = $(sender).closest('table');
-    if (table.length != 0)
-        return table;
+    // // strategy 3: inside table >thead>tr>th>div
+    // var table = $(sender).closest('table');
+    // if (table.length != 0)
+    //     return table;
 
-    // strategy 4: inside div before table
-    table = $(sender).parent().nextAll('table').first();
-    if (table.length != 0)
-        return table;
+    // // strategy 4: inside div before table
+    // table = $(sender).parent().nextAll('table').first();
+    // if (table.length != 0)
+    //     return table;
 
-    // strategy 5: inside div before datatable wrapper
-    table = $(sender).parent().nextAll('.dataTables_wrapper').find('table').first();
+    // // strategy 5: inside div before datatable wrapper
+    // table = $(sender).parent().nextAll('.dataTables_wrapper').find('table').first();
+    // if (table.length != 0)
+    //     return table;
+
+    // strategy 6: inside card-body
+    table = $(sender).closest('.card').find('table').first();
     if (table.length != 0)
         return table;
 }

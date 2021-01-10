@@ -1,66 +1,484 @@
 <!DOCTYPE html>
-<html lang="{{ request.locale_name }}">
+<html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  {#
-  <meta name="description" content="pyramid web application"> #}
-  {#
-  <meta name="author" content="Pylons Project"> #}
-  <title>Demo app</title>
-  <!-- Bootstrap core CSS -->
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.datatables.net/1.10.10/css/jquery.dataTables.css" rel="stylesheet">
-  <link href="/static/app.css" rel="stylesheet">
-  <style>
-    body {
-      min-height: 2000px;
-      padding-top: 70px;
-    }
-  </style>
-  {% block extra_stylesheets %} {% endblock extra_stylesheets %}
-  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!--[if lt IE 9]>
-    <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="//oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+
+    <title>
+        OMNI Warehouse
+    </title>
+
+    <link rel="stylesheet" href="/static/siqtheme.css">
+    <link rel="stylesheet" href="/static/app.css">
+    {% block extra_stylesheets %} {% endblock extra_stylesheets %}
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/img/apple-icon.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon.ico">
+    {#
+    <link rel="stylesheet" href="/static/css/pages/dashboard1.css"> #}
 </head>
 
-<body>
-  <nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-          aria-expanded="false" aria-controls="navbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/order_lines">Order Lines View</a>
-        <a class="navbar-brand" href="#">Inventory Management</a>
-      </div>
-      <div id="navbar" class="collapse navbar-collapse">
-        <ul class="nav navbar-nav navbar-right">
-          {# <li><a href="/dt_110x">DT >= 1.10.x</a></li> #}
-        </ul>
-      </div>
-      <!--/.nav-collapse -->
-    </div>
-  </nav>
-  <div class="container">
-    {% block content %} {% endblock content %}
-  </div>
-  <!-- Bootstrap core JavaScript
-        ================================================== -->
-  <!-- Placed at the end of the document so the pages load faster -->
-  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-  <script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
-  <script src="/static/app.js"></script>
-  {% block extra_javascripts %} {% endblock extra_javascripts %}
+<body class="theme-default">
+    <div class="grid-wrapper sidebar-bg bg1">
+
+        <!-- BOF HEADER -->
+        <div class="header">
+            <div class="header-bar">
+                <div class="brand">
+                    <a href="index.html" class="logo"><span class="text-carolina">OMNI</span> Warehouse</a>
+                    <a href="index.html" class="logo-sm text-carolina" style="display: none;">siQ</a>
+                </div>
+                <div class="btn-toggle">
+                    <!-- <a href="#" class="toggle-sidebar-btn"><i class="ti-arrow-circle-left"></i></a> -->
+                    <a href="#" class="slide-sidebar-btn" style="display: none;"><i class="ti-menu"></i></a>
+                </div>
+                <div class="navigation d-flex">
+
+                    <!-- BOF Header Search -->
+                    <form class="navbar-search" role="search" method="post" action="#">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><i class="ti-search"></i></div>
+                            </div>
+                            <input type="text" placeholder="Search for keywords" class="form-control" name="top-search"
+                                id="top-search">
+                        </div>
+                    </form>
+                    <!-- EOF Header Search -->
+
+                    <!-- BOF Header Nav -->
+                    <div class="navbar-menu d-flex">
+                        {# <div class="menu-item">
+                            <a href="#" class="btn" data-toggle="dropdown">
+                                <i class="ti-bell"></i>
+                                <span class="badge badge-pill badge-danger">3</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right dropdown-alert">
+                                <li class="dropdown-header text-center"><a href="#"><i class="ti-comment-alt"></i> View
+                                        All Alerts <i class="ti-angle-right"></i></a></li>
+                                <li><a href="#"><i class="fa fa-user"></i> New user registered <span>Just now</span></a>
+                                </li>
+                                <li><a href="#"><i class="fa fa-calendar-plus-o"></i> New event created <span>5 min
+                                            ago</span></a></li>
+                                <li><a href="#"><i class="fa fa-area-chart"></i> Report ready to download <span>1 day
+                                            ago</span></a></li>
+                                <li><a href="#"><i class="fa fa-bank"></i> Bill payment reminder <span>1 day
+                                            ago</span></a></li>
+                                <li><a href="#"><i class="fa fa-clock-o"></i> Staff meeting <span>3 days ago</span></a>
+                                </li>
+                            </ul>
+                        </div> #}
+                        {# <div class="menu-item">
+                            <a href="#" class="btn" data-toggle="dropdown">
+                                <i class="ti-email"></i>
+                                <span class="badge badge-pill badge-success">7</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right dropdown-message">
+                                <li class="dropdown-header text-center"><a href="#"><i class="ti-comments"></i> View All
+                                        Messages <i class="ti-angle-right"></i></a></li>
+                                <li>
+                                    <img src="/static/img/profile/profile-04.jpg">
+                                    <div class="message-row">
+                                        <small>24h ago</small>
+                                        <a href="#"><span class="message-user">Pear Appleton</span><br>
+                                            Staff meeting on Tuesday at 4PM, remember to set date</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <img src="/static/img/profile/profile-07.jpg">
+                                    <div class="message-row">
+                                        <small>2h ago</small>
+                                        <a href="#"><span class="message-user">siQuang Humbleman</span><br>
+                                            RE: Remember to generate PNL for October</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <img src="/static/img/profile/profile-06.jpg">
+                                    <div class="message-row">
+                                        <small>3d ago</small>
+                                        <a href="#"><span class="message-user">Lemony Tang</span><br>
+                                            Appointment with lawyer, better call Saul!</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <img src="/static/img/profile/profile-07.jpg">
+                                    <div class="message-row">
+                                        <small>4d ago</small>
+                                        <a href="#"><span class="message-user">siQuang Humbleman</span><br>
+                                            Theme designed by siQuang for siQthemes</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div> #}
+                        <div class="menu-item">
+                            <a href="#" class="btn right-sidebar-toggle"><i class="ti-user"></i></a>
+                        </div>
+                    </div>
+                    <!-- EOF Header Nav -->
+
+                </div>
+            </div>
+        </div>
+        <!-- EOF HEADER -->
+
+        <!-- BOF ASIDE-LEFT -->
+        <div id="sidebar" class="sidebar">
+            <div class="sidebar-content">
+                <!-- sidebar-menu  -->
+                <div class="sidebar-menu">
+                    <ul>
+                        <li class="header-menu">
+                            Categories
+                        </li>
+                        {# <li class="<% if (htmlWebpackPlugin.options.topmenu == 'db') { %>active<% } %>">
+                            <a href="index.html">
+                                <i class="ti-dashboard"></i>
+                                <span class="menu-text">Dashboard</span>
+                            </a>
+                        </li> #}
+                        <li class="maincat">
+                            <a href="#">
+                                <i class="ti-package"></i>
+                                <span class="menu-text">Order management</span>
+                                {# <span class="badge badge-pill badge-danger">3</span> #}
+                            </a>
+                            <div class="subcat">
+                                <ul>
+                                    <li>
+                                            <a href="/order_lines/">Order Lines view</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="maincat">
+                            <a href="#">
+                                <i class="ti-layout-grid3-alt"></i>
+                                <span class="menu-text">Inventory management</span>
+                            </a>
+                            <div class="subcat">
+                                <ul>
+                                    <li>
+                                            <a href="/inventory/">Inventory View</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="maincat">
+                            <a href="#">
+                                <i class="ti-bar-chart"></i>
+                                <span class="menu-text">Reports</span>
+                            </a>
+                            <div class="subcat">
+                                <ul>
+                                    <li>
+                                            <a href="/reports/">Report</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        {# <li class="maincat <% if (htmlWebpackPlugin.options.topmenu == 'tb') { %>active<% } %>">
+                            <a href="#">
+                                <i class="ti-layout-grid2"></i>
+                                <span class="menu-text">Tables</span>
+                            </a>
+                            <div class="subcat">
+                                <ul>
+                                    <li <% if (htmlWebpackPlugin.options.submenu=='tbbasic' ) { %>class="active" <% } %>
+                                            >
+                                            <a href="tb_basic.html">Basic Tables</a>
+                                    </li>
+                                    <li <% if (htmlWebpackPlugin.options.submenu=='tbdatatables' ) { %>class="active" <%
+                                            } %>>
+                                            <a href="tb_datatables.html">Datatables</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="maincat <% if (htmlWebpackPlugin.options.topmenu == 'fm') { %>active<% } %>">
+                            <a href="#">
+                                <i class="ti-write"></i>
+                                <span class="menu-text">Forms</span>
+                            </a>
+                            <div class="subcat">
+                                <ul>
+                                    <li <% if (htmlWebpackPlugin.options.submenu=='fmcontrol' ) { %>class="active" <% }
+                                            %>>
+                                            <a href="fm_control.html">Form Control</a>
+                                    </li>
+                                    <li
+                                        class="tier1 <% if (htmlWebpackPlugin.options.submenu == 'fmckeditor') { %>active<% } %>">
+                                        <a href="#"><span class="menu-text">CKEditor</span></a>
+                                        <div class="subcat">
+                                            <ul>
+                                                <li <% if (htmlWebpackPlugin.options.submenu2=='fmckeditorclassic' ) {
+                                                    %>class="active" <% } %>>
+                                                        <a href="fm_ckeditor_classic.html">Classic</a>
+                                                </li>
+                                                <li <% if (htmlWebpackPlugin.options.submenu2=='fmckeditorballoon' ) {
+                                                    %>class="active" <% } %>>
+                                                        <a href="fm_ckeditor_balloon.html">Balloon</a>
+                                                </li>
+                                                <li <% if (htmlWebpackPlugin.options.submenu2=='fmckeditorblock' ) { %>
+                                                    class="active" <% } %>>
+                                                        <a href="fm_ckeditor_block.html">Balloon Block</a>
+                                                </li>
+                                                <li <% if (htmlWebpackPlugin.options.submenu2=='fmckeditorinline' ) { %>
+                                                    class="active" <% } %>>
+                                                        <a href="fm_ckeditor_inline.html">Inline</a>
+                                                </li>
+                                                <li <% if (htmlWebpackPlugin.options.submenu2=='fmckeditordocument' ) {
+                                                    %>class="active" <% } %>>
+                                                        <a href="fm_ckeditor_document.html">Document</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="maincat <% if (htmlWebpackPlugin.options.topmenu == 'ch') { %>active<% } %>">
+                            <a href="#">
+                                <i class="ti-bar-chart"></i>
+                                <span class="menu-text">Charts</span>
+                            </a>
+                            <div class="subcat">
+                                <ul>
+                                    <li <% if (htmlWebpackPlugin.options.submenu=='chapex' ) { %>class="active" <% } %>>
+                                            <a href="ch_apexcharts.html">Apex Charts</a>
+                                    </li>
+                                    <li <% if (htmlWebpackPlugin.options.submenu=='chamchart' ) { %>class="active" <% }
+                                            %>>
+                                            <a href="javascript:;">amCharts</a>
+                                    </li>
+                                    <li <% if (htmlWebpackPlugin.options.submenu=='chmorris' ) { %>class="active" <% }
+                                            %>>
+                                            <a href="javascript:;">Morris Charts</a>
+                                    </li>
+                                    <li <% if (htmlWebpackPlugin.options.submenu=='chflot' ) { %>class="active" <% } %>>
+                                            <a href="javascript:;">Flot Charts</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li> #}
+                        {# <li class="header-menu">
+                            Extra
+                        </li>
+                        <li class="maincat <% if (htmlWebpackPlugin.options.topmenu == 'pg') { %>active<% } %>">
+                            <a href="#">
+                                <i class="ti-file"></i>
+                                <span class="menu-text">Pages</span>
+                            </a>
+                            <div class="subcat">
+                                <ul>
+                                    <li <% if (htmlWebpackPlugin.options.submenu=='pglogin' ) { %>class="active" <% } %>
+                                            >
+                                            <a href="pg_login.html" target="_blank">Login</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="maincat">
+                            <a href="#">
+                                <i class="ti-layers-alt"></i>
+                                <span class="menu-text">Multi-Levels Menu</span>
+                            </a>
+                            <div class="subcat">
+                                <ul>
+                                    <li class="tier1">
+                                        <a href="javascript:;">Tier 1</a>
+                                        <div class="subcat">
+                                            <ul>
+                                                <li><a href="javascript:;">Level 2</a></li>
+                                                <li><a href="javascript:;">Level 2</a></li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">Submenu</a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">Submenu</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li>
+                            <a href="javascript:;">
+                                <i class="ti-agenda"></i>
+                                <span class="menu-text">Documentation</span>
+                                <span class="badge badge-pill badge-primary">Beta</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:;">
+                                <i class="ti-calendar"></i>
+                                <span class="menu-text">Calendar</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://github.com/siQuang/siqtheme" target="_blank">
+                                <i class="ti-github"></i>
+                                <span class="menu-text">Github/siQtheme</span>
+                            </a>
+                        </li> #}
+                    </ul>
+                </div>
+                <!-- sidebar-menu  -->
+            </div>
+        </div>
+        <!-- EOF ASIDE-LEFT -->
+
+        <!-- BOF MAIN -->
+        <div class="main">
+
+            <!-- BOF Breadcrumb -->
+            {# <div class="row">
+                <div class="col">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href=""><i class="ti-home"></i> Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="">Tables</a></li>
+                        <li class="breadcrumb-item active">DataTables</li>
+                    </ol>
+                </div>
+            </div> #}
+            <!-- EOF Breadcrumb -->
+
+            <!-- BOF MAIN-BODY -->
+            {# <div class="row">
+                <div class="col">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <p class="card-text">DataTables is a simple-to-use jQuery plug-in with a huge range of customisable
+                                options. The examples in this section demonstrate basic initialisation of DataTables and how it can
+                                be easily customised by passing an object with the options you want.</p>
+                            <p class="card-text">To learn more visit <a href="https://datatables.net"
+                                    target="_blank">https://datatables.net/</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div> #}
+            {% block content %} {% endblock content %}
+            <!-- EOF MAIN-BODY -->
+
+        </div>
+        <!-- EOF MAIN -->
+
+        <!-- BOF FOOTER -->
+        <div class="footer">
+            <p class="text-center mt-3">OMNIWarehouse - LogisticsForHire inc.</p>
+        </div>
+        <!-- EOF FOOTER -->
+
+        <!-- BOF ASIDE-RIGHT -->
+        <div id="sidebar-right">
+            <div class="sidebar-right-container">
+
+                <!-- BOF TABS -->
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a href="#tab-1" data-toggle="tab" class="nav-link active">Profile</a>
+                    </li>
+                    {# <li>
+                        <a href="#tab-2" data-toggle="tab" class="nav-link">Settings</a>
+                    </li>
+                    <li>
+                        <a href="#tab-3" data-toggle="tab" class="nav-link">Help</a>
+                    </li> #}
+                </ul>
+                <!-- EOF TABS -->
+
+                <!-- BOF TAB PANES -->
+                <div class="tab-content">
+                    <!-- BOF TAB-PANE #1 -->
+                    <div id="tab-1" class="tab-pane show active">
+                        <div class="pane-header">
+                            <h3><i class="ti-user"></i> User Panel</h3>
+                            <i class="fa fa-circle text-success"></i> <span class="profile-user">Admin
+                                </span>
+                            <span class="float-right"><a href="#" class="text-carolina">Log-Out</a></span>
+                        </div>
+                        <div class="pane-body">
+                            <div class="card bg-transparent mb-3">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <h5 class="mb-3">My Theme</h5>
+                                        <div class="btn-group mb-2">
+                                            <button type="button" class="btn switch-theme btn-light"
+                                                id="theme-default">Light</button>
+                                            <button type="button" class="btn switch-theme btn-dark"
+                                                id="theme-dark">Dark</button>
+                                            <button type="button" class="btn switch-theme btn-primary"
+                                                id="theme-blue">Blue</button>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <h5 class="mb-3">My Profile</h5>
+                                        <form class="form-update-profile">
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-md-4">Firstname:</label>
+                                                <div class="col">
+                                                    <input type="text" name="first_name" class="form-control-plaintext"
+                                                        value="siQuang">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-md-4">Lastname:</label>
+                                                <div class="col">
+                                                    <input type="text" name="last_name" class="form-control-plaintext"
+                                                        value="Humbleman">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-md-4">Email:</label>
+                                                <div class="col">
+                                                    <input type="text" name="email" class="form-control-plaintext"
+                                                        value="siquang@example.com">
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="col-form-label col-md-4">Username:</label>
+                                                <div class="col">
+                                                    <input type="text" name="username" class="form-control-plaintext"
+                                                        value="siquang">
+                                                </div>
+                                            </div>
+                                            {# <div class="form-group row">
+                                                <label class="col-form-label col-md-4">Password:</label>
+                                                <div class="col">
+                                                    <input type="password" name="password"
+                                                        class="form-control-plaintext" value="123456789">
+                                                </div>
+                                            </div>
+                                            <div class="col offset-md-4 pl-2">
+                                                <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                                            </div> #}
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- EOF TAB-PANE #1 -->
+
+
+                </div>
+                <!-- EOF TAB PANES -->
+
+            </div>
+        </div>
+        <!-- EOF ASIDE-RIGHT -->
+
+        <div id="overlay"></div>
+
+    </div> <!-- END WRAPPER -->
+
+    <script src="/static/siqtheme.js"></script>
+    <script src="/static/app.js"></script>
+    {% block extra_javascripts %} {% endblock extra_javascripts %}
+    {#
+    <script src="/static/scripts/pages/dashboard1.js"></script> #}
 </body>
 
 </html>
