@@ -132,12 +132,12 @@ class InventoryLocationsAvaiable(db.Model):
     __tablename__ = 'inventory_locations_avaiable'
     __bind_key__ = 'inventoryDB'
 
-    Row = db.Column(db.String(10), nullable=False, primary_key=True)
+    lID = db.Column(db.BigInteger, nullable=False, primary_key=True)
+    Row = db.Column(db.String(10), nullable=False)
     Level = db.Column(db.String(10), nullable=False)
     Col = db.Column(db.String(10), nullable=False)
     Qty = db.Column(db.Integer, nullable=False)
     UPC = db.Column(db.String(25))
-    lID = db.Column(db.BigInteger, nullable=False)
     rev = db.Column(db.String(50))
     imageURL = db.Column(db.Unicode(4000))
     shortUPC = db.Column(db.String(10))
