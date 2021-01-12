@@ -62,8 +62,8 @@ def create_app(test_config=None):
     from api.fake_firebase.blueprint import firebase
     app.register_blueprint(firebase, url_prefix='/firebase')
 
-    from api.orders_dt.blueprint import orders_dt
-    app.register_blueprint(orders_dt, url_prefix='/order_lines')
+    from api.orders.blueprint import orders
+    app.register_blueprint(orders, url_prefix='/order_lines')
 
     from api.inventory.blueprint import inventory
     app.register_blueprint(inventory, url_prefix='/inventory')

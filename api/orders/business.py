@@ -4,23 +4,15 @@ from flask import request, session, jsonify
 #from lxml import etree
 
 # from commerceblitz_api.models import orders_model
-from sqlalchemy.sql import func
+from sqlalchemy.sql import func, join
+from flask_sqlalchemy import orm
+# import contains_eager, joinedload, subquery, raiseload
 from marshmallow import EXCLUDE
 from api.models.combined import OrderLines, OrderLineFlags, Orders, OrderFlags, Warehouses, OrderLineFlagsLog
 from api.models.model_base import db, filter_query, sort_query, paginate_query, get_model_changes
-from api.orders.schemas import OrderFeedsSchema, UpdateOrderLineFlagsSchema
+from .schemas import OrderFeedsSchema, UpdateOrderLineFlagsSchema
 
 def order_lines_query():
-
-    q = db.session.query(OrderLines)\
-        .join(Orders)\
-        .outerjoin(OrderFlags)\
-        .outerjoin(OrderLineFlags)\
-        .outerjoin(Warehouses)
-
-    return OrderLines.query
-
-def get_order_lines(filtering, sorting, paging):
 
     q = OrderLines.query\
         .join(Orders)\
@@ -28,9 +20,24 @@ def get_order_lines(filtering, sorting, paging):
         .outerjoin(OrderLineFlags)\
         .outerjoin(Warehouses)
 
-    q = filter_query(q, filtering)
-    q = sort_query(q, sorting)
-    return paginate_query(q, paging)
+    return q
+
+def get_order_lines_by_id(object_id):
+
+    q = OrderLines.query\
+        .join(OrderLineFlags)\
+        .filter(OrderLines.guid_order_line == object_id)\
+        .first()
+
+    return q
+
+
+def get_order_line_flags_by_id(object_id):
+
+    q = OrderLineFlags.query\
+        .get_or_404(object_id)
+
+    return q
 
 def update_order_line_flags(update_object):
 
