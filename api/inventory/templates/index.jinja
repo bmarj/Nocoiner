@@ -6,11 +6,11 @@
           <div class="card mb-3">
               <div class="card-header">
                   <div class="caption uppercase">
-                      <i class="ti-package"></i> Order Lines
+                      <i class="ti-layout-grid3-alt"></i> Inventory Lines
                   </div>
                   <div class="tools">
-                    <button class="btn btn-primary btn-add" onclick="goToEditModal(this, '/order_lines/edit', '#editModal')"><i class="ti-write mr-1"></i>Edit</button>
-                    <button class="btn btn-warning btn-add" onclick="doDelete(this, '/order_lines/delete')"><i class="ti-trash mr-1"></i>Delete</button>
+                    <button class="btn btn-primary btn-add" onclick="goToEditModal(this, '/inventory/edit', '#editModal')"><i class="ti-write mr-1"></i>Edit</button>
+                    <button class="btn btn-warning btn-add" onclick="doDelete(this, '/inventory/delete')"><i class="ti-trash mr-1"></i>Delete</button>
                   </div>
               </div>
               <div class="card-body">
@@ -39,12 +39,13 @@
         "serverSide": true,
         "filter": true,
         "deferRender": true,
-        "ajax": "{{ url_for('.order_feedsDT') }}",
-        "rowId": 'guid_order_line',
+        "ajax": "{{ url_for('.inventory_lines_data') }}",
+        "rowId": 'lID',
         "columns": [
-            { data:"sku", title:"SKU", defaultContent:"", searchable:"false"},
-            { data:"order_line_flags.purchase_order_number", title:"PO #", defaultContent:"" },
-            { data:"product.brand", title:"Brand", defaultContent:"", searchable:"false", orderable:false, render:cell_template},
+            { data:"location", title:"Location", defaultContent:""},
+            { data:"Qty", title:"Quantity", defaultContent:"" },
+            { data:"UPC", title:"UPC", defaultContent:"" },
+            { data:"SKU", title:"SKU", defaultContent:"" }
         ]
       });
     });

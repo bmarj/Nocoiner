@@ -451,10 +451,24 @@ function goToEditModal(sender, urlToAction, dialogId) {
     }        
 }
 
+// function formValidate(form){
+//     if (form.hasClass('validate') && form[0].checkValidity === false) {
+//         // e.preventDefault();
+//         // e.stopPropagation();
+//         form.addClass('was-validated');
+//         return false;
+//     }
+//     form.addClass('was-validated');
+//     return true;
+// }
+
+
 function submitModal(sender, urlToAction, dialogId) {
     let url = urlToAction;
     if (url){
-        var formData = $(dialogId + " form").serialize();
+        var form = $(dialogId + " form");
+
+        var formData = form.serialize();
         $.ajax({
             type: 'POST',
             //dataType: "json",
@@ -480,6 +494,7 @@ function setupModal(){
     $('button[data-dismiss]').on('click', function(){ closeModal('#editModal'); });
     // fields without name are not posted, so make them readonly
     $("form input:not([name])").attr('disabled', '');
+    handleValidation();
 }
 
 // go to delete action
@@ -636,3 +651,16 @@ function disableFormAutocomplete() {
     $("input:text,form").attr("autocomplete", "off");
 }
 
+var handleValidation = function () {
+    $('.validate').on('submit', function (e) {
+        e.preventDefault();
+
+        var form = $('.validate');
+
+        if (form[0].checkValidity === false) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        form.addClass('was-validated');
+    });
+}

@@ -65,4 +65,7 @@ def create_app(test_config=None):
     from api.orders_dt.blueprint import orders_dt
     app.register_blueprint(orders_dt, url_prefix='/order_lines')
 
+    from api.inventory.blueprint import inventory
+    app.register_blueprint(inventory, url_prefix='/inventory')
+
     return app
