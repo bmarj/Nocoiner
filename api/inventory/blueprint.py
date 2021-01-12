@@ -8,7 +8,7 @@ from .business import inventory_lines, get_inventory_line_by_id
 from .schemas import (
     InventoryLinesSchema,
     UpdateInventoryItemSchema)
-from .forms import InventoryForm
+from .forms import InventoryForm, ChangeQuantityForm
 
 inventory = Blueprint('inventory', __name__,
                    template_folder='templates',
@@ -60,3 +60,26 @@ def update():
     
     return render_template("edit_inventory_item.jinja", form=form, key=object_id, classes="was-validated")
 
+@inventory.route("/change-quantity/<id>")
+def change_quantity(id):    
+    obj = get_inventory_line_by_id(id)
+    form = ChangeQuantityForm(obj=obj)
+    return render_template("edit_quantity.jinja", form=form, key=id)
+
+@inventory.route('/update-quantity', methods=['POST'])
+def update_quantity():
+    object_id = request.values.get("key")
+    input_data = request.values
+    
+    form = ChangeQuantityForm(input_data)
+    
+    if form.validate_on_submit():
+        obj = get_inventory_line_by_id(object_id)
+        # form.populate_obj(obj)  # dont load form values to object
+        # update object manually
+        obj.Qty += form.UpdatedQty.data
+        obj.query.session.commit()
+        flash(f'{form.UpdatedQty.data} items added', category="Success")
+        return render_template("form_success.jinja")
+    
+    return render_template("edit_quantity.jinja", form=form, key=object_id, classes="was-validated")
