@@ -434,6 +434,68 @@ function getEditUrl(sender, urlToAction) {
     return false;
 }
 
+// go to delete action
+function doDeletePost(sender, urlToAction, dialogId) {
+    var table = findRelatedTable(sender);
+    var selectedRows = getSelectedRows(table);
+    if (selectedRows.length == 0) {
+        alert("Click on the row to select it.");
+    }
+    else if (selectedRows.length > 1) {
+        alert("Select single row.");
+    }
+    else if (selectedRows.length == 1) {
+        if (confirmDelete(sender)) {
+
+            if (urlToAction == null)
+                return true;
+            var hasExpression = urlToAction.match(/\{(.*?)\}/);
+            if (hasExpression) {
+                // custom edit by expresssion
+                var attrName = hasExpression[1];
+                var attrValues = getRowAttributes(selectedRows, attrName);
+
+                var url = urlToAction.replace('{' + attrName + '}', attrValues[0]);
+                // go to url
+                // window.location.href = url;                
+                $.ajax({
+                    type: 'POST',
+                    //dataType: "json",
+                    url: url,
+                    encode: true,
+                    success: function(data) {
+                        $(dialogId).replaceWith(data);
+                    },
+                    error: function(e) { 
+                        alert('Error. Try again.');
+                    }
+                });
+            }
+            else {
+                // ordinary edit by id
+                var ids = getRowIds(selectedRows);
+                var url = urlToAction + '/' + ids[0];
+                // go to url
+                //window.location.href = url;
+                $.ajax({
+                    type: 'POST',
+                    //dataType: "json",
+                    url: url,
+                    encode: true,
+                    success: function(data) {
+                        $(dialogId).replaceWith(data);
+                    },
+                    error: function(e) { 
+                        alert('Error. Try again.');
+                    }
+                });
+            }
+        }
+    }
+    return false;
+}
+
+
 // open edit modal
 function goToEditModal(sender, urlToAction, dialogId) {
     let url = getEditUrl(sender, urlToAction);
@@ -443,7 +505,7 @@ function goToEditModal(sender, urlToAction, dialogId) {
             url: url,
             //data: data,
             success: function(data) {
-                $('#editModal').modal('hide');
+                // $('#editModal').modal('hide');
                 $(dialogId).replaceWith(data);
             },
             error: function(e) { alert('Error. Try again.');}

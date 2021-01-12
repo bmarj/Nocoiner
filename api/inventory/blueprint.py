@@ -83,3 +83,11 @@ def update_quantity():
         return render_template("form_success.jinja")
     
     return render_template("edit_quantity.jinja", form=form, key=object_id, classes="was-validated")
+
+@inventory.route("/delete/<id>", methods=['GET', 'POST'])
+def delete(id):    
+    obj = get_inventory_line_by_id(id)
+    obj.Qty = 0
+    obj.query.session.commit()
+    flash('Quantity deleted', category="Success")
+    return render_template("form_success.jinja")
