@@ -125,13 +125,6 @@
 
         <!-- BOF MAIN -->
         <div class="main">
-            {% for message in get_flashed_messages() %}
-            <div class="alert alert-success">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ message }}
-            </div>
-            {% endfor %}
-
             {% block content %} {% endblock content %}
             <!-- EOF MAIN-BODY -->
 
@@ -242,7 +235,7 @@
     </div> <!-- END WRAPPER -->
 
     <script src="/static/siqtheme.js"></script>
-    <script src="/static/app.js"></script>
+    <script src="/static/app.js"></script>    
     {% block extra_javascripts %} {% endblock extra_javascripts %}
     {#
     <script src="/static/scripts/pages/dashboard1.js"></script> #}
