@@ -14,6 +14,8 @@ JSONMapper = "*"
 flask-wtf = "*"
 python-dateutil = "*"
 wtforms-alchemy = "*"
+dateutils = "*"
+pymssql = "*"
 
 [dev-packages]
 flake8 = "*"

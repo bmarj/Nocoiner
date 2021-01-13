@@ -23,7 +23,7 @@ class ChangeQuantityForm(ModelForm):
         model = m.TblInvLocations
         include = ['Row', 'Level', 'Qty', 'UPC']
         exclude = ['guidItemLoc', 'lastModTime', 'shortUPC', 'QTY_Avail', 'rev']
-    UpdatedQty = IntegerField("Quantity", validators=[DataRequired("New quantity is required")])
+    UpdatedQty = IntegerField("Quantity to add", validators=[DataRequired("New quantity is required")])
 
     def validate_UpdatedQty(self, field):
         if field.data <= 0:            
