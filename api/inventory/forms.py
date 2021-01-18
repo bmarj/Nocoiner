@@ -7,22 +7,19 @@ from api.models.form_base import ModelForm
 class InventoryForm(ModelForm):
     class Meta:
         model = m.TblInvLocations
-        include = ['Row', 'Level', 'Qty', 'UPC']
-        exclude = ['guidItemLoc', 'lastModTime', 'shortUPC', 'QTY_Avail', 'rev']
+        only = ['Row', 'Level', 'Col', 'Qty', 'UPC']
     # submit = SubmitField('Submit')
 
 
 # class ChangeQuantityForm(ModelForm):
 #     class Meta:
 #         model = m.TblInvLocations
-#         include = ['Qty']
-#         exclude = ['guidItemLoc', 'lastModTime', 'shortUPC', 'QTY_Avail', 'rev', 'Row', 'Level', 'UPC']
+#         only = ['Qty']
 
 class ChangeQuantityForm(ModelForm):
     class Meta:
         model = m.TblInvLocations
-        include = ['Row', 'Level', 'Qty', 'UPC']
-        exclude = ['guidItemLoc', 'lastModTime', 'shortUPC', 'QTY_Avail', 'rev']
+        only = ['Row', 'Level', 'Qty', 'Col', 'UPC']
     UpdatedQty = IntegerField("Quantity to add", validators=[DataRequired("New quantity is required")])
 
     def validate_UpdatedQty(self, field):
