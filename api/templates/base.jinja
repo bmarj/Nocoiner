@@ -13,6 +13,7 @@
 
     <link rel="stylesheet" href="/static/siqtheme.css">
     <link rel="stylesheet" href="/static/app.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.5/css/buttons.dataTables.min.css">
     {% block extra_stylesheets %} {% endblock extra_stylesheets %}
     <link rel="apple-touch-icon" sizes="76x76" href="/static/img/apple-icon.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon.ico">
@@ -64,61 +65,8 @@
         <!-- BOF ASIDE-LEFT -->
         <div id="sidebar" class="sidebar">
             <div class="sidebar-content">
-                <!-- sidebar-menu  -->
-                <div class="sidebar-menu">
-                    <ul>
-                        <li class="header-menu">
-                            Categories
-                        </li>
-                        {# <li class="<% if (htmlWebpackPlugin.options.topmenu == 'db') { %>active<% } %>">
-                            <a href="index.html">
-                                <i class="ti-dashboard"></i>
-                                <span class="menu-text">Dashboard</span>
-                            </a>
-                        </li> #}
-                        <li class="maincat">
-                            <a href="#">
-                                <i class="ti-package"></i>
-                                <span class="menu-text">Order management</span>
-                                {# <span class="badge badge-pill badge-danger">3</span> #}
-                            </a>
-                            <div class="subcat">
-                                <ul>
-                                    <li>
-                                        <a href="/order_lines/">Order Lines view</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="maincat">
-                            <a href="#">
-                                <i class="ti-layout-grid3-alt"></i>
-                                <span class="menu-text">Inventory management</span>
-                            </a>
-                            <div class="subcat">
-                                <ul>
-                                    <li>
-                                        <a href="/inventory/">Inventory View</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="maincat">
-                            <a href="#">
-                                <i class="ti-bar-chart"></i>
-                                <span class="menu-text">Reports</span>
-                            </a>
-                            <div class="subcat">
-                                <ul>
-                                    <li>
-                                        <a href="/reports/">Report</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                <!-- sidebar-menu  -->
+                {% from "_menu.html" import render_menu %}
+                {{ render_menu() }}
             </div>
         </div>
         <!-- EOF ASIDE-LEFT -->
@@ -234,8 +182,10 @@
 
     </div> <!-- END WRAPPER -->
 
-    <script src="/static/siqtheme.js"></script>
-    <script src="/static/app.js"></script>    
+    <script src="/static/siqtheme.js"></script>    
+    <script src="https://cdn.datatables.net/buttons/1.6.5/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.6.5/js/buttons.colVis.min.js"></script>    
+    <script src="/static/app.js"></script>
     {% block extra_javascripts %} {% endblock extra_javascripts %}
     {#
     <script src="/static/scripts/pages/dashboard1.js"></script> #}

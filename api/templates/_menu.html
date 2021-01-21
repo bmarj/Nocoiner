@@ -1,0 +1,58 @@
+{% macro render_menu() %}
+    <!-- sidebar-menu  -->
+    <div class="sidebar-menu">
+        <ul>
+            <li class="header-menu">
+                Categories
+            </li>
+            <li class="maincat">
+                <a href="#">
+                    <i class="ti-package"></i>
+                    <span class="menu-text">Order management</span>
+                    {# <span class="badge badge-pill badge-danger">3</span> #}
+                </a>
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="/orders/">Orders view</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="/order_lines/">Order Lines view</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="maincat">
+                <a href="#">
+                    <i class="ti-layout-grid3-alt"></i>
+                    <span class="menu-text">Inventory management</span>
+                </a>
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="/inventory/">Inventory View</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="maincat">
+                <a href="#">
+                    <i class="ti-bar-chart"></i>
+                    <span class="menu-text">Reports</span>
+                </a>
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="/reports/">Report</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <!-- sidebar-menu  -->
+{% endmacro %}

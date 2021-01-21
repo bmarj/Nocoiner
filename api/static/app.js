@@ -435,7 +435,7 @@ function getEditUrl(sender, urlToAction) {
 }
 
 // go to delete action
-function doDeletePost(sender, urlToAction, dialogId) {
+function doActionPost(sender, urlToAction, dialogId) {
     var table = findRelatedTable(sender);
     var selectedRows = getSelectedRows(table);
     if (selectedRows.length == 0) {
@@ -445,7 +445,7 @@ function doDeletePost(sender, urlToAction, dialogId) {
         alert("Select single row.");
     }
     else if (selectedRows.length == 1) {
-        if (confirmDelete(sender)) {
+        if (confirmAction(sender)) {
 
             if (urlToAction == null)
                 return true;
@@ -603,6 +603,17 @@ function confirmDelete(sender) {
     return false;
 }
 
+function confirmAction(sender) {
+    let message = $(sender).data('confirmation-message');
+    // if data-confirmation-message is not defined on button, skip confirmation
+    if (message === undefined)
+        return true;
+    if (confirm(message)) {
+        return true;
+    }
+    return false;
+}
+
 // set href for ajax call
 function setHrefAttr(sender) {
     var table = findRelatedTable(sender);
@@ -725,4 +736,34 @@ var handleValidation = function () {
         }
         form.addClass('was-validated');
     });
+}
+
+var defaultDatatablesDOM = 
+    //"<'row'<'col-sm-12 offset-11 col-md-1'B>>" +
+    "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-4'B><'col-sm-12 col-md-4'f>>" +
+    "<'row'<'col-sm-12'tr>>" +
+    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>";
+
+var defaultDatatablesConfig =
+{
+    "processing": true,
+    "serverSide": true,
+    "filter": true,
+    "deferRender": true,    
+    "rowId": 'id',
+    dom: defaultDatatablesDOM,
+    colReorder: true,
+    stateSave: true,
+    buttons: [
+        {
+            extend: 'colvis',
+            //collectionLayout: 'fixed two-column'
+        }
+    ]
+}
+
+function initDatatable(datatableId, dtConf){
+    return $(datatableId)
+        .on('draw.dt', function(e, settings, data, xhr) {setupTable();} )      
+        .DataTable(dtConf);
 }

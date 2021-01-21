@@ -11,7 +11,7 @@ class BasicMeta:
     with session.
     session is needed for deserialization
     """
-    sqla_session = db.session
+    sqla_session = db.session    
 
 
 class SimpleMeta(BasicMeta):
@@ -23,6 +23,14 @@ class SimpleMeta(BasicMeta):
     include_fk = False
     load_instance = True
 
+class GridSimpleMeta(SimpleMeta):
+    """
+    Simple table schema rules, no related data loading,
+    with DateTime formated for display on grid
+    """
+    # default serialization options
+    datetimeformat = '%Y-%m-%d %H:%M'
+    dateformat = '%Y-%m-%d'
 
 class NamespaceOpts(SQLAlchemyAutoSchemaOpts):
     """Same as the default class Meta options, but adds "name" and

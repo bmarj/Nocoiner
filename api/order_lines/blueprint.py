@@ -4,26 +4,27 @@ from marshmallow import EXCLUDE
 # from marshmallow.exceptions import ValidationError
 
 from api.datatables import DataTables
-from .business import get_orders, get_order_by_id, set_order_status
+from .business import get_order_lines, get_order_line_by_id, set_order_line_status
 from .schemas import (
-    OrdersSchema)
-from .forms import OrderForm
+    OrderLinesSchema)
+from .forms import OrderLineForm
 
-orders = bp = Blueprint('orders', __name__,
+order_lines = bp = Blueprint('order_lines', __name__,
                    template_folder='templates',
                    static_folder='static', static_url_path='/static')
 
-@bp.route("/")
-def orders_view():
-    return render_template("orders.jinja")
 
-@bp.route("/orders_data")
-def orders_data():
+@bp.route("/")
+def order_lines_view():
+    return render_template("order_lines.jinja")
+
+@bp.route("/order_lines_data")
+def order_lines_data():
 
     """Return server side data."""
     # defining the initial query depending on your purpose
-    query = get_orders()
-    response_schema = OrdersSchema(many=True)
+    query = get_order_lines()
+    response_schema = OrderLinesSchema(many=True)
 
     # instantiating a DataTable for the query and table needed
     rowTable = DataTables(request.args, query, response_schema)
@@ -32,33 +33,33 @@ def orders_data():
 
 @bp.route("/edit/<id>")
 def edit(id):    
-    obj = get_order_by_id(id)
-    form = OrderForm(obj=obj)
-    return render_template("edit_order_shipping.jinja", form=form, key=id)
+    obj = get_order_line_by_id(id)
+    form = OrderLineForm(obj=obj)
+    return render_template("edit_order_line.jinja", form=form, key=id)
 
 @bp.route('/update', methods=['POST'])
 def update():
     object_id = request.values.get("key")
     input_data = request.values
     
-    form = OrderForm(input_data)
+    form = OrderLineForm(input_data)
 
     if form.validate_on_submit():
-        obj = get_order_by_id(object_id)
+        obj = get_order_line_by_id(object_id)
         form.populate_obj(obj)
         obj.query.session.commit()
-        flash('Order saved', category="Success")
+        flash('Order line saved', category="Success")
         return render_template("form_success.jinja")
 
     # additional processing or validation:    
     form.validation_summary = 'Fill all required fields'
     
-    return render_template("edit_order_shipping.jinja", form=form, key=object_id, classes="was-validated")
+    return render_template("edit_order_line.jinja", form=form, key=object_id, classes="was-validated")
 
 @bp.route("/cancel/<id>", methods=['POST'])
 def cancel_order(id):    
-    obj = get_order_by_id(id)
-    set_order_status(obj, 'CANCELLED')
+    obj = get_order_line_by_id(id)
+    set_order_line_status(obj, 'CANCELLED')
     obj.query.session.commit()
-    flash('Order cancelled', category="Success")
+    flash('Order line cancelled', category="Success")
     return render_template("form_success.jinja")

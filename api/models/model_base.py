@@ -1,6 +1,6 @@
 # coding: utf-8
 import json
-from flask import request
+from flask import request, abort
 from flask_sqlalchemy import SQLAlchemy, BaseQuery, Model, Pagination
 from flask_sqlalchemy import orm, inspect, event
 from sqlalchemy.sql import func
