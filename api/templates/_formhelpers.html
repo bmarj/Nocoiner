@@ -1,5 +1,21 @@
+{# from https://github.com/kvesteri/flask-jinjahelpers/blob/master/flask_jinjahelpers/templates/_formhelpers.html #}
 {% macro render_field(field) %}
-  <dt>{{ field.label }}
+    <div class="control-group {% if field.errors %}error{% endif %}">
+        {{ field.label(class_="control-label") }}
+        <div class="controls">
+            {{ field(class_="form-control", **kwargs)|safe }}
+            {% if field.errors %}
+                <p class="help-block">{{ field.errors|join(' ') }}</p>
+            {% endif %}
+            {% if field.description %}
+                <p class="help-block">{{ field.description }}</p>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro render_field3(field) %}  
+  <dt>{{ field.label(**kwargs) }}
   <dd>{{ field(**kwargs)|safe }}
   {% if field.errors %}
     <ul class=errors>
@@ -11,6 +27,18 @@
   </dd>
 {% endmacro %}
 
+{% macro render_field2(field) %}  
+  {# render the label tag associated with field #}
+  {{ field.label()  }}  
+
+  {# render the field itself #}
+  {{ field()  }}  
+
+  {# render the validation errors associated with the field #}
+  {% for error in field.errors %}
+      {{ error }}  
+  {% endfor %}
+{% endmacro %}
 
 {% macro validation_summary(form) %}
   
@@ -32,4 +60,80 @@
   </div>
   {% endif %}
 
+{% endmacro %}
+
+{# from https://github.com/kvesteri/flask-jinjahelpers/blob/master/flask_jinjahelpers/templates/_formhelpers.html #}
+{% macro render_limited_textarea(field) %}
+    <div class="control-group textarea-limited {% if field.errors %} error{% endif %}">
+        {{ field.label(class_="control-label") }}
+        <div class="controls">
+            {{ field(**kwargs)|safe }}
+            {% if field.errors %}
+                <span class="help-inline">{{ field.errors|join(' ') }}</span>
+            {% endif %}
+            <div class="character-count">
+                Characters left <span class="charCount">255</span>
+            </div>
+            {% if field.description %}
+                <p class="help-block">{{ field.description }}</p>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{# from https://github.com/kvesteri/flask-jinjahelpers/blob/master/flask_jinjahelpers/templates/_formhelpers.html #}
+{% macro render_date_picker(field) %}
+  <div class="control-group{% if field.errors %} error{% endif %}">
+    {{ field.label(class_="control-label") }}
+    <div class="controls controls-row">
+      <div class="input-prepend">
+        <span class="add-on"><i class="icon-calendar"></i></span>
+        {{- field(class="input-small date") }}
+      </div>
+    </div>
+    <div class="controls">
+      {% if field.description %}
+        <p class="help-block">{{ field.description }}</p>
+      {% endif %}
+      {% if field.errors %}
+        <p class="help-block">
+          {% for errors in field.errors %}
+            {{ errors }}
+          {% endfor %}
+        </p>
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+{# from https://github.com/kvesteri/flask-jinjahelpers/blob/master/flask_jinjahelpers/templates/_formhelpers.html #}
+{% macro render_image_field(field, image) %}
+  <div class="control-group {% if field.errors %}error{% endif %}">
+    {{ field.label(class="control-label") }}
+    <div class="controls">
+      <div class="fileupload {% if image %}fileupload-exists{% else %}fileupload-new{% endif %}" data-provides="fileupload">
+        <div class="fileupload-new thumbnail">
+          <div class="no-image">no image</div>
+        </div>
+        <div class="fileupload-preview fileupload-exists thumbnail" style="max-width: 200px; max-height: 150px; line-height: 20px;">
+          {% if image %}
+            <img src="{{ image.url }}" style="max-width: 200px; max-height: 150px;">
+          {% endif %}
+        </div>
+        <div>
+          <span class="btn btn-file">
+            <span class="fileupload-new">Choose Image…</span>
+            <span class="fileupload-exists">Change</span>
+            {{ field }}
+          </span>
+        </div>
+      </div>
+      {% if field.errors %}
+        <p class="help-block">{{ field.errors|join(' ') }}</p>
+      {% endif %}
+      {% if field.description %}
+        <p class="help-block">{{ field.description }}</p>
+      {% endif %}
+    </div>
+  </div>
 {% endmacro %}

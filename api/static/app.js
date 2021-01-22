@@ -1,6 +1,6 @@
 $(document).ready(
     function () {
-        setupAll();
+        setupAll(); 
     }
 );
 
@@ -8,10 +8,11 @@ function setupAll() {
     disableSubmitOnEnter();
     setupInlineAdd();
     setupTable();
+    //setupColvisButton();
     //setupDatatable();
     //setupDatePicker();
     setupFileUpload();
-    disableFormAutocomplete();
+    disableFormAutocomplete();    
 }
 
 function setupTable() {
@@ -26,7 +27,7 @@ function setupTable() {
     // select/deselect row on click
     // turned on for tables with .clickable-rows class
     $("table.clickable-rows tbody tr").on("click", function (event) {
-        rowClass = 'table-warning row-selected';
+        rowClass = 'selected';
         if ($(this).hasClass(rowClass)) {
             $(this).removeClass(rowClass);
         } else {
@@ -46,6 +47,12 @@ function setupTable() {
     //})
 }
 
+function setupColvisButton(){
+    $("button.buttons-colvis")
+        .removeClass('dt-button buttons-collection buttons-colvis')
+        .addClass('btn btn-outline-secondary btn-sm');
+
+};
 
 // setup image preview
 function handleFiles(files, previewDivId) {
@@ -373,7 +380,7 @@ function findRelatedTable(sender) {
 
 // get rows selected on a table
 function getSelectedRows(table) {
-    return table.find('.row-selected');
+    return table.find('.selected');
 }
 
 // get array of attribute values
@@ -757,13 +764,16 @@ var defaultDatatablesConfig =
     buttons: [
         {
             extend: 'colvis',
+            class: 'btn btn-outline-secondary'
             //collectionLayout: 'fixed two-column'
         }
     ]
 }
 
 function initDatatable(datatableId, dtConf){
-    return $(datatableId)
+    let dt = $(datatableId)
         .on('draw.dt', function(e, settings, data, xhr) {setupTable();} )      
         .DataTable(dtConf);
+    setupColvisButton();
+    return dt;
 }

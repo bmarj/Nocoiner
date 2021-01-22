@@ -1,6 +1,9 @@
 from flask_wtf import FlaskForm
+from sqlalchemy.sql.expression import label
+from wtforms_components import DateField
 from wtforms_alchemy import model_form_factory
 from wtforms.meta import DefaultMeta
+from datetime import datetime
 
 # The variable db here is a SQLAlchemy object instance from
 # Flask-SQLAlchemy package
@@ -15,10 +18,28 @@ class ModelForm(BaseModelForm):
 
 
 class FormMeta(DefaultMeta):
-    
-    def render_field(self, field, render_kw):
-        render_kw['class'] = 'form-control ' + render_kw.get('class', '')
-        return super().render_field(field, render_kw)
+    pass
+    # def render_field(self, field, render_kw):
+    #     render_kw['class'] = 'form-control ' + render_kw.get('class', '')
+    #     return super().render_field(field, render_kw)
+
 
 def title_case_label_args(columns):
     return { n: {'label': ' '.join([w.title() for w in n.split('_')])} for n in columns}
+
+
+# from https://stackoverflow.com/questions/27766417/how-to-implement-not-required-datefield-using-flask-wtf?rq=1
+class NullableDateField(DateField):
+    """Native WTForms DateField throws error for empty dates.
+    Let's fix this so that we could have DateField nullable."""
+    def process_formdata(self, valuelist):
+        if valuelist:
+            date_str = ' '.join(valuelist).strip()
+            if date_str == '':
+                self.data = None
+                return
+            try:
+                self.data = datetime.strptime(date_str, self.format).date()
+            except ValueError:
+                self.data = None
+                raise ValueError(self.gettext('Not a valid date value'))

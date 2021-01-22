@@ -13,7 +13,14 @@
                 <form class="validate {{ classes }}" action="" method="POST" novalidate>
                   <input type="hidden" name="key" value="{{ key }}">
                   {{ form.hidden_tag() }}
-                  {{ render_field(form.sku) }}
+                  <div class="row">                                    
+                    <div class="form-group col-12">
+                        {{ render_field(form.sku, readonly=true) }}
+                    </div>
+                    <div class="form-group col-12">
+                        {{ render_field(form.order_line_status) }}
+                    </div>                 
+                  </div>
                 </form>                
             </div>                        
             <div class="modal-footer">                

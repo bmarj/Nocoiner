@@ -4,7 +4,7 @@ from marshmallow import EXCLUDE
 # from marshmallow.exceptions import ValidationError
 
 from api.datatables import DataTables
-from .business import get_order_lines, get_order_line_by_id, set_order_line_status
+from .business import query_order_line, get_order_line_by_id, set_order_line_status
 from .schemas import (
     OrderLinesSchema)
 from .forms import OrderLineForm
@@ -23,7 +23,7 @@ def order_lines_data():
 
     """Return server side data."""
     # defining the initial query depending on your purpose
-    query = get_order_lines()
+    query = query_order_line()
     response_schema = OrderLinesSchema(many=True)
 
     # instantiating a DataTable for the query and table needed

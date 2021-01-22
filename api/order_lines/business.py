@@ -6,13 +6,23 @@ from api.models import OrderLine, OrderLineStatus, Order, SalesChannel
 from api.models.model_base import db, filter_query, sort_query, paginate_query, get_model_changes
 #from .schemas import UpdateInventoryItemSchema
 
-def get_order_lines():
+###
+### Queries (to enable further server side processing like sorting, paging and filtering)
+###
+def query_order_line():
     # join to eager load relations
     q = OrderLine.query\
         .join(Order)\
         .outerjoin(SalesChannel)
     return q
 
+def query_order_line_status():
+    q = OrderLineStatus.query
+    return q
+
+###
+### Fetch or process objects
+###
 def get_order_line_by_id(object_id):
     q = OrderLine.query\
         .filter(OrderLine.id == object_id)\
@@ -24,3 +34,5 @@ def set_order_line_status(order, status_text):
         .filter(OrderLineStatus.code == status_text)\
         .first()
     order.OrderStatus = q
+
+

@@ -10,4 +10,5 @@ class OrderForm(ModelForm):
         only = ['order_number', 'ship_name', 'ship_phone', 'ship_email', 
         'ship_address', 'ship_address_2', 'ship_city', 
         'ship_postal_code', 'ship_country', 'ship_state']
+        # auto generate labels
         field_args = title_case_label_args(only)
