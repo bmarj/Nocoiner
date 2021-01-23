@@ -1,10 +1,9 @@
 from flask_wtf import FlaskForm
 from sqlalchemy.sql.expression import label
 from wtforms_components import DateField
-from wtforms_alchemy import model_form_factory
 from wtforms.meta import DefaultMeta
 from datetime import datetime
-
+from wtforms_alchemy import model_form_factory
 # The variable db here is a SQLAlchemy object instance from
 # Flask-SQLAlchemy package
 from .model_base import db

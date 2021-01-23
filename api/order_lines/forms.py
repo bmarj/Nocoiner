@@ -1,9 +1,8 @@
-from typing import Optional
 from wtforms_components import StringField, IntegerField, SelectField
+from wtforms_alchemy import QuerySelectField
 from wtforms.validators import DataRequired, ValidationError, InputRequired, Optional
 from api.models import combined as m
 from api.models.form_base import ModelForm, FormMeta
-from wtforms_alchemy import QuerySelectField
 from .business import query_order_line_status
 
 class OrderLineForm(ModelForm):

@@ -5,6 +5,7 @@ from flask import Flask
 # from flask_marshmallow import Marshmallow
 from api.config import config
 
+from api.utils import template_filters
 from api.models.model_base import db
 from api.models.simple_schema import ma
 # db = SQLAlchemy()
@@ -41,17 +42,13 @@ def create_app(test_config=None):
         app.config.from_object(config[env])
 
     app.config.from_pyfile('config.ini')  # config dict is from api/config.py
+
+    template_filters.init_app(app)
+
     # Flask-SQLAlchemy must be initialized before Flask-Marshmallow.
     db.init_app(app)
     ma.init_app(app)
 
-    # TODO: extract to separate module with filters
-    # custom filter for use in templates
-    @app.template_filter()
-    def lfh_label(fieldname):
-        if '_' in fieldname or fieldname == fieldname.lower():
-            return ' '.join([w.title() for w in fieldname.split('_') if w != 'id'])
-        return fieldname
 
     # attach routes and custom error pages here
 
