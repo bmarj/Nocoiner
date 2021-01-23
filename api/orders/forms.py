@@ -1,7 +1,7 @@
 from wtforms_components import StringField, IntegerField
 from wtforms.validators import DataRequired, ValidationError
 # from flask_wtf import FlaskForm
-from api.models import combined as m
+from api import models as m
 from api.models.form_base import ModelForm, FormMeta
 
 class OrderForm(ModelForm):

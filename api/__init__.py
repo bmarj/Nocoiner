@@ -1,13 +1,11 @@
 import os
-import inspect
+# import inspect
 from flask import Flask
-# from flask_sqlalchemy import SQLAlchemy
-# from flask_marshmallow import Marshmallow
 from api.config import config
 
 from api.utils import template_filters
 from api.models.model_base import db
-from api.models.simple_schema import ma
+from api.models.schema_base import ma
 # db = SQLAlchemy()
 # ma = Marshmallow()
 

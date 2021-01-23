@@ -8,7 +8,7 @@ from sqlalchemy import MetaData
 from sqlalchemy import desc, text
 from sqlalchemy.dialects.mssql import (BIT, DECIMAL, NUMERIC,
                                        DATETIMEOFFSET)
-from .model_helpers import get_column_in_models
+from api.utils.model_helpers import get_column_in_models
 
 
 class LfhSQLAlchemy(SQLAlchemy):
