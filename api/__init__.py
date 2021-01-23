@@ -45,6 +45,14 @@ def create_app(test_config=None):
     db.init_app(app)
     ma.init_app(app)
 
+    # TODO: extract to separate module with filters
+    # custom filter for use in templates
+    @app.template_filter()
+    def lfh_label(fieldname):
+        if '_' in fieldname or fieldname == fieldname.lower():
+            return ' '.join([w.title() for w in fieldname.split('_') if w != 'id'])
+        return fieldname
+
     # attach routes and custom error pages here
 
     from api.errors.blueprint import errors
@@ -67,5 +75,6 @@ def create_app(test_config=None):
 
     # from api.inventory.blueprint import inventory
     # app.register_blueprint(inventory, url_prefix='/inventory')
+
 
     return app

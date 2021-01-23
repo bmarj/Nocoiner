@@ -24,10 +24,6 @@ class FormMeta(DefaultMeta):
     #     return super().render_field(field, render_kw)
 
 
-def title_case_label_args(columns):
-    return { n: {'label': ' '.join([w.title() for w in n.split('_')])} for n in columns}
-
-
 # from https://stackoverflow.com/questions/27766417/how-to-implement-not-required-datefield-using-flask-wtf?rq=1
 class NullableDateField(DateField):
     """Native WTForms DateField throws error for empty dates.

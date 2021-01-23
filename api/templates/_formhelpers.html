@@ -1,7 +1,7 @@
 {# from https://github.com/kvesteri/flask-jinjahelpers/blob/master/flask_jinjahelpers/templates/_formhelpers.html #}
 {% macro render_field(field) %}
     <div class="control-group {% if field.errors %}error{% endif %}">
-        {{ field.label(class_="control-label") }}
+        {{ field.label(class_="control-label", text=field.label.text|lfh_label) }}
         <div class="controls">
             {{ field(class_="form-control", **kwargs)|safe }}
             {% if field.errors %}
