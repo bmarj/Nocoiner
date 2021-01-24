@@ -223,35 +223,35 @@ function formatSelected(item) {
     return element;
 }
 
-// function setupSelect() {
-//     var s = $('select.select2');
-//     s.select2(
-//         {
-//             hidePlaceholder: true,
-//             placeholder: '-- select -- ',
-//             //multiple: true,
-//             //maximumSelectionLength: 2,
-//             allowClear: true,
-//             templateSelection: formatSelected,
-//             escapeMarkup: function (m) { return m; },
-//             templateResult: formatResult,
-//         }
-//     );
+function setupSelect() {
+    var s = $('select.select2');
+    s.select2(
+        {
+            hidePlaceholder: true,
+            placeholder: '-- select -- ',
+            //multiple: true,
+            //maximumSelectionLength: 2,
+            allowClear: true,
+            templateSelection: formatSelected,
+            escapeMarkup: function (m) { return m; },
+            templateResult: formatResult,
+        }
+    );
 
-//     var s = $('select.select2-to-tree');
-//     s.select2ToTree(
-//         {
-//             hidePlaceholder: true,
-//             placeholder: '-- select -- ',
-//             //multiple: true,
-//             //maximumSelectionLength: 2,
-//             allowClear: true,
-//             templateSelection: formatSelected,
-//             escapeMarkup: function (m) { return m; },
-//             templateResult: formatResult,
-//         }
-//     );
-// }
+    var s = $('select.select2-to-tree');
+    s.select2ToTree(
+        {
+            hidePlaceholder: true,
+            placeholder: '-- select -- ',
+            //multiple: true,
+            //maximumSelectionLength: 2,
+            allowClear: true,
+            templateSelection: formatSelected,
+            escapeMarkup: function (m) { return m; },
+            templateResult: formatResult,
+        }
+    );
+}
 
 
 // Class definition
@@ -564,6 +564,30 @@ function setupModal(){
     // fields without name are not posted, so make them readonly
     $("form input:not([name])").attr('disabled', '');
     handleValidation();
+    //setupSelect();
+
+    $('#editModal').on('shown.bs.modal', makeModalDraggable);
+
+}
+
+function makeModalDraggable(event){
+    // setup jQueryUI draggable modal dialog
+    // only if jQueryUI exists
+    if ($().resizable != undefined)
+    {
+        $('.modal-content').resizable({
+            //alsoResize: ".modal-dialog",
+            minHeight: $('.modal-content').height(),
+            minWidth: 300
+          });
+        $('.modal-dialog').draggable();
+      
+        $('#editModal').on('show.bs.modal', function() {
+            $(this).find('.modal-body').css({
+                'max-height': '100%'
+            });
+        });
+    }
 }
 
 // go to delete action
@@ -750,10 +774,13 @@ var defaultDatatablesDOM =
     "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-4'B><'col-sm-12 col-md-4'f>>" +
     "<'row'<'col-sm-12'tr>>" +
     "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>";
-
+let lengthMenuItems = [
+    [10, 15, 20, 50, 100],
+    [10, 15, 20, 50, 100]
+];
 var defaultDatatablesConfig =
 {
-    "processing": true,
+    "processing": false,
     "serverSide": true,
     "filter": true,
     "deferRender": true,    
@@ -767,10 +794,14 @@ var defaultDatatablesConfig =
             class: 'btn btn-outline-secondary'
             //collectionLayout: 'fixed two-column'
         }
-    ]
+    ],
+    lengthMenu: lengthMenuItems,
+    pageLength: "10"
 }
 
 function initDatatable(datatableId, dtConf){
+    // default empšty string content for values returned as null
+    dtConf.columns.forEach((t) => t.defaultContent === undefined ? t.defaultContent = "" : null);
     let dt = $(datatableId)
         .on('draw.dt', function(e, settings, data, xhr) {setupTable();} )      
         .DataTable(dtConf);

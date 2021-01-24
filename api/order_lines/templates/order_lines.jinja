@@ -38,16 +38,21 @@
 
     dtConf.ajax = '{{ url_for('.order_lines_data') }}';
     dtConf.columns = [
-        { data:"sku", title:"SKU", defaultContent:""},
-        { data:"qty_ordered", title:"Qty Ordered", defaultContent:"" },
-        { data:"qty_shipped", title:"Qty Shipped", defaultContent:"" },
-        { data:"promise_date", title:"Ship by", defaultContent:"" },
-        { data:"line_type", title:"Line Type", defaultContent:"" },
-        { data:"price", title:"Price", defaultContent:"" },
-        { data:"tax", title:"Tax", defaultContent:"" },
-        { data:"order.purchase_date", title:"Purchase Date", defaultContent:"" },
-        { data:"order.sales_channel.description", title:"Sales Channel", defaultContent:"" },
+        { data:"sku", title:"SKU" },
+        { data:"qty_ordered", title:"Qty Ordered" },
+        { data:"qty_shipped", title:"Qty Shipped" },
+        { data:"promise_date", title:"Ship by" },
+        { data:"line_type", title:"Line Type" },
+        { data:"price", title:"Price" },
+        { data:"tax", title:"Tax" },
+        { data:"order.purchase_date", title:"Purchase Date" },
+        { data:"order.sales_channel.description", title:"Sales Channel" },
     ];
+    // custom row coloring
+    dtConf.fnRowCallback = function( row, data, iDisplayIndex, iDisplayIndexFull ) {
+        data.line_type == "S" ? row.classList.add('text-lime') : null;
+        data.line_type == "D" ? row.classList.add('table-salmon','text-chili') : null;
+    };
 
     // this function provides API for modal dialog to refresh source grid
     function table_reload() {
