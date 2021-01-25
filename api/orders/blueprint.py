@@ -4,6 +4,7 @@ from marshmallow import EXCLUDE
 # from marshmallow.exceptions import ValidationError
 
 from api.datatables import DataTables
+from api.user_management import login_required
 from .business import query_orders, get_order_by_id, set_order_status
 from .schemas import (
     OrdersSchema)
@@ -14,6 +15,7 @@ orders = bp = Blueprint('orders', __name__,
                    static_folder='static', static_url_path='/static')
 
 @bp.route("/")
+@login_required
 def orders_view():
     return render_template("orders.jinja")
 

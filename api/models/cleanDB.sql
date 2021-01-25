@@ -219,6 +219,24 @@ GO
 
 
 
+CREATE TABLE dbo.app_user(
+	id int IDENTITY(1,1) NOT NULL CONSTRAINT [PK_app_user] PRIMARY KEY CLUSTERED (id ASC),
+	first_name nvarchar(64) NOT NULL,
+	last_name nvarchar(64) NOT NULL,
+	username nvarchar(64) NOT NULL,
+	password nvarchar(256) NOT NULL,
+	active bit NOT NULL DEFAULT(1),
+	email nvarchar(64) NOT NULL,
+	last_login datetime,
+	login_count int,
+	fail_login_count int,
+	created_on datetime NULL,
+	changed_on datetime NULL,
+	created_by int FOREIGN KEY(created_by) REFERENCES dbo.app_user (id),
+	changed_by int FOREIGN KEY(created_by) REFERENCES dbo.app_user (id)
+)
+
+GO
 
 
 

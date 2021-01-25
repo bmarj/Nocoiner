@@ -1,13 +1,15 @@
 import os
 # import inspect
 from flask import Flask
-from api.config import config
 
+from api.config import config
 from api.utils import template_filters
 from api.models.model_base import db
 from api.models.schema_base import ma
+from api.user_management import um
 # db = SQLAlchemy()
 # ma = Marshmallow()
+# login_manager = LoginManager()
 
 def create_app(test_config=None):
     """
@@ -46,7 +48,7 @@ def create_app(test_config=None):
     # Flask-SQLAlchemy must be initialized before Flask-Marshmallow.
     db.init_app(app)
     ma.init_app(app)
-
+    um.init_app(app)
 
     # attach routes and custom error pages here
 
@@ -59,9 +61,6 @@ def create_app(test_config=None):
     from api.orders.blueprint import orders
     app.register_blueprint(orders, url_prefix='/orders')
 
-    from api.fake_auth.blueprint import auth
-    app.register_blueprint(auth, url_prefix='/auth')
-
     from api.fake_firebase.blueprint import firebase
     app.register_blueprint(firebase, url_prefix='/firebase')
 
@@ -70,6 +69,5 @@ def create_app(test_config=None):
 
     # from api.inventory.blueprint import inventory
     # app.register_blueprint(inventory, url_prefix='/inventory')
-
 
     return app

@@ -16,6 +16,7 @@ python-dateutil = "*"
 wtforms-alchemy = "*"
 dateutils = "*"
 pymssql = "*"
+flask-login = "*"
 
 [dev-packages]
 flake8 = "*"
