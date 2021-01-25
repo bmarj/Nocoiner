@@ -54,9 +54,9 @@ class DataTables:
     def output_result(self):
         """Output results in the format needed by DataTables."""
         output = {}
-        output['draw'] = str(int(self.params.get('draw', 1)))
-        output['recordsTotal'] = str(self.cardinality)
-        output['recordsFiltered'] = str(self.cardinality_filtered)
+        output['draw'] = int(self.params.get('draw', 1))
+        output['recordsTotal'] = int(self.cardinality)
+        output['recordsFiltered'] = int(self.cardinality_filtered)
         if self.error:
             output['error'] = self.error
             return output

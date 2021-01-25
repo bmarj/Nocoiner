@@ -17,12 +17,12 @@ function setupAll() {
 
 function setupTable() {
     // double click behavior
-    $("table.table-hover tbody tr").dblclick(function () {
-        var links = this.getElementsByTagName("a");
-        if (links.length > 0)
-            window.location = links[0].href;
-    }
-    );
+    // $("table.table-hover tbody tr").dblclick(function () {
+    //     var links = this.getElementsByTagName("a");
+    //     if (links.length > 0)
+    //         window.location = links[0].href;
+    // }
+    // );
 
     // select/deselect row on click
     // turned on for tables with .clickable-rows class
@@ -780,11 +780,11 @@ let lengthMenuItems = [
 ];
 var defaultDatatablesConfig =
 {
-    "processing": false,
-    "serverSide": true,
-    "filter": true,
-    "deferRender": true,    
-    "rowId": 'id',
+    processing: false, // for "Processing" message
+    serverSide: true,
+    filter: true,
+    deferRender: true,    
+    rowId: 'id',
     dom: defaultDatatablesDOM,
     colReorder: true,
     stateSave: true,
@@ -796,14 +796,16 @@ var defaultDatatablesConfig =
         }
     ],
     lengthMenu: lengthMenuItems,
-    pageLength: "10"
+    pageLength: 10
 }
 
 function initDatatable(datatableId, dtConf){
     // default empty string content for values returned as null
     dtConf.columns.forEach((t) => t.defaultContent === undefined ? t.defaultContent = "" : null);
     let dt = $(datatableId)
-        .on('draw.dt', function(e, settings, data, xhr) {setupTable();} )      
+        .on('draw.dt', function(e, settings, data, xhr) {
+            setupTable();
+        } )
         .DataTable(dtConf);
     setupColvisButton();
     return dt;
