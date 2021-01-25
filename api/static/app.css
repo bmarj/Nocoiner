@@ -32,12 +32,12 @@ tr:not(.selected) .draggable a {
     visibility: hidden;
 }
 
-/* .dialog-size-grid{
-  width: 300% !important; 
-  left: -75% !important;
+.dialog-size-grid{
+  width: 300%; 
+  left: -75%;
 }
 
 .dialog-size-form{
-  width: 150% !important; 
-  left: -25% !important;
-} */
+  width: 150%; 
+  left: -25%;
+}

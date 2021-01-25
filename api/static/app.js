@@ -776,7 +776,7 @@ var defaultDatatablesDOM =
     "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>";
 let lengthMenuItems = [
     [10, 15, 20, 50, 100],
-    [10, 15, 20, 50, 100]
+    ['10', '15', '20', '50', '100']
 ];
 var defaultDatatablesConfig =
 {
@@ -800,7 +800,7 @@ var defaultDatatablesConfig =
 }
 
 function initDatatable(datatableId, dtConf){
-    // default empšty string content for values returned as null
+    // default empty string content for values returned as null
     dtConf.columns.forEach((t) => t.defaultContent === undefined ? t.defaultContent = "" : null);
     let dt = $(datatableId)
         .on('draw.dt', function(e, settings, data, xhr) {setupTable();} )      

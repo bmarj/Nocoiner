@@ -14,7 +14,8 @@ bp = user_management = Blueprint('user_management', __name__,
 # User session management setup
 # https://flask-login.readthedocs.io/en/latest
 class UserManager(LoginManager):
-    def init_app(self, app):        
+    def init_app(self, app):
+        # registers blueprint into same url namespace as login manager
         app.register_blueprint(user_management, url_prefix='/')
         self.user_loader(self.load_user)
         self.unauthorized_handler(self.handle_unauthorized)
