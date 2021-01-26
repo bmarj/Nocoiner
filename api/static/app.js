@@ -783,7 +783,7 @@ let lengthMenuItems = [
 var defaultDatatablesConfig =
 {
     processing: false, // for "Processing" message
-    serverSide: true,
+    serverSide: true,    
     filter: true,
     deferRender: true,    
     rowId: 'id',
@@ -797,6 +797,14 @@ var defaultDatatablesConfig =
             //collectionLayout: 'fixed two-column'
         }
     ],
+    ajax: {
+        error: function(xhr, error, thrown) {
+            if (xhr.status == 401) {
+                window.location = window.location.origin + '/login?returnUrl=' + window.location.pathname;
+                return false;
+            }          
+        }
+    },
     lengthMenu: lengthMenuItems,
     pageLength: 10
 }

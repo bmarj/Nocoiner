@@ -36,7 +36,8 @@
   <script>
     let dtConf = defaultDatatablesConfig;
 
-    dtConf.ajax = '{{ url_for('.order_lines_data') }}';
+    dtConf.ajax.url = '{{ url_for('.order_lines_data') }}';
+
     dtConf.columns = [        
         { data:"sku", title:"SKU" },
         { data:"qty_ordered", title:"Qty Ordered" },

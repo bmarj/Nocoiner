@@ -37,7 +37,8 @@
   <script>
     let dtConf = defaultDatatablesConfig;
 
-    dtConf.ajax = '{{ url_for('.orders_data') }}';
+    dtConf.ajax.url = '{{ url_for('.orders_data') }}';
+
     dtConf.columns = [
         { data:"order_number", title:"Order Number" },
         { data:"purchase_date", title:"Purchase Date" },
@@ -48,7 +49,6 @@
         { data:"ship_state", title:"Shipping State" },
         { data:"shipping_priority", title:"Shipping Priority" },
         { data:"sales_channel.description", title:"Sales Channel" },
-
     ];
 
     // this function provides API for modal dialog to refresh source grid

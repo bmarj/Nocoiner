@@ -1,5 +1,5 @@
 import json
-from flask import Blueprint, redirect, request, url_for, config, flash, render_template
+from flask import Blueprint, redirect, request, jsonify, url_for, config, flash, render_template
 from flask_login import LoginManager, login_required, current_user, login_user, logout_user
 from .business import get_user_by_id, get_user_by_username, authenticate_user
 from .forms import LoginForm
@@ -25,7 +25,12 @@ class UserManager(LoginManager):
         return get_user_by_id(id)
 
     def handle_unauthorized(self):
-        return redirect(url_for('user_management.login'))
+        if request.accept_mimetypes.best == 'application/json':
+            return jsonify(success=False,
+                        data={'login_required': True},
+                        message='Authorize please to access this page.'), 401
+        else:
+            return redirect(url_for('user_management.login'))
 
 
 @bp.route('/login', methods=['GET', 'POST'])
