@@ -218,6 +218,18 @@ CREATE NONCLUSTERED INDEX [ix_order_id] ON [dbo].[order_line]
 GO
 
 
+CREATE TABLE dbo.role(
+	id int IDENTITY(1,1) NOT NULL CONSTRAINT [PK_role] PRIMARY KEY CLUSTERED (id ASC),
+	name nvarchar(64) NOT NULL,
+)
+GO
+
+CREATE TABLE dbo.permission(
+	id int IDENTITY(1,1) NOT NULL CONSTRAINT [PK_permission] PRIMARY KEY CLUSTERED (id ASC),
+	name nvarchar(64) NOT NULL,
+)
+GO
+
 
 CREATE TABLE dbo.app_user(
 	id int IDENTITY(1,1) NOT NULL CONSTRAINT [PK_app_user] PRIMARY KEY CLUSTERED (id ASC),
@@ -232,16 +244,71 @@ CREATE TABLE dbo.app_user(
 	fail_login_count int,
 	created_on datetime NULL,
 	changed_on datetime NULL,
-	created_by int FOREIGN KEY(created_by) REFERENCES dbo.app_user (id),
-	changed_by int FOREIGN KEY(created_by) REFERENCES dbo.app_user (id)
+	created_by_id int FOREIGN KEY(created_by_id) REFERENCES dbo.app_user (id),
+	changed_by_id int FOREIGN KEY(changed_by_id) REFERENCES dbo.app_user (id)
 )
 
 GO
 
 
+CREATE TABLE dbo.app_user_role(
+	id int IDENTITY(1,1) NOT NULL CONSTRAINT [PK_app_user_role] PRIMARY KEY CLUSTERED (id ASC),
+	app_user_id int NOT NULL,
+	CONSTRAINT FK_app_user_role_app_user FOREIGN KEY(app_user_id) REFERENCES dbo.app_user (id),
+	role_id int NOT NULL,
+	CONSTRAINT FK_app_user_role_role FOREIGN KEY(role_id) REFERENCES dbo.role (id),
+)
+GO
+
+CREATE UNIQUE INDEX user_role_index ON dbo.app_user_role (app_user_id, role_id)
+
+GO
+
+CREATE TABLE dbo.role_permission(
+	id int IDENTITY(1,1) NOT NULL CONSTRAINT [PK_role_permission] PRIMARY KEY CLUSTERED (id ASC),
+	role_id int NOT NULL,
+	CONSTRAINT FK_role_permission_role FOREIGN KEY(role_id) REFERENCES dbo.role (id),
+	permission_id int NOT NULL,
+	CONSTRAINT FK_role_permission_permission FOREIGN KEY(permission_id) REFERENCES dbo.permission (id),
+)
+GO
+
+CREATE UNIQUE INDEX role_permission_permission_index ON dbo.app_user_role (app_user_id, role_id)
+
+GO
 
 
+INSERT INTO role (name)
+SELECT name FROM
+(
+	SELECT 'Admin' as name
+	UNION
+	SELECT 'Warehouse User'
+) as names 
+WHERE NOT EXISTS (select * from role where role.name=names.name)
+GO
 
+INSERT INTO permission (name)
+SELECT name FROM
+(
+	SELECT 'orders' as name
+	UNION
+	SELECT 'order_lines'
+) as names 
+WHERE NOT EXISTS (select * from permission where permission.name=names.name)
+GO
+
+INSERT INTO role_permission (role_id, permission_id)
+SELECT role.id, permission.id
+FROM role, permission
+WHERE NOT EXISTS (select 9 from role_permission a where a.role_id=role.id and a.permission_id=permission.id)
+GO
+
+INSERT INTO app_user_role(app_user_id, role_id)
+SELECT app_user.id, role.id
+FROM app_user, role
+WHERE NOT EXISTS (select 9 from app_user_role a where a.role_id=role.id and a.role_id=role.id)
+and role.name='Admin'
 GO
 
 

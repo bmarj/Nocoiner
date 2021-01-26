@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from .model import User
+from .model import Permission, User, Role, RolePermission, UserRole
 
 
 def get_user_by_id(id):
@@ -28,7 +28,34 @@ def set_password(id, password):
     password_hash = generate_password_hash(password)
     q.password = password_hash
     # commit to db
-    q.db.session.commit()    
+    q.db.session.commit()
 
 def check_password(user: User, password):
     return check_password_hash(user.password, password)
+
+# convenience methods for permssions and roles are also on User object
+
+def get_user_permissions(id):
+    """
+    get user permissions from database
+    """
+    q = Permission.query\
+        .join(RolePermission)\
+        .join(Role)\
+        .join(UserRole)\
+        .filter(UserRole.app_user_id == int(id))\
+        .all()
+    return q
+
+# def get_user_permissions_type2(id):
+#     """
+#     another filtering flavor
+#     ( generates WHERE EXISTS type query )
+#     """
+#     q = Permission.query\
+#         .filter(
+#             Permission.role_permissions.any(
+#             Role.user_roles.any(
+#             UserRole.app_user_id == int(id)))
+#         ).all()
+#     return q
