@@ -434,7 +434,9 @@ function getEditUrl(sender, urlToAction) {
         else {
             // ordinary edit by id
             var ids = getRowIds(selectedRows);
-            url = urlToAction + '/' + ids[0];
+            url = urlToAction 
+                + (urlToAction[urlToAction.length-1] =='/' ? '' : '/') // appends slash if not url doesn't end with one
+                + ids[0];
         }
         return url;
     }
@@ -799,14 +801,14 @@ var defaultDatatablesConfig =
     pageLength: 10
 }
 
-function initDatatable(datatableId, dtConf){
+function initDatatable(datatableId, dtConf){    
     // default empty string content for values returned as null
     dtConf.columns.forEach((t) => t.defaultContent === undefined ? t.defaultContent = "" : null);
-    let dt = $(datatableId)
+    let table = $(datatableId);
+    table
         .on('draw.dt', function(e, settings, data, xhr) {
             setupTable();
         } )
         .DataTable(dtConf);
     setupColvisButton();
-    return dt;
 }

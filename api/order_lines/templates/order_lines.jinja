@@ -32,12 +32,12 @@
 </div>
 {% endblock content %}
 
-{% block extra_javascripts %}  
+{% block extra_javascripts %}
   <script>
     let dtConf = defaultDatatablesConfig;
 
     dtConf.ajax = '{{ url_for('.order_lines_data') }}';
-    dtConf.columns = [
+    dtConf.columns = [        
         { data:"sku", title:"SKU" },
         { data:"qty_ordered", title:"Qty Ordered" },
         { data:"qty_shipped", title:"Qty Shipped" },
@@ -47,12 +47,18 @@
         { data:"tax", title:"Tax" },
         { data:"order.purchase_date", title:"Purchase Date" },
         { data:"order.sales_channel.description", title:"Sales Channel" },
+        { data:"order.order_number", title:"Order Number" },
     ];
     // custom row coloring
     dtConf.fnRowCallback = function( row, data, iDisplayIndex, iDisplayIndexFull ) {
         data.line_type == "S" ? row.classList.add('text-lime') : null;
         data.line_type == "D" ? row.classList.add('table-salmon','text-chili') : null;
     };
+    // row grouping
+    /*dtConf.rowGroup = {
+        //dataSrc: ['order.order_number'],
+        dataSrc:  function ( row ) { return 'Order #: <b class="text-sapphire">' + row.order.order_number + '</b>'; },
+    }*/
 
     // this function provides API for modal dialog to refresh source grid
     function table_reload() {
@@ -63,5 +69,12 @@
       initDatatable('#datatable', dtConf);
     });
   </script>
-
+  
 {% endblock extra_javascripts %}
+
+{# additional features used on this page: #}
+{% block feature_javascripts %}  
+  {% include '_feature_column_visibility.html' %}
+  {% include '_feature_column_reorder.html' %}
+  {# {% include '_feature_grouping.html' %} #}
+{% endblock feature_javascripts %}

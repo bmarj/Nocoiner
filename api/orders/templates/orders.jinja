@@ -62,3 +62,8 @@
   </script>
 
 {% endblock extra_javascripts %}
+
+{# additional features used on this page: #}
+{% block feature_javascripts %}  
+  {% include '_feature_column_visibility.html' %}
+{% endblock feature_javascripts %}

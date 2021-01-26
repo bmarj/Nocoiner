@@ -13,7 +13,7 @@ class SalesChannelSchema(SQLAlchemyAutoSchema):
 class OrderSchema(SQLAlchemyAutoSchema):
     class Meta(GridSimpleMeta):
         model = m.Order
-        fields = ['purchase_date', 'sales_channel']
+        fields = ['order_number', 'purchase_date', 'sales_channel']
     sales_channel = fields.Nested(SalesChannelSchema)
 
 

@@ -11,11 +11,10 @@
         OMNI Warehouse
     </title>
 
-    <link rel="stylesheet" href="/static/siqtheme.css">    
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.5/css/buttons.dataTables.min.css">
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">    
-    <link rel="stylesheet" href="/static/app.css">
+    <link rel="stylesheet" href="/static/siqtheme.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
     {% block extra_stylesheets %} {% endblock extra_stylesheets %}
+    <link rel="stylesheet" href="/static/app.css">
     <link rel="apple-touch-icon" sizes="76x76" href="/static/img/apple-icon.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon.ico">
     {#
@@ -184,12 +183,11 @@
     </div> <!-- END WRAPPER -->
 
     <script src="/static/siqtheme.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.6.5/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.6.5/js/buttons.colVis.min.js"></script>
+    {% block feature_javascripts %} {% endblock feature_javascripts %}
     {# jQueryUI is optional, used for draggable modal #}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script src="/static/app.js"></script>
-    {% block extra_javascripts %} {% endblock extra_javascripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>      
+    <script src="/static/app.js"></script>    
+    {% block extra_javascripts %} {% endblock extra_javascripts %}    
 </body>
 
 </html>
