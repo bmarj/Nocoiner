@@ -22,6 +22,13 @@
 </head>
 
 <body class="theme-default">
+    <script>        
+        if(localStorage.currentTheme != null)
+        {
+            let classHolder = document.getElementsByTagName("BODY")[0];
+            classHolder.className = localStorage.currentTheme;
+        }
+    </script>
     <div class="grid-wrapper sidebar-bg bg1 collapsed">
 
         <!-- BOF HEADER -->
@@ -114,8 +121,10 @@
                                         <h5 class="mb-3">My Theme</h5>
                                         <div class="btn-group mb-2">
                                             <button type="button" class="btn switch-theme btn-light"
+                                                onclick="localStorage.currentTheme = 'theme-default'"
                                                 id="theme-default">Light</button>
                                             <button type="button" class="btn switch-theme btn-dark"
+                                                onclick="localStorage.currentTheme = 'theme-dark'"
                                                 id="theme-dark">Dark</button>
                                             {# <button type="button" class="btn switch-theme btn-primary"
                                                 id="theme-blue">Blue</button> #}
