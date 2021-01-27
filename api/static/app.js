@@ -514,8 +514,15 @@ function goToEditModal(sender, urlToAction, dialogId) {
             url: url,
             //data: data,
             success: function(data) {
-                // $('#editModal').modal('hide');
-                $(dialogId).replaceWith(data);
+                // IS REDIRECT TO LOGIN?  
+                if (data.trimStart().startsWith("<!DOCTYPE html>")){
+                    window.location = window.location.origin + '/login?returnUrl=' + url;
+                    //$(document).replaceWith(data);
+                }
+                else{
+                    // $('#editModal').modal('hide');
+                    $(dialogId).replaceWith(data);
+                }
             },
             error: function(e) { alert('Error. Try again.');}
         });
@@ -547,8 +554,15 @@ function submitModal(sender, urlToAction, dialogId) {
             data: formData,
             encode: true,
             success: function(data) {
-                $('#editModal').modal('hide');
-                $(dialogId).replaceWith(data);
+                // IS REDIRECT TO LOGIN?  
+                if (data.trimStart().startsWith("<!DOCTYPE html>")){
+                    window.location = window.location.origin + '/login?returnUrl=' + url;
+                    //$(document).replaceWith(data);
+                }
+                else{
+                    $('#editModal').modal('hide');
+                    $(dialogId).replaceWith(data);
+                }
             },
             error: function(e) { 
                 alert('Error. Try again.');
