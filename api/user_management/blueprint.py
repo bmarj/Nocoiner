@@ -1,6 +1,8 @@
+from functools import wraps
 import json
 from flask import Blueprint, redirect, request, jsonify, url_for, current_app, flash, render_template
-from flask_login import LoginManager, login_required, current_user, login_user, logout_user
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_login.config import EXEMPT_METHODS
 
 from api.datatables import DataTables
 from .business import (
@@ -87,3 +89,23 @@ def users_data():
     rowTable = DataTables(request.args, query, response_schema)
     # returns what is needed by DataTable
     return jsonify(rowTable.output_result())
+
+
+def authorize(permission_key = None):
+    """
+    Authorize function with given permission_key.
+    If permission_key is not provided, use automatic: full module name + function name
+    """
+    def check_authorization(func):
+        @wraps(func)
+        @login_required        
+        def decorated_view(*args, **kwargs):
+            if permission_key:
+                permission_name = permission_key
+            else:
+                permission_name = func.__module__ + '.' + func.__name__         
+            if not current_user.has_permission(permission_name):
+                return current_app.login_manager.unauthorized()
+            return func(*args, **kwargs)
+        return decorated_view
+    return check_authorization

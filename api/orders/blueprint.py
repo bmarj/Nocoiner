@@ -4,7 +4,7 @@ from marshmallow import EXCLUDE
 # from marshmallow.exceptions import ValidationError
 
 from api.datatables import DataTables
-from api.user_management import login_required
+from api.user_management import login_required, authorize
 from .business import query_orders, get_order_by_id, set_order_status
 from .schemas import (
     OrdersSchema)
@@ -15,12 +15,12 @@ orders = bp = Blueprint('orders', __name__,
                    static_folder='static', static_url_path='/static')
 
 @bp.route("/")
-@login_required
+@authorize('orders')
 def orders_view():
     return render_template("orders.jinja")
 
 @bp.route("/orders_data")
-@login_required
+@authorize('orders')
 def orders_data():
 
     """Return server side data."""
@@ -34,14 +34,14 @@ def orders_data():
     return jsonify(rowTable.output_result())
 
 @bp.route("/edit/<id>")
-@login_required
+@authorize('orders')
 def edit(id):    
     obj = get_order_by_id(id)
     form = OrderForm(obj=obj)
     return render_template("edit_order_shipping.jinja", form=form, key=id)
 
 @bp.route('/update', methods=['POST'])
-@login_required
+@authorize('orders')
 def update():
     object_id = request.values.get("key")
     input_data = request.values
@@ -61,7 +61,7 @@ def update():
     return render_template("edit_order_shipping.jinja", form=form, key=object_id, classes="was-validated")
 
 @bp.route("/cancel/<id>", methods=['POST'])
-@login_required
+@authorize('orders')
 def cancel_order(id):    
     obj = get_order_by_id(id)
     set_order_status(obj, 'CANCELLED')
