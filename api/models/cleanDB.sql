@@ -277,6 +277,19 @@ CREATE UNIQUE INDEX role_permission_permission_index ON dbo.app_user_role (app_u
 
 GO
 
+INSERT INTO app_user (first_name, last_name, username, password, active, email)
+SELECT first_name, last_name, username, password, active, email FROM
+(
+	SELECT first_name='Admin', last_name='Administrator', 
+		   username='admin', password='pbkdf2:sha256:150000$IBCxIR9E$5e1de6149a3e6dfc22b79e3b68eff4d9d00cd8fa40e0860f458c038d62663314', 
+		   active=1, email='admin@example.com'
+	UNION
+	SELECT first_name='Branimir', last_name='Marjanovic', 
+		   username='bmarjanovic', password='pbkdf2:sha256:150000$IBCxIR9E$5e1de6149a3e6dfc22b79e3b68eff4d9d00cd8fa40e0860f458c038d62663314', 
+		   active=1, email='branimir@example.com'
+) users
+WHERE NOT EXISTS (select * from app_user a where a.username=users.username)
+
 
 INSERT INTO role (name)
 SELECT name FROM
