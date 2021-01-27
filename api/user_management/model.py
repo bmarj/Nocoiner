@@ -163,6 +163,18 @@ class User(db.Model):
     def has_permission(self, permission: str) -> bool:
         return permission.lower() in self.permissions
 
+    def any_role(self, *role: str) -> bool:
+        for r in role:
+            if r.lower() in self.roles:
+                return True
+        return False
+
+    def any_permission(self, *permission: str) -> bool:
+        for p in permission:
+            if p.lower() in self.permissions:
+                return True
+        return False
+
     _permissions = None
     @property
     def permissions(self) -> dict:

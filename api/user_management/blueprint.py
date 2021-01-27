@@ -1,7 +1,22 @@
 import json
 from flask import Blueprint, redirect, request, jsonify, url_for, current_app, flash, render_template
 from flask_login import LoginManager, login_required, current_user, login_user, logout_user
-from .business import get_user_by_id, get_user_by_username, authenticate_user, get_user_permissions
+
+from api.datatables import DataTables
+from .business import (
+    get_user_by_id, 
+    get_user_by_username, 
+    authenticate_user, 
+    get_user_permissions,
+    query_users,
+    query_roles,
+    query_user_roles
+)
+from .schemas import (
+    UserSchema,
+    RoleSchema,
+    UserRoleSchema
+)
 from .forms import LoginForm
 #from . import um
 
@@ -54,3 +69,21 @@ def logout():
     logout_user()
     return redirect(url_for('.login'))
 
+
+@bp.route("/users")
+@login_required
+def users():
+    return render_template("users.jinja")
+
+@bp.route("/users_data")
+@login_required
+def users_data():
+    """Return server side data."""
+    # defining the initial query depending on your purpose
+    query = query_users()
+    response_schema = UserSchema(many=True)
+
+    # instantiating a DataTable for the query and table needed
+    rowTable = DataTables(request.args, query, response_schema)
+    # returns what is needed by DataTable
+    return jsonify(rowTable.output_result())

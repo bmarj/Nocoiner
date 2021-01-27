@@ -294,6 +294,8 @@ SELECT name FROM
 	SELECT 'orders' as name
 	UNION
 	SELECT 'order_lines'
+	UNION
+	SELECT 'users'
 ) as names 
 WHERE NOT EXISTS (select * from permission where permission.name=names.name)
 GO

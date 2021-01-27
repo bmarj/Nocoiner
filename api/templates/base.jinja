@@ -73,7 +73,7 @@
         <div id="sidebar" class="sidebar">
             <div class="sidebar-content">
                 {% from "_menu.html" import render_menu %}
-                {{ render_menu() }}
+                {{ render_menu(current_user) }}
             </div>
         </div>
         <!-- EOF ASIDE-LEFT -->

@@ -2,6 +2,31 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from .model import Permission, User, Role, RolePermission, UserRole
 
 
+###
+### Queries (to enable further server side processing like sorting, paging and filtering)
+###
+def query_users():
+    # join to eager load relations
+    q = User.query\
+        .outerjoin(UserRole)\
+        .outerjoin(Role)
+    return q
+
+def query_roles():
+    # join to eager load relations
+    q = Role.query
+    return q
+
+def query_user_roles():
+    # join to eager load relations
+    q = UserRole.query\
+        .join(User)\
+        .join(Role)
+    return q
+
+###
+### Fetch or process objects
+###
 def get_user_by_id(id):
     q = User.query\
         .get(int(id))
