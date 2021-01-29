@@ -2,6 +2,7 @@
 import json
 from flask import Blueprint, redirect, request, jsonify, url_for, current_app, flash, render_template
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from .common import generic_edit, generic_delete, generic_add
 from .decorators import authorize
 
 
@@ -193,281 +194,85 @@ def permissions_data():
 @bp.route('/add_permission', methods=['GET', 'POST'])
 @authorize('users')
 def add_permission():
-    obj = create_permission()
-
-    if request.method == 'GET':
-        form = PermissionForm(obj=obj)
-    else:
-        form = PermissionForm(request.values)
-
-    if form.validate_on_submit():        
-        form.populate_obj(obj)
-        obj.query.session.add(obj)
-        obj.query.session.commit()
-        flash('Data saved', category="Success")
-        return render_template("form_success.jinja")
-
-    # additional processing or validation:    
-    # form.validation_summary = 'Fill all required fields'
-    
-    return render_template("permission_add.jinja", form=form, key=None,
-                           classes=("was-validated" if request.method == 'POST' else ''))
-
+    return generic_add(PermissionForm, 'permission_add.jinja')
 
 @bp.route('/edit_permission/<id>', methods=['GET'])
 @bp.route('/edit_permission', methods=['POST'])
 @authorize('users')
 def edit_permission(id=None):
-    """ Used for opening edit form and also POSTing values.
-        Pattern used to reduce code duplication
-    """
-    object_id = id or request.values.get("key")
-    obj = get_permission_by_id(object_id)
-
-    if request.method == 'GET':        
-        form = PermissionForm(obj=obj)
-    else:
-        form = PermissionForm(request.values)
-
-    if form.validate_on_submit():
-        form.populate_obj(obj)
-        obj.query.session.commit()
-        flash('Data saved', category="Success")
-        return render_template("form_success.jinja")
-
-    # additional processing or validation:    
-    # form.validation_summary = 'Fill all required fields'
-    #     
-    return render_template("permission_edit.jinja", form=form, key=object_id,
-                           classes=("was-validated" if request.method == 'POST' else ''))
+    return generic_edit(PermissionForm, 'permission_edit.jinja', id)
 
 @bp.route("/delete_permission/<id>", methods=['POST'])
 @authorize('users')
 def delete_permission(id):    
-    obj = get_permission_by_id(id)
-    obj.query.session.delete(obj)
-    obj.query.session.commit()
-    flash('Row deleted', category="Success")
-    return render_template("form_success.jinja")
+    return generic_delete(PermissionForm, id)
 
 
 
 @bp.route('/add_role', methods=['GET', 'POST'])
 @authorize('users')
 def add_role():
-    obj = create_role()
-
-    if request.method == 'GET':
-        form = RoleForm(obj=obj)
-    else:
-        form = RoleForm(request.values)
-
-    if form.validate_on_submit():        
-        form.populate_obj(obj)
-        obj.query.session.add(obj)
-        obj.query.session.commit()
-        flash('Data saved', category="Success")
-        return render_template("form_success.jinja")
-  
-    return render_template("role_add.jinja", form=form, key=None,
-                           classes=("was-validated" if request.method == 'POST' else ''))
-
+    return generic_add(RoleForm, 'role_add.jinja')
 
 @bp.route('/edit_role/<id>', methods=['GET'])
 @bp.route('/edit_role', methods=['POST'])
 @authorize('users')
 def edit_role(id=None):
-    """ Used for opening edit form and also POSTing values.
-        Pattern used to reduce code duplication
-    """
-    object_id = id or request.values.get("key")
-    obj = get_role_by_id(object_id)
-
-    if request.method == 'GET':        
-        form = RoleForm(obj=obj)
-    else:
-        form = RoleForm(request.values)
-
-    if form.validate_on_submit():
-        form.populate_obj(obj)
-        obj.query.session.commit()
-        flash('Data saved', category="Success")
-        return render_template("form_success.jinja")
-
-    return render_template("role_edit.jinja", form=form, key=object_id,
-                           classes=("was-validated" if request.method == 'POST' else ''))
+    return generic_edit(RoleForm, 'role_edit.jinja', id)
 
 @bp.route("/delete_role/<id>", methods=['POST'])
 @authorize('users')
 def delete_role(id):    
-    obj = get_role_by_id(id)
-    obj.query.session.delete(obj)
-    obj.query.session.commit()
-    flash('Row deleted', category="Success")
-    return render_template("form_success.jinja")
+    return generic_delete(RoleForm, id)
 
 
 
 @bp.route('/add_user_role', methods=['GET', 'POST'])
 @authorize('users')
 def add_user_role():
-    obj = create_user_role()
-
-    if request.method == 'GET':
-        form = UserRoleForm(obj=obj)
-    else:
-        form = UserRoleForm(request.values)
-
-    if form.validate_on_submit():        
-        form.populate_obj(obj)
-        obj.query.session.add(obj)
-        obj.query.session.commit()
-        flash('Data saved', category="Success")
-        return render_template("form_success.jinja")
-  
-    return render_template("user_role_add.jinja", form=form, key=None,
-                           classes=("was-validated" if request.method == 'POST' else ''))
-
+    return generic_add(UserRoleForm, 'user_role_add.jinja')
 
 @bp.route('/edit_user_role/<id>', methods=['GET'])
 @bp.route('/edit_user_role', methods=['POST'])
 @authorize('users')
 def edit_user_role(id=None):
-    """ Used for opening edit form and also POSTing values.
-        Pattern used to reduce code duplication
-    """
-    object_id = id or request.values.get("key")
-    obj = get_user_role_by_id(object_id)
-
-    if request.method == 'GET':        
-        form = UserRoleForm(obj=obj)
-    else:
-        form = UserRoleForm(request.values)
-
-    if form.validate_on_submit():
-        form.populate_obj(obj)
-        obj.query.session.commit()
-        flash('Data saved', category="Success")
-        return render_template("form_success.jinja")
-
-    return render_template("user_role_edit.jinja", form=form, key=object_id,
-                           classes=("was-validated" if request.method == 'POST' else ''))
+    return generic_edit(UserRoleForm, 'user_role_edit.jinja', id)
 
 @bp.route("/delete_user_role/<id>", methods=['POST'])
 @authorize('users')
 def delete_user_role(id):    
-    obj = get_user_role_by_id(id)
-    obj.query.session.delete(obj)
-    obj.query.session.commit()
-    flash('Row deleted', category="Success")
-    return render_template("form_success.jinja")
+    return generic_delete(UserRoleForm, id)
 
 
 @bp.route('/add_role_permission', methods=['GET', 'POST'])
 @authorize('users')
 def add_role_permission():
-    obj = create_role_permission()
-
-    if request.method == 'GET':
-        form = RolePermissionForm(obj=obj)
-    else:
-        form = RolePermissionForm(request.values)
-
-    if form.validate_on_submit():        
-        form.populate_obj(obj)
-        obj.query.session.add(obj)
-        obj.query.session.commit()
-        flash('Data saved', category="Success")
-        return render_template("form_success.jinja")
-  
-    return render_template("role_permission_add.jinja", form=form, key=None,
-                           classes=("was-validated" if request.method == 'POST' else ''))
-
+    return generic_add(RolePermissionForm, 'role_permission_add.jinja')
 
 @bp.route('/edit_role_permission/<id>', methods=['GET'])
 @bp.route('/edit_role_permission', methods=['POST'])
 @authorize('users')
 def edit_role_permission(id=None):
-    """ Used for opening edit form and also POSTing values.
-        Pattern used to reduce code duplication
-    """
-    object_id = id or request.values.get("key")
-    obj = get_role_permission_by_id(object_id)
-
-    if request.method == 'GET':        
-        form = RolePermissionForm(obj=obj)
-    else:
-        form = RolePermissionForm(request.values)
-
-    if form.validate_on_submit():
-        form.populate_obj(obj)
-        obj.query.session.commit()
-        flash('Data saved', category="Success")
-        return render_template("form_success.jinja")
-
-    return render_template("role_permission_edit.jinja", form=form, key=object_id,
-                           classes=("was-validated" if request.method == 'POST' else ''))
+    return generic_edit(RolePermissionForm, 'role_permission_edit.jinja', id)
 
 @bp.route("/delete_role_permission/<id>", methods=['POST'])
 @authorize('users')
 def delete_role_permission(id):    
-    obj = get_role_permission_by_id(id)
-    obj.query.session.delete(obj)
-    obj.query.session.commit()
-    flash('Row deleted', category="Success")
-    return render_template("form_success.jinja")
+    return generic_delete(RolePermissionForm, id)
 
 
 @bp.route('/add_user', methods=['GET', 'POST'])
 @authorize('users')
 def add_user():
-    obj = create_user()
-
-    if request.method == 'GET':
-        form = UserForm(obj=obj)
-    else:
-        form = UserForm(request.values)
-
-    if form.validate_on_submit():        
-        form.populate_obj(obj)
-        obj.query.session.add(obj)
-        obj.query.session.commit()
-        flash('Data saved', category="Success")
-        return render_template("form_success.jinja")
-  
-    return render_template("user_add.jinja", form=form, key=None,
-                           classes=("was-validated" if request.method == 'POST' else ''))
-
+    return generic_add(UserForm, 'user_add.jinja')
 
 @bp.route('/edit_user/<id>', methods=['GET'])
 @bp.route('/edit_user', methods=['POST'])
 @authorize('users')
 def edit_user(id=None):
-    """ Used for opening edit form and also POSTing values.
-        Pattern used to reduce code duplication
-    """
-    object_id = id or request.values.get("key")
-    obj = get_user_by_id(object_id)
-
-    if request.method == 'GET':        
-        form = UserForm(obj=obj)
-    else:
-        form = UserForm(request.values)
-
-    if form.validate_on_submit():
-        form.populate_obj(obj)
-        obj.query.session.commit()
-        flash('Data saved', category="Success")
-        return render_template("form_success.jinja")
-
-    return render_template("user_edit.jinja", form=form, key=object_id,
-                           classes=("was-validated" if request.method == 'POST' else ''))
+    return generic_edit(UserForm, 'user_edit.jinja', id)
 
 @bp.route("/delete_user/<id>", methods=['POST'])
 @authorize('users')
 def delete_user(id):    
-    obj = get_user_by_id(id)
-    obj.query.session.delete(obj)
-    obj.query.session.commit()
-    flash('Row deleted', category="Success")
-    return render_template("form_success.jinja")
+    return generic_delete(UserForm, id)
