@@ -15,7 +15,7 @@
                 <form class="validate {{ classes }}" action="" method="POST" novalidate>
                   <input type="hidden" name="key" value="{{ key }}">
                   {{ form.hidden_tag() }}
-                  <div class="row">                    
+                  <div class="row">
                     <div class="form-group col-12">
                         {{ render_field(form.first_name) }}
                     </div>
@@ -32,9 +32,9 @@
                         {{ render_field(form.plain_password) }}
                     </div>
                   </div>
-                </form>                
-            </div>                        
-            <div class="modal-footer">                
+                </form>
+            </div>
+            <div class="modal-footer">
                 {{ validation_summary(form) }}
                 <button id="btnUpdate" type="button" class="btn btn-primary"
                         onclick="submitModal(this,'{{ url_for('.user_add') }}','#editModal');">Save</button>

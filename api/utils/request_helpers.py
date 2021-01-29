@@ -5,7 +5,7 @@ from flask import request
 
 def get_filter_json():
     filter_json_req = json.loads(request.args.get('filter', '{"operands": []}'))
-    filter_json = filter_json_req['operands']    
+    filter_json = filter_json_req['operands']
     days = request.args.get('days')
     if days and days != 'All':
         if days == 'All':
@@ -23,7 +23,7 @@ def get_sort_json():
 
 
 def get_paging_json():
-    paging_json = { 
+    paging_json = {
         'page': int(request.args.get('page', '1')),
         'itemsPerPage': int(request.args.get('itemsPerPage', '10000'))
         }

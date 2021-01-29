@@ -13,7 +13,7 @@
                 <form class="validate {{ classes }}" action="" method="POST" novalidate>
                   <input type="hidden" name="key" value="{{ key }}">
                   {{ form.hidden_tag() }}
-                  <div class="row">                    
+                  <div class="row">
                     <div class="form-group col-12">
                         {{ render_field(form.order_number) }}
                     </div>
@@ -23,7 +23,7 @@
                     <div class="form-group col-6">
                         {{ render_field(form.ship_phone) }}
                     </div>
-                    <div class="form-group col-6">                        
+                    <div class="form-group col-6">
                     </div>
                     <div class="form-group col-6">
                         {{ render_field(form.ship_email) }}
@@ -47,9 +47,9 @@
                         {{ render_field(form.ship_state) }}
                     </div>
                   </div>
-                </form>                
-            </div>                        
-            <div class="modal-footer">                
+                </form>
+            </div>
+            <div class="modal-footer">
                 {{ validation_summary(form) }}
                 <button id="btnUpdate" type="button" class="btn btn-primary"
                         onclick="submitModal(this,'{{ url_for('.update') }}','#editModal');">Save</button>

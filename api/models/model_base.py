@@ -173,7 +173,7 @@ def sort_query(query, sort_json, related_model_classes=[]):
     main_model_class = query._entity_zero().entity  # returns the query's Model
     model_classes = [main_model_class] + related_model_classes + [ent.entity for ent in query._join_entities]
     for (key, v) in sort_json.items():
-        column = get_column_in_models(model_classes, key, None)        
+        column = get_column_in_models(model_classes, key, None)
         if not column:
             # making sorting by unknown column not fatal
             continue

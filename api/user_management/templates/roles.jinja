@@ -33,13 +33,13 @@
 </div>
 {% endblock content %}
 
-{% block extra_javascripts %}  
+{% block extra_javascripts %}
   <script>
     let dtConf = defaultDatatablesConfig;
 
     dtConf.ajax.url = '{{ url_for('.roles_data') }}';
 
-    dtConf.columns = [        
+    dtConf.columns = [
         { data:"name", title:"Role" }
     ];
 

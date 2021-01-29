@@ -37,7 +37,7 @@ def order_lines_data():
 @bp.route("/edit/<id>")
 @authorize('order_lines')
 #@permission_name('test')
-def edit(id):    
+def edit(id):
     obj = get_order_line_by_id(id)
     form = OrderLineForm(obj=obj)
     return render_template("edit_order_line.jinja", form=form, key=id)
@@ -57,14 +57,15 @@ def update():
         flash('Order line saved', category="Success")
         return render_template("form_success.jinja")
 
-    # additional processing or validation:    
+    # additional processing or validation:
     form.validation_summary = 'Fill all required fields'
     
-    return render_template("edit_order_line.jinja", form=form, key=object_id, classes="was-validated")
+    return render_template("edit_order_line.jinja",
+        form=form, key=object_id, classes="was-validated")
 
 @bp.route("/cancel/<id>", methods=['POST'])
 @authorize('order_lines')
-def cancel_order(id):    
+def cancel_order(id):
     obj = get_order_line_by_id(id)
     set_order_line_status(obj, 'CANCELLED')
     obj.query.session.commit()

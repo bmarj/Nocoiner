@@ -9,7 +9,7 @@ def generic_add(form_class, template, id=None, submit_target=None):
     else:
         form = form_class(request.values)
 
-    if form.validate_on_submit():        
+    if form.validate_on_submit():
         form.populate_obj(obj)
         obj.query.session.add(obj)
         obj.query.session.commit()
@@ -38,7 +38,7 @@ def generic_edit(form_class, template, id=None, submit_target=None):
         # form = form_class(request.values)
         form.populate_obj(obj)
 
-    if form.validate_on_submit():        
+    if form.validate_on_submit():
         obj.query.session.commit()
         flash('Data saved', category="Success")
         return render_template("form_success.jinja")
@@ -46,7 +46,7 @@ def generic_edit(form_class, template, id=None, submit_target=None):
     return render_template(template, form=form, key=object_id, form_type=form_class.__name__, submit_target=submit_target,
                            classes=("was-validated" if request.method == 'POST' else ''))
 
-def generic_delete(form, id):    
+def generic_delete(form, id):
     obj = form.Meta.model.query.get(id)
     obj.query.session.delete(obj)
     obj.query.session.commit()

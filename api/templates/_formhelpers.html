@@ -14,7 +14,7 @@
     </div>
 {% endmacro %}
 
-{% macro render_field3(field) %}  
+{% macro render_field3(field) %}
   <dt>{{ field.label(**kwargs) }}
   <dd>{{ field(**kwargs)|safe }}
   {% if field.errors %}
@@ -27,16 +27,16 @@
   </dd>
 {% endmacro %}
 
-{% macro render_field2(field) %}  
+{% macro render_field2(field) %}
   {# render the label tag associated with field #}
-  {{ field.label()  }}  
+  {{ field.label() }}
 
   {# render the field itself #}
-  {{ field()  }}  
+  {{ field() }}
 
   {# render the validation errors associated with the field #}
   {% for error in field.errors %}
-      {{ error }}  
+      {{ error }}
   {% endfor %}
 {% endmacro %}
 
@@ -70,15 +70,15 @@
             </ul>
         {% endif %}
       </li>
-    </ul>  
+    </ul>
   </div>
   {% endif %}
 
 {% endmacro %}
 
-{% macro render_form_fields(form) %}  
+{% macro render_form_fields(form) %}
   {{ form.hidden_tag() }}
-  <div class="row">   
+  <div class="row">
     {% for field in form if not field.flags.hidden %}
       <div class="form-group col-12">
           {{ render_field(field) }}

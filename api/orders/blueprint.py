@@ -35,7 +35,7 @@ def orders_data():
 
 @bp.route("/edit/<id>")
 @authorize('orders')
-def edit(id):    
+def edit(id):
     obj = get_order_by_id(id)
     form = OrderForm(obj=obj)
     return render_template("edit_order_shipping.jinja", form=form, key=id)
@@ -55,14 +55,14 @@ def update():
         flash('Order saved', category="Success")
         return render_template("form_success.jinja")
 
-    # additional processing or validation:    
+    # additional processing or validation:
     form.validation_summary = 'Fill all required fields'
     
     return render_template("edit_order_shipping.jinja", form=form, key=object_id, classes="was-validated")
 
 @bp.route("/cancel/<id>", methods=['POST'])
 @authorize('orders')
-def cancel_order(id):    
+def cancel_order(id):
     obj = get_order_by_id(id)
     set_order_status(obj, 'CANCELLED')
     obj.query.session.commit()

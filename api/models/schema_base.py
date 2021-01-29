@@ -13,7 +13,7 @@ class BasicMeta:
     with session.
     session is needed for deserialization
     """
-    sqla_session = db.session    
+    sqla_session = db.session
 
 
 class SimpleMeta(BasicMeta):

@@ -26,7 +26,7 @@ class UserRoleSchema(SQLAlchemyAutoSchema):
         model = m.UserRole
         #fields = ['description']
     user = fields.Nested(UserSchema)
-    role = fields.Nested(RoleSchema)    
+    role = fields.Nested(RoleSchema)
 
 class RolePermissionSchema(SQLAlchemyAutoSchema):
     class Meta(GridSimpleMeta):
