@@ -1,11 +1,9 @@
 
-from api.user_management.model import User
 import json
 from flask import Blueprint, redirect, request, jsonify, url_for, current_app, flash, render_template
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from .common import generic_edit, generic_delete, generic_add, generic_form_delete, generic_form_edit
 from .decorators import authorize
-
+from ..utils.common import generic_edit, generic_delete, generic_add, generic_form_delete, generic_form_edit
 
 from api.datatables import DataTables
 from .business import (
