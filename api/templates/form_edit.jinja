@@ -29,7 +29,7 @@
             <div class="modal-footer">                
                 {{ validation_summary(form) }}
                 <button id="btnUpdate" type="button" class="btn btn-primary"
-                        onclick="submitModal(this,'/form_edit','#editModal');">Save</button>
+                        onclick="submitModal(this,'{{ submit_target }}','#editModal');">Save</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
         </div>

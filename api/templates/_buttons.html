@@ -36,6 +36,13 @@
   {% endif %}
 {% endmacro %}
 
+{% macro copy(form_type, permission, user) %}  
+  {% if user.has_permission(permission) %}
+    <button class="btn btn-primary btn-add" onclick="goToEditModal(this, `/form_edit/{id}?form_type={{ form_type }}&action=copy`, '#editModal')">
+      <i class="ti-layers mr-2"></i>Copy</button>
+  {% endif %}
+{% endmacro %}
+
 {% macro delete(form_type, permission, user) %}  
   {% if user.has_permission(permission) %}
     <button class="btn btn-danger btn-add" onclick="doActionPost(this, `/delete/{id}?form_type={{ form_type }}`, '#editModal')"

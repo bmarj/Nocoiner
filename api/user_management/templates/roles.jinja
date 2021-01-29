@@ -9,8 +9,9 @@
                       <i class="ti-user"></i> Roles View
                   </div>
                   <div class="tools">
-                    {% from "_buttons.html" import add, edit, delete %}
+                    {% from "_buttons.html" import add, edit, delete, copy %}
                     {{ add('RoleForm', 'users', current_user) }}
+                    {{ copy('RoleForm', 'users', current_user) }}
                     {{ edit('RoleForm', 'users', current_user) }}
                     {{ delete('RoleForm', 'users', current_user) }}
                   </div>

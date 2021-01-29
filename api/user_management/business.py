@@ -71,43 +71,6 @@ def set_password(id, password):
 def check_password(user: User, password):
     return check_password_hash(user.password, password)
 
-def create_permission():
-    q = Permission()
-    return q
-
-def get_permission_by_id(id):
-    q = Permission.query\
-        .get(int(id))
-    return q
-
-def create_role():
-    q = Role()
-    return q
-
-def get_role_by_id(id):
-    q = Role.query\
-        .get(int(id))
-    return q
-
-def create_user_role():
-    q = UserRole()
-    return q
-
-def get_user_role_by_id(id):
-    q = UserRole.query\
-        .get(int(id))
-    return q
-
-
-def create_role_permission():
-    q = RolePermission()
-    return q
-
-def get_role_permission_by_id(id):
-    q = RolePermission.query\
-        .get(int(id))
-    return q
-
 def create_user():
     q = User()
     return q

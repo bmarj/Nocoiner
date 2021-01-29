@@ -9,23 +9,15 @@ from .decorators import authorize
 
 from api.datatables import DataTables
 from .business import (
-    get_user_by_id, 
-    get_user_by_username, 
-    authenticate_user, 
+    get_user_by_id,
+    get_user_by_username,
+    authenticate_user,
     get_user_permissions,
     query_users,
     query_roles,
     query_user_roles,
     query_role_permissions,
     query_permissions,
-    create_permission,
-    get_permission_by_id,
-    create_role,
-    get_role_by_id,
-    create_user_role,
-    get_user_role_by_id,
-    create_role_permission,
-    get_role_permission_by_id,
     create_user
     )
 from .schemas import (
@@ -191,78 +183,7 @@ def permissions_data():
     # returns what is needed by DataTable
     return jsonify(rowTable.output_result())
 
-
-
-@bp.route('/permission_add', methods=['GET', 'POST'])
-@authorize('users')
-def permission_add():
-    return generic_add(PermissionForm, 'permission_add.jinja')
-
-@bp.route('/permission_edit/<id>', methods=['GET'])
-@bp.route('/permission_edit', methods=['POST'])
-@authorize('users')
-def permission_edit(id=None):
-    return generic_edit(PermissionForm, 'permission_edit.jinja', id)
-
-@bp.route("/permission_delete/<id>", methods=['POST'])
-@authorize('users')
-def permission_delete(id):    
-    return generic_delete(PermissionForm, id)
-
-
-
-@bp.route('/role_add', methods=['GET', 'POST'])
-@authorize('users')
-def role_add():
-    return generic_add(RoleForm, 'role_add.jinja')
-
-@bp.route('/role_edit/<id>', methods=['GET'])
-@bp.route('/role_edit', methods=['POST'])
-@authorize('users')
-def role_edit(id=None):
-    return generic_edit(RoleForm, 'role_edit.jinja', id)
-
-@bp.route("/role_delete/<id>", methods=['POST'])
-@authorize('users')
-def role_delete(id):    
-    return generic_delete(RoleForm, id)
-
-
-
-@bp.route('/user_role_add', methods=['GET', 'POST'])
-@authorize('users')
-def user_role_add():
-    return generic_add(UserRoleForm, 'user_role_add.jinja')
-
-@bp.route('/user_role_edit/<id>', methods=['GET'])
-@bp.route('/user_role_edit', methods=['POST'])
-@authorize('users')
-def user_role_edit(id=None):
-    return generic_edit(UserRoleForm, 'user_role_edit.jinja', id)
-
-@bp.route("/user_role_delete/<id>", methods=['POST'])
-@authorize('users')
-def user_role_delete(id):    
-    return generic_delete(UserRoleForm, id)
-
-
-@bp.route('/role_permission_add', methods=['GET', 'POST'])
-@authorize('users')
-def role_permission_add():
-    return generic_add(RolePermissionForm, 'role_permission_add.jinja')
-
-@bp.route('/role_permission_edit/<id>', methods=['GET'])
-@bp.route('/role_permission_edit', methods=['POST'])
-@authorize('users')
-def role_permission_edit(id=None):
-    return generic_edit(RolePermissionForm, 'role_permission_edit.jinja', id)
-
-@bp.route("/role_permission_delete/<id>", methods=['POST'])
-@authorize('users')
-def role_permission_delete(id):    
-    return generic_delete(RolePermissionForm, id)
-
-
+# user editing
 @bp.route('/user_add', methods=['GET', 'POST'])
 @authorize('users')
 def user_add():
@@ -276,17 +197,16 @@ def user_edit(id=None):
 
 @bp.route("/user_delete/<id>", methods=['POST'])
 @authorize('users')
-def user_delete(id):    
+def user_delete(id):
     return generic_delete(UserForm, id)
 
-
+# generic editing
 @bp.route('/form_edit/<id>', methods=['GET'])
 @bp.route('/form_edit', methods=['GET','POST'])
 @authorize('users')
-def form_edit(id=None):    
+def form_edit(id=None):
     permitted_forms = [RoleForm, UserRoleForm, PermissionForm, RolePermissionForm]
-    return generic_form_edit(permitted_forms, id)
-
+    return generic_form_edit(url_for('.form_edit'), permitted_forms, id)
 
 @bp.route("/delete/<id>", methods=['POST'])
 @authorize('users')
