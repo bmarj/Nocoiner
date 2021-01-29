@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, render_template
 from marshmallow.exceptions import ValidationError
 
 errors = Blueprint('errors', __name__,
@@ -7,8 +7,8 @@ errors = Blueprint('errors', __name__,
 
 @errors.app_errorhandler(404)
 def page_not_found(e):
-    return "Not found", 404
-    # return render_template('404.html'), 404
+    #return "Not found", 404
+    return render_template('404.jinja'), 404
 
 @errors.app_errorhandler(500)
 def internal_server_error(e):

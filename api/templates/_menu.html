@@ -65,6 +65,42 @@
                     </ul>
                 </div>
                 {% endif %}
+                {% if user.has_permission('users') %}
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="/roles">Roles</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+                {% if user.has_permission('users') %}
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="/user-roles">Users - Roles</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+                {% if user.has_permission('users') %}
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="/role-permissions">Roles - Permissions</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+                {% if user.has_permission('users') %}
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="/permissions">Permissions</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
             </li>
             {% endif %}
             {% if user.any_permission('report') %}

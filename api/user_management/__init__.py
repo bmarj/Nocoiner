@@ -1,5 +1,6 @@
 from flask_login import login_required
-from .blueprint import UserManager, authorize
+from .decorators import authorize
+from .blueprint import UserManager
 
 
 um = UserManager()

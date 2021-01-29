@@ -529,6 +529,30 @@ function goToEditModal(sender, urlToAction, dialogId) {
     }        
 }
 
+// open edit modal
+function goToAddModal(sender, urlToAction, dialogId) {
+    let url = urlToAction; // getEditUrl(sender, urlToAction);
+    if (url){
+        $.ajax({
+            //dataType: "json",
+            url: url,
+            //data: data,
+            success: function(data) {
+                // IS REDIRECT TO LOGIN?  
+                if (data.trimStart().startsWith("<!DOCTYPE html>")){
+                    window.location = window.location.origin + '/login?returnUrl=' + url;
+                    //$(document).replaceWith(data);
+                }
+                else{
+                    // $('#editModal').modal('hide');
+                    $(dialogId).replaceWith(data);
+                }
+            },
+            error: function(e) { alert('Error. Try again.');}
+        });
+    }        
+}
+
 // function formValidate(form){
 //     if (form.hasClass('validate') && form[0].checkValidity === false) {
 //         // e.preventDefault();

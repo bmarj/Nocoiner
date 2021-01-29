@@ -3,6 +3,11 @@ from api.models.schema_base import (
     SQLAlchemyAutoSchema, SimpleMeta, GridSimpleMeta)
 from . import model as m
 
+class PermissionSchema(SQLAlchemyAutoSchema):
+    class Meta(GridSimpleMeta):
+        model = m.Permission
+        #fields = ['description']
+    #sales_channel = fields.Nested(SalesChannelSchema)
 
 class UserSchema(SQLAlchemyAutoSchema):
     class Meta(GridSimpleMeta):
@@ -20,4 +25,12 @@ class UserRoleSchema(SQLAlchemyAutoSchema):
     class Meta(GridSimpleMeta):
         model = m.UserRole
         #fields = ['description']
-    #sales_channel = fields.Nested(SalesChannelSchema)
+    user = fields.Nested(UserSchema)
+    role = fields.Nested(RoleSchema)    
+
+class RolePermissionSchema(SQLAlchemyAutoSchema):
+    class Meta(GridSimpleMeta):
+        model = m.RolePermission
+        #fields = ['description']
+    role = fields.Nested(RoleSchema)
+    permission = fields.Nested(PermissionSchema)

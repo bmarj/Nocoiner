@@ -1,6 +1,7 @@
 # coding: utf-8
 import datetime
 from flask import g
+from werkzeug.security import generate_password_hash
 from api.models.model_base import db, BIT, DECIMAL, NUMERIC, DATETIMEOFFSET, MetaData
 #from sqlalchemy import Table
 from sqlalchemy.ext.declarative import declared_attr
@@ -104,6 +105,14 @@ class User(db.Model):
 
     created_on = db.Column(db.DateTime, default=datetime.datetime.now, nullable=True)
     changed_on = db.Column(db.DateTime, default=datetime.datetime.now, nullable=True)
+
+    @property
+    def plain_password(self):
+        return None
+
+    @plain_password.setter
+    def plain_password(self, password):
+        self.password = generate_password_hash(password)
 
     @declared_attr
     def created_by_id(self):

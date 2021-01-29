@@ -24,6 +24,18 @@ def query_user_roles():
         .join(Role)
     return q
 
+def query_role_permissions():
+    # join to eager load relations
+    q = RolePermission.query\
+        .join(Role)\
+        .join(Permission)
+    return q
+
+def query_permissions():
+    # join to eager load relations
+    q = Permission.query
+    return q
+
 ###
 ### Fetch or process objects
 ###
@@ -48,6 +60,7 @@ def authenticate_user(username, password):
         return q
     return None
 
+
 def set_password(id, password):
     q = get_user_by_id(id)
     password_hash = generate_password_hash(password)
@@ -57,6 +70,47 @@ def set_password(id, password):
 
 def check_password(user: User, password):
     return check_password_hash(user.password, password)
+
+def create_permission():
+    q = Permission()
+    return q
+
+def get_permission_by_id(id):
+    q = Permission.query\
+        .get(int(id))
+    return q
+
+def create_role():
+    q = Role()
+    return q
+
+def get_role_by_id(id):
+    q = Role.query\
+        .get(int(id))
+    return q
+
+def create_user_role():
+    q = UserRole()
+    return q
+
+def get_user_role_by_id(id):
+    q = UserRole.query\
+        .get(int(id))
+    return q
+
+
+def create_role_permission():
+    q = RolePermission()
+    return q
+
+def get_role_permission_by_id(id):
+    q = RolePermission.query\
+        .get(int(id))
+    return q
+
+def create_user():
+    q = User()
+    return q
 
 # convenience methods for permssions and roles are also on User object
 

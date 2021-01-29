@@ -1,0 +1,21 @@
+{% macro add_button(target, permission, user) %}  
+  {% if user.has_permission(permission) %}
+    <button class="btn btn-primary btn-add" onclick="goToAddModal(this, `{{ url_for(target) }}`, '#editModal')">
+      <i class="ti-plus mr-2"></i>Add</button>
+  {% endif %}
+{% endmacro %}
+
+{% macro edit_button(target, permission, user) %}  
+  {% if user.has_permission(permission) %}
+    <button class="btn btn-primary btn-add" onclick="goToEditModal(this, `{{ url_for(target, id='') }}`, '#editModal')">
+      <i class="ti-write mr-2"></i>Edit</button>
+  {% endif %}
+{% endmacro %}
+
+{% macro delete_button(target, permission, user) %}  
+  {% if user.has_permission(permission) %}
+    <button class="btn btn-danger btn-add" onclick="doActionPost(this, `{{ url_for(target, id='') }}`, '#editModal')"
+      data-confirmation-message="Are you sure you want to delete this row?">
+      <i class="ti-trash mr-2"></i>Delete</button>
+  {% endif %}
+{% endmacro %}
