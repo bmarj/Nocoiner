@@ -809,6 +809,28 @@ var handleValidation = function () {
     });
 }
 
+
+function searchDebounce(table, delayMs=1000) {
+    var tableId = table.settings()[0].sTableId;
+    $('.dataTables_filter input[aria-controls="' + tableId + '"]') // select the correct input field
+        .unbind() // Unbind previous default bindings
+        .bind('input', (delay(function (e) { // Bind our desired behavior
+            table.search($(this).val()).draw();
+            return;
+        }, delayMs))); // Set delay in milliseconds
+}
+ 
+function delay(callback, ms) {
+    var timer = 0;
+    return function () {
+        var context = this, args = arguments;
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+            callback.apply(context, args);
+        }, ms || 0);
+    };
+}
+
 var defaultDatatablesDOM = 
     //"<'row'<'col-sm-12 offset-11 col-md-1'B>>" +
     "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-4'B><'col-sm-12 col-md-4'f>>" +
@@ -821,9 +843,9 @@ let lengthMenuItems = [
 var defaultDatatablesConfig =
 {
     processing: false, // for "Processing" message
-    serverSide: true,    
+    serverSide: true,
     filter: true,
-    deferRender: true,    
+    deferRender: true,
     rowId: 'id',
     dom: defaultDatatablesDOM,
     colReorder: true,
@@ -840,21 +862,21 @@ var defaultDatatablesConfig =
             if (xhr.status == 401) {
                 window.location = window.location.origin + '/login?returnUrl=' + window.location.pathname;
                 return false;
-            }          
+            }
         }
     },
     lengthMenu: lengthMenuItems,
     pageLength: 10
 }
 
-function initDatatable(datatableId, dtConf){    
+function initDatatable(datatableId, dtConf){
     // default empty string content for values returned as null
     dtConf.columns.forEach((t) => t.defaultContent === undefined ? t.defaultContent = "" : null);
-    let table = $(datatableId);
-    table
+    let table = $(datatableId)
         .on('draw.dt', function(e, settings, data, xhr) {
             setupTable();
         } )
         .DataTable(dtConf);
     setupColvisButton();
+    var debounce = new searchDebounce(table, 500);
 }
