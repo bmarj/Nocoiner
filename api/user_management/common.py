@@ -1,13 +1,13 @@
 from flask import request, render_template, flash
 
 
-def generic_add(form, template):
-    obj = form.Meta.model()
+def generic_add(formClass, template, id=None):
+    obj = formClass.Meta.model()
 
     if request.method == 'GET':
-        form = form(obj=obj)
+        form = formClass(obj=obj)
     else:
-        form = form(request.values)
+        form = formClass(request.values)
 
     if form.validate_on_submit():        
         form.populate_obj(obj)
@@ -16,21 +16,21 @@ def generic_add(form, template):
         flash('Data saved', category="Success")
         return render_template("form_success.jinja")
   
-    return render_template(template, form=form, key=None,
+    return render_template(template, form=form, key=None, form_type=formClass.__name__,
                            classes=("was-validated" if request.method == 'POST' else ''))
 
-def generic_edit(form, template, id=None):
+def generic_edit(formClass, template, id=None):
     """ Used for opening edit form and also POSTing values.
         Pattern used to reduce code duplication
     """
     object_id = id or request.values.get("key")
     
-    obj = form.Meta.model.query.get(object_id)
+    obj = formClass.Meta.model.query.get(object_id)
 
     if request.method == 'GET':        
-        form = form(obj=obj)
+        form = formClass(obj=obj)
     else:
-        form = form(request.values)
+        form = formClass(request.values)
 
     if form.validate_on_submit():
         form.populate_obj(obj)
@@ -38,7 +38,7 @@ def generic_edit(form, template, id=None):
         flash('Data saved', category="Success")
         return render_template("form_success.jinja")
 
-    return render_template(template, form=form, key=object_id,
+    return render_template(template, form=form, key=object_id, form_type=formClass.__name__,
                            classes=("was-validated" if request.method == 'POST' else ''))
 
 def generic_delete(form, id):    
@@ -47,3 +47,22 @@ def generic_delete(form, id):
     obj.query.session.commit()
     flash('Row deleted', category="Success")
     return render_template("form_success.jinja")
+
+
+def generic_form_edit(permitted_forms, id=None):
+    """ Add/Edit object specified by form name
+    """    
+    object_id = id or request.values.get("key")
+    object_type = request.values.get("form_type")
+    form_class = [x for x in permitted_forms if x.__name__ == object_type][0]
+    if not object_id:
+        return generic_add(form_class, 'form_edit.jinja', object)
+    return generic_edit(form_class, 'form_edit.jinja', object_id)
+
+def generic_form_delete(permitted_forms, id):
+    """ Delete object specified by form name
+    """
+    object_id = id or request.values.get("key")
+    object_type = request.values.get("form_type")
+    form_class = [x for x in permitted_forms if x.__name__ == object_type][0]
+    return generic_delete(form_class, object_id)

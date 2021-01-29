@@ -10,9 +10,9 @@
                   </div>
                   <div class="tools">
                     {% from "_buttons.html" import add_button, edit_button, delete_button %}
-                    {{ add_button('.add_user','users', current_user) }}
-                    {{ edit_button('.edit_user','users', current_user) }}
-                    {{ delete_button('.delete_user','users', current_user) }}
+                    {{ add_button('.user_add','users', current_user) }}
+                    {{ edit_button('.user_edit','users', current_user) }}
+                    {{ delete_button('.user_delete','users', current_user) }}
                   </div>
               </div>
               <div class="card-body">

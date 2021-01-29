@@ -9,9 +9,10 @@
                       <i class="ti-user"></i> Permissions View
                   </div>
                   <div class="tools">
-                    {% from "_buttons.html" import add_button, edit_button, delete_button %}
-                    {{ add_button('.add_permission','users', current_user) }}
-                    {{ delete_button('.delete_permission','users', current_user) }}
+                    {% from "_buttons.html" import add, edit, delete %}
+                    {{ add('PermissionForm', 'users', current_user) }}
+                    {{ edit('PermissionForm', 'users', current_user) }}
+                    {{ delete('PermissionForm', 'users', current_user) }}
                   </div>
               </div>
               <div class="card-body">
