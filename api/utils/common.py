@@ -19,7 +19,7 @@ def generic_add(form_class, template, id=None, submit_target=None):
     return render_template(template, form=form, key=None, form_type=form_class.__name__, submit_target=submit_target,
                            classes=("was-validated" if request.method == 'POST' else ''))
 
-def generic_edit(form_class, template, id=None, submit_target=None):
+def generic_edit(form_class, template, id=None, submit_target=None, **kwargs):
     """ Used for opening edit form and also POSTing values.
         Pattern used to reduce code duplication
     """
@@ -43,8 +43,11 @@ def generic_edit(form_class, template, id=None, submit_target=None):
         flash('Data saved', category="Success")
         return render_template("form_success.jinja")
 
-    return render_template(template, form=form, key=object_id, form_type=form_class.__name__, submit_target=submit_target,
-                           classes=("was-validated" if request.method == 'POST' else ''))
+    return render_template(template, form=form, 
+                           key=object_id, form_type=form_class.__name__, 
+            	           submit_target=submit_target, 
+                           classes=("was-validated" if request.method == 'POST' else ''),
+                           **kwargs)
 
 def generic_delete(form, id):
     obj = form.Meta.model.query.get(id)
@@ -54,7 +57,7 @@ def generic_delete(form, id):
     return render_template("form_success.jinja")
 
 
-def generic_form_edit(submit_target, permitted_forms, id=None):
+def generic_form_edit(submit_target, permitted_forms, id=None, **kwargs):
     """ Add/Edit object specified by form name
     """    
     object_id = id or request.values.get("key")
@@ -62,7 +65,7 @@ def generic_form_edit(submit_target, permitted_forms, id=None):
     form_class = [x for x in permitted_forms if x.__name__ == object_type][0]
     if not object_id:
         return generic_add(form_class, 'form_edit.jinja', None, submit_target)
-    return generic_edit(form_class, 'form_edit.jinja', object_id, submit_target)
+    return generic_edit(form_class, 'form_edit.jinja', object_id, submit_target=submit_target, **kwargs)
 
 def generic_form_delete(permitted_forms, id):
     """ Delete object specified by form name
