@@ -879,4 +879,5 @@ function initDatatable(datatableId, dtConf){
         .DataTable(dtConf);
     setupColvisButton();
     var debounce = new searchDebounce(table, 500);
+    return table;
 }

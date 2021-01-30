@@ -57,7 +57,10 @@
     };
 
     $(document).ready(function () {
-      initDatatable('#datatable', dtConf);
+      tb = initDatatable('#datatable', dtConf);
+      /* yadcf.init(tb, [
+        { column_number: 0, filter_type: "text", filter_match_mode: 'startsWith' },
+      ]); */
     });
   </script>
 
@@ -66,4 +69,5 @@
 {# additional features used on this page: #}
 {% block feature_javascripts %}
   {% include '_feature_column_visibility.html' %}
+  {# {% include '_feature_column_filtering.html' %} #}
 {% endblock feature_javascripts %}

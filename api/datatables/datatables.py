@@ -151,18 +151,28 @@ class DataTables:
                                     '')
             searchable = self.params.get('columns[{:d}][searchable]'.format(i),
                                          'false')
+            is_regex = self.params.get('columns[{:d}][search][regex]'.format(i),
+                                    '') == 'true'
             i += 1
             if searchable.lower() == 'false':
                 continue
+            search_val = value
+            if is_regex:
+                if search_val.startswith('^'):
+                    search_val = search_val.replace('^','') + '%'
+            else:
+                if search_val != '':
+                    search_val = '%' + search_val + '%'
+
             column = get_column_in_models(models, column_name)
             if column:
-                columns.append([column, value])
+                columns.append([column, search_val])
 
         # per columns filters:
         for column, value in columns:
             filter_expr = None
             if value:
-                search_func = SEARCH_METHODS['ilike']
+                search_func = SEARCH_METHODS['like']
                 filter_expr = search_func(column, value)
             self.filter_expressions.append(filter_expr)
 
