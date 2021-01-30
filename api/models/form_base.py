@@ -7,6 +7,7 @@ from wtforms_alchemy import model_form_factory
 # The variable db here is a SQLAlchemy object instance from
 # Flask-SQLAlchemy package
 from .model_base import db
+from .custom_widgets import BootstrapCheckboxInput
 
 BaseModelForm = model_form_factory(FlaskForm)
 
@@ -17,7 +18,14 @@ class ModelForm(BaseModelForm):
 
 
 class FormMeta(DefaultMeta):
-    pass
+    """ Binds application default widgets. You can override widget at field level. 
+    """
+    def bind_field(self, form, unbound_field, options):
+        bound = super().bind_field(form, unbound_field, options)
+        if bound.type == "BooleanField":
+            bound.widget = BootstrapCheckboxInput()
+        return bound
+
     # def render_field(self, field, render_kw):
     #     render_kw['class'] = 'form-control ' + render_kw.get('class', '')
     #     return super().render_field(field, render_kw)
