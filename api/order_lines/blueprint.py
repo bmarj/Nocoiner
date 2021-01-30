@@ -1,4 +1,5 @@
-from flask import Blueprint, session, jsonify, request, render_template, flash
+import os
+from flask import Blueprint, session, jsonify, request, render_template, flash, current_app
 from flask_sqlalchemy import orm
 from marshmallow import EXCLUDE
 # from marshmallow.exceptions import ValidationError
@@ -71,3 +72,28 @@ def cancel_order(id):
     obj.query.session.commit()
     flash('Order line cancelled', category="Success")
     return render_template("form_success.jinja")
+
+
+@bp.route("/report")
+@authorize('order_lines')
+def order_lines_report():
+    from docxtpl import DocxTemplate
+    from flask import send_file
+    
+    query = query_order_line()
+    response_schema = OrderLinesSchema(many=True)
+    results = response_schema.dump(query.limit(50).all())
+
+    root = os.path.join(current_app.root_path, 'order_lines', 'report_templates')
+
+    doc = DocxTemplate(os.path.join(root, "test_template1.docx"))
+    context = {
+        'company_name' : "Demo report",
+        'col_labels': ['fruit', 'vegetable', 'stone', 'thing'],
+        'count': len(results),
+        'data': results,
+    }
+    doc.render(context)
+
+    doc.save(os.path.join(root, "test_report1.docx"))
+    return send_file(os.path.join(root, "test_report1.docx"))

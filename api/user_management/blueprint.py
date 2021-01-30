@@ -203,7 +203,8 @@ def user_delete(id):
 @bp.route('/form_edit', methods=['GET','POST'])
 @authorize('users')
 def form_edit(id=None):
-    permitted_forms = [RoleForm, UserRoleForm, PermissionForm, RolePermissionForm]
+    permitted_forms = [UserForm, 
+        RoleForm, UserRoleForm, PermissionForm, RolePermissionForm]
     return generic_form_edit(url_for('.form_edit'), permitted_forms, id)
 
 @bp.route("/delete/<id>", methods=['POST'])
