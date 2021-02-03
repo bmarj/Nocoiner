@@ -9,10 +9,8 @@
                       <i class="ti-user"></i> Roles View
                   </div>
                   <div class="tools">
-                    {% from "_buttons.html" import add, edit, delete, copy %}
-                    {{ add('RoleForm', 'users', current_user) }}
-                    {{ copy('RoleForm', 'users', current_user) }}
-                    {{ edit('RoleForm', 'users', current_user) }}
+                    {% from "_buttons.html" import add, add_inline, copy, edit, delete %}
+                    {{ add_inline('RoleForm', 'users', current_user) }}
                     {{ delete('RoleForm', 'users', current_user) }}
                   </div>
               </div>
@@ -26,7 +24,6 @@
           </div>
       </div>
   </div>
-</div>
 
 <!-- modal dialog placeholder -->
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">

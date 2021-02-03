@@ -37,7 +37,7 @@ class UserRoleForm(ModelForm):
     user = QuerySelectField(
         label="User",
         query_factory=lambda: query_users().all(),
-        #allow_blank=True, blank_text='-- Unknown --',
+        #allow_blank=True, blank_text='-- Empty --',
         get_label=lambda a: a.first_name + ' ' + a.last_name)
 
     # map it to name of model relation
@@ -54,12 +54,16 @@ class RolePermissionForm(ModelForm):
     role = QuerySelectField(
         label="Role",
         query_factory=lambda: query_roles().all(),
+        allow_blank=True, blank_text='-- Empty --',
+        validators=[DataRequired()],
         get_label=lambda a: a.name)
 
     # map it to name of model relation
     permission = QuerySelectField(
         label="Permission",
         query_factory=lambda: query_permissions().all(),
+        allow_blank=True, blank_text='-- Empty --',
+        validators=[DataRequired()],
         get_label=lambda a: a.name)
 
 class UserForm(ModelForm):

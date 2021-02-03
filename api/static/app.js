@@ -553,6 +553,157 @@ function goToAddModal(sender, urlToAction, dialogId) {
     }        
 }
 
+function copyModalToRow(idModal, idRow){
+    var hiddenHtml ='';
+    // all hidden fields
+    hiddenInputs = $(idModal).find('[type="hidden"]');
+    for (i=0; i<hiddenInputs.length; i++){
+        hiddenHtml += hiddenInputs[i].outerHTML;
+        // hiddenInputs[i].outerHTML = "";
+    }
+
+    var row = '';
+    inputControls = $(idModal).find("div.controls");
+    for (i=0; i<inputControls.length; i++){
+        row += '<td>' + inputControls[i].outerHTML;
+        if (i == 0)
+            row += hiddenHtml;
+        row += '</td>';
+        // inputControls[i].outerHTML = "";
+    }
+
+    $(idRow).html(
+        row
+    );
+}
+
+// Uses fields from modal dialog to position them for inline add
+function goToAddInlineFromModal(sender, urlToAction, dialogId) {
+    let url = urlToAction; // getEditUrl(sender, urlToAction);
+    if (url){
+        $.ajax({
+            //dataType: "json",
+            url: url,
+            //data: data,
+            success: function(data) {
+                // IS REDIRECT TO LOGIN?  
+                if (data.trimStart().startsWith("<!DOCTYPE html>")){
+                    window.location = window.location.origin + '/login?returnUrl=' + url;
+                    //$(document).replaceWith(data);
+                }
+                else{
+                    // $('#editModal').modal('hide');
+
+                    $('#inlineAdd').hide();
+                    $('#inlineSave').show();
+                    $('#inlineCancel').show();
+
+                    $(dialogId).replaceWith(data);
+                    $(dialogId).modal('hide');
+                    
+                    // var hiddenHtml ='';
+                    // // all hidden fields
+                    // hiddenInputs = $(dialogId).find('[type="hidden"]');
+                    // for (i=0; i<hiddenInputs.length; i++){
+                    //     hiddenHtml += hiddenInputs[i].outerHTML;
+                    //     // hiddenInputs[i].outerHTML = "";
+                    // }
+
+                    // var row = '';
+                    // inputControls = $(dialogId).find("div.controls");
+                    // for (i=0; i<inputControls.length; i++){
+                    //     row += '<td>' + inputControls[i].outerHTML;
+                    //     if (i == 0)
+                    //         row += hiddenHtml;
+                    //     row += '</td>';
+                    //     // inputControls[i].outerHTML = "";
+                    // }
+
+                    // $('#datatable tbody').prepend(
+                    //     ''
+                    //     + '<tr id="addinline">'
+                    //     + row
+                    //     + '</tr>'
+                    // );
+                    $('#datatable tbody').prepend(
+                        '<tr id="addinline"></tr>'
+                    );
+                    copyModalToRow(dialogId, '#addinline');
+                }
+            },
+            error: function(e) { alert('Error. Try again.');}
+        });
+    }        
+}
+
+function submitInlineAdd(sender, urlToAction) {
+    let inlineRowId = "#addinline";
+
+    let url = urlToAction;
+    let dialogId = "#editModal";
+
+    var formData = $(inlineRowId).find("input, textarea, select").serialize();
+    $.ajax({
+        type: 'POST',
+        //dataType: "json",
+        url: url,
+        data: formData,
+        encode: true,
+        success: function(data) {
+            // IS REDIRECT TO LOGIN?  
+            if (data.trimStart().startsWith("<!DOCTYPE html>")){
+                window.location = window.location.origin + '/login?returnUrl=' + url;
+                //$(document).replaceWith(data);
+            }
+            else{
+                $(dialogId).replaceWith(data);
+                $(dialogId).modal('hide');
+                if ($(dialogId).data("saved") === undefined ){
+                    // var hiddenHtml ='';
+                    // hiddenInputs = $(dialogId).find('[type="hidden"]');
+                    // for (i=0; i<hiddenInputs.length; i++){
+                    //     hiddenHtml += hiddenInputs[i].outerHTML;
+                    // }
+    
+                    // var row = '';
+                    // inputControls = $(dialogId).find("div.controls");
+                    // for (i=0; i<inputControls.length; i++){
+                    //     row += '<td>' + inputControls[i].outerHTML;
+                    //     if (i == 0)
+                    //         row += hiddenHtml;
+                    //     row += '</td>';
+                    // }
+    
+                    // $(inlineRowId).html(
+                    //     ''
+                    //     + '<tr id="addinline">'
+                    //     + row
+                    //     + '</tr>'
+                    // );
+                    copyModalToRow(dialogId, inlineRowId);
+                }
+                else{
+                    $('#addinline')[0].outerHTML = "";
+                    $('#inlineAdd').show();
+                    $('#inlineSave').hide();
+                    $('#inlineCancel').hide();
+                }
+            }
+        },
+        error: function(e) { 
+            alert('Error. Try again.');
+        }
+    });
+}
+
+function cancelInlineAdd(sender) {
+    $('#addinline')[0].outerHTML = "";
+    $('#inlineAdd').show();
+    $('#inlineSave').hide();
+    $('#inlineCancel').hide();
+}
+
+
 // function formValidate(form){
 //     if (form.hasClass('validate') && form[0].checkValidity === false) {
 //         // e.preventDefault();
@@ -584,7 +735,7 @@ function submitModal(sender, urlToAction, dialogId) {
                     //$(document).replaceWith(data);
                 }
                 else{
-                    $('#editModal').modal('hide');
+                    $(dialogId).modal('hide');
                     $(dialogId).replaceWith(data);
                 }
             },

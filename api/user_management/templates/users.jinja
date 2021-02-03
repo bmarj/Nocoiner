@@ -1,39 +1,39 @@
 {% extends 'base.jinja' %}
 
 {% block content %}
-  <div class="row">
-      <div class="col-lg-12">
-          <div class="card mb-3">
-              <div class="card-header">
-                  <div class="caption uppercase">
-                      <i class="ti-user"></i> Users View
-                  </div>
-                  <div class="tools">
-                    {% from "_buttons.html" import add_button, edit_button, delete_button, edit %}
-                    {{ add_button('.user_add','users', current_user) }}
-                    {{ edit_button('.user_edit','users', current_user) }}
-                    {# {{ edit('UserForm','users', current_user) }} #}
-                    {{ delete_button('.user_delete','users', current_user) }}
-                  </div>
-              </div>
-              <div class="card-body">
-                  <div class="table-responsive">
-                      <table id="datatable" class="table table-bordered table-hover clickable-rows" cellspacing="0">
-                        <thead class="thead-light"></thead>
-                      </table>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="caption uppercase">
+                    <i class="ti-user"></i> Users View
+                </div>
+                <div class="tools">
+                  {% from "_buttons.html" import add_button, edit_button, delete_button, edit %}
+                  {{ add_button('.user_add','users', current_user) }}
+                  {{ edit_button('.user_edit','users', current_user) }}
+                  {# {{ edit('UserForm','users', current_user) }} #}
+                  {{ delete_button('.user_delete','users', current_user) }}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="datatable" class="table table-bordered table-hover clickable-rows" cellspacing="0">
+                      <thead class="thead-light"></thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 
 <!-- modal dialog placeholder -->
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
 </div>
 {% endblock content %}
 
-{% block extra_javascripts %}  
+{% block extra_javascripts %}
   <script>
     let dtConf = defaultDatatablesConfig;
 
