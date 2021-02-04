@@ -1,59 +1,63 @@
 # coding: utf-8
-from api.models.model_base import db, BIT, DECIMAL, NUMERIC, DATETIMEOFFSET, MetaData
+from sqlalchemy import event, Column, DateTime, Integer, ForeignKey, String, Boolean, FetchedValue, Unicode
+from sqlalchemy.orm import relationship
+from api.models.model_base import db, BIT, Numeric, DECIMAL, DATETIMEOFFSET, MetaData
 from sqlalchemy.ext.hybrid import hybrid_property
 
 class FulfillmentWarehouse(db.Model):
     __tablename__ = 'fulfillment_warehouse'
     __bind_key__ = 'ordersDB'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False)
-    code = db.Column(db.String(20, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False, unique=True)
-    enabled = db.Column(BIT, nullable=False, server_default=db.FetchedValue())
+    id = Column(Integer, primary_key=True)
+    name = Column(String(64), nullable=False)
+    code = Column(String(20), nullable=False, unique=True)
+    enabled = Column(BIT, nullable=False, server_default=FetchedValue())
 
 
 class Order(db.Model):
     __tablename__ = 'order'
     __bind_key__ = 'ordersDB'
 
-    id = db.Column(db.Integer, primary_key=True)
-    order_number = db.Column(db.Unicode(50), nullable=False)
-    purchase_date = db.Column(db.DateTime, nullable=False)
-    ship_name = db.Column(db.Unicode(500), nullable=False)
-    ship_phone = db.Column(db.Unicode(100))
-    ship_email = db.Column(db.Unicode(500))
-    ship_address = db.Column(db.Unicode(500), nullable=False)
-    ship_address_2 = db.Column(db.Unicode(500))
-    ship_city = db.Column(db.Unicode(500))
-    ship_postal_code = db.Column(db.Unicode(100))
-    ship_state = db.Column(db.Unicode(500))
-    ship_country = db.Column(db.Unicode(500), nullable=False)
-    buyer_name = db.Column(db.Unicode(500))
-    buyer_phone = db.Column(db.Unicode(100))
-    buyer_email = db.Column(db.Unicode(500))
-    buyer_address = db.Column(db.Unicode(500))
-    buyer_address_2 = db.Column(db.Unicode(500))
-    buyer_city = db.Column(db.Unicode(500))
-    buyer_state = db.Column(db.Unicode(500))
-    buyer_postal_code = db.Column(db.Unicode(100))
-    buyer_country = db.Column(db.Unicode(500))
-    sales_channel_id = db.Column(db.ForeignKey('sales_channel.id'), nullable=False)
-    created_timestamp = db.Column(db.DateTime, nullable=False, server_default=db.FetchedValue())
-    total_qty = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
-    order_status_id = db.Column(db.ForeignKey('order_status.id'), nullable=False)
-    processing_status = db.Column(db.Unicode(20), nullable=False, server_default=db.FetchedValue())
-    referring_order = db.Column(db.BigInteger)
-    is_prime = db.Column(BIT, nullable=False, server_default=db.FetchedValue())
-    is_premium = db.Column(BIT, nullable=False, server_default=db.FetchedValue())
-    shipping_priority = db.Column(db.Unicode(128))
+    id = Column(Integer, primary_key=True)
+    order_number = Column(Unicode(50), nullable=False)
+    purchase_date = Column(DateTime, nullable=False)
+    ship_name = Column(Unicode(500), nullable=False)
+    ship_phone = Column(Unicode(100))
+    ship_email = Column(Unicode(500))
+    ship_address = Column(Unicode(500), nullable=False)
+    ship_address_2 = Column(Unicode(500))
+    ship_city = Column(Unicode(500))
+    ship_postal_code = Column(Unicode(100))
+    ship_state = Column(Unicode(500))
+    ship_country = Column(Unicode(500), nullable=False)
+    buyer_name = Column(Unicode(500))
+    buyer_phone = Column(Unicode(100))
+    buyer_email = Column(Unicode(500))
+    buyer_address = Column(Unicode(500))
+    buyer_address_2 = Column(Unicode(500))
+    buyer_city = Column(Unicode(500))
+    buyer_state = Column(Unicode(500))
+    buyer_postal_code = Column(Unicode(100))
+    buyer_country = Column(Unicode(500))
+    sales_channel_id = Column(ForeignKey('sales_channel.id'), nullable=False)
+    created_timestamp = Column(
+        DateTime, nullable=False, server_default=FetchedValue())
+    total_qty = Column(Integer, nullable=False, server_default=FetchedValue())
+    order_status_id = Column(ForeignKey('order_status.id'), nullable=False)
+    processing_status = Column(
+        Unicode(20), nullable=False, server_default=FetchedValue())
+    referring_order = Column(Integer)
+    is_prime = Column(BIT, nullable=False, server_default=FetchedValue())
+    is_premium = Column(BIT, nullable=False, server_default=FetchedValue())
+    shipping_priority = Column(Unicode(128))
 
-    order_status = db.relationship(
+    order_status = relationship(
         'OrderStatus',
-        primaryjoin='Order.order_status_id == OrderStatus.id',
+        foreign_keys=order_status_id,
         backref='orders')
-    sales_channel = db.relationship(
+    sales_channel = relationship(
         'SalesChannel',
-        primaryjoin='Order.sales_channel_id == SalesChannel.id',
+        foreign_keys=sales_channel_id,
         backref='orders')
 
 
@@ -61,41 +65,41 @@ class OrderLine(db.Model):
     __tablename__ = 'order_line'
     __bind_key__ = 'ordersDB'
 
-    id = db.Column(db.Integer, primary_key=True)
-    sku = db.Column(db.String(159, 'SQL_Latin1_General_CP1_CI_AS'))
-    order_id = db.Column(db.ForeignKey('order.id'), nullable=False)
-    qty_ordered = db.Column(db.Integer, nullable=False)
-    qty_shipped = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
-    price = db.Column(db.Numeric(10, 2), nullable=False)
-    tax = db.Column(db.Numeric(10, 2))
-    currency_code = db.Column(db.Unicode(3), nullable=False)
-    shipping_price = db.Column(db.Numeric(10, 2))
-    shipping_tax = db.Column(db.Numeric(10, 2))
-    line_type = db.Column(db.Unicode(10))
-    purchase_order_number = db.Column(db.Unicode(128))
-    order_line_status_id = db.Column(db.ForeignKey('order_line_status.id'))
-    exported = db.Column(BIT, nullable=False, server_default=db.FetchedValue())
-    date_exported = db.Column(db.DateTime)
-    username = db.Column(db.Unicode(256))
-    notes = db.Column(db.Unicode)
-    created_date = db.Column(db.DateTime, server_default=db.FetchedValue())
-    processed_date = db.Column(db.DateTime)
-    promise_date = db.Column(db.DateTime)
-    fulfillment_warehouse_id = db.Column(db.ForeignKey('fulfillment_warehouse.id'))
-    is_premium = db.Column(BIT, nullable=False, server_default=db.FetchedValue())
-    shipping_priority = db.Column(db.Unicode(128))
+    id = Column(Integer, primary_key=True)
+    sku = Column(String(159))
+    order_id = Column(ForeignKey('order.id'), nullable=False)
+    qty_ordered = Column(Integer, nullable=False)
+    qty_shipped = Column(Integer, nullable=False, server_default=FetchedValue())
+    price = Column(Numeric(10, 2), nullable=False)
+    tax = Column(Numeric(10, 2))
+    currency_code = Column(Unicode(3), nullable=False)
+    shipping_price = Column(Numeric(10, 2))
+    shipping_tax = Column(Numeric(10, 2))
+    line_type = Column(Unicode(10))
+    purchase_order_number = Column(Unicode(128))
+    order_line_status_id = Column(ForeignKey('order_line_status.id'))
+    exported = Column(BIT, nullable=False, server_default=FetchedValue())
+    date_exported = Column(DateTime)
+    username = Column(Unicode(256))
+    notes = Column(Unicode)
+    created_date = Column(DateTime, server_default=FetchedValue())
+    processed_date = Column(DateTime)
+    promise_date = Column(DateTime)
+    fulfillment_warehouse_id = Column(ForeignKey('fulfillment_warehouse.id'))
+    is_premium = Column(BIT, nullable=False, server_default=FetchedValue())
+    shipping_priority = Column(Unicode(128))
 
-    fulfillment_warehouse = db.relationship(
+    fulfillment_warehouse = relationship(
         'FulfillmentWarehouse',
-        primaryjoin='OrderLine.fulfillment_warehouse_id == FulfillmentWarehouse.id',
+        foreign_keys=fulfillment_warehouse_id,
         backref='order_lines')
-    order = db.relationship(
+    order = relationship(
         'Order',
-        primaryjoin='OrderLine.order_id == Order.id',
+        foreign_keys=order_id,
         backref='order_lines')
-    order_line_status = db.relationship(
+    order_line_status = relationship(
         'OrderLineStatus',
-        primaryjoin='OrderLine.order_line_status_id == OrderLineStatus.id',
+        foreign_keys=order_line_status_id,
         backref='order_lines')
 
 
@@ -103,38 +107,38 @@ class OrderLineStatus(db.Model):
     __tablename__ = 'order_line_status'
     __bind_key__ = 'ordersDB'
 
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(20, 'SQL_Latin1_General_CP1_CI_AS'), nullable=False, unique=True)
-    description = db.Column(db.Unicode(500), nullable=False)
+    id = Column(Integer, primary_key=True)
+    code = Column(String(20), nullable=False, unique=True)
+    description = Column(Unicode(500), nullable=False)
 
 
 class OrderStatus(db.Model):
     __tablename__ = 'order_status'
     __bind_key__ = 'ordersDB'
 
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.Unicode(20), nullable=False, unique=True)
-    description = db.Column(db.Unicode(500), nullable=False)
+    id = Column(Integer, primary_key=True)
+    code = Column(Unicode(20), nullable=False, unique=True)
+    description = Column(Unicode(500), nullable=False)
 
 
 class SalesChannel(db.Model):
     __tablename__ = 'sales_channel'
     __bind_key__ = 'ordersDB'
 
-    id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.Unicode(100), nullable=False)
-    code = db.Column(db.Unicode(20), nullable=False, unique=True)
-    service_id = db.Column(db.Unicode(50), unique=True)
-    balanceable = db.Column(BIT, nullable=False, server_default=db.FetchedValue())
-    enabled = db.Column(BIT, nullable=False, server_default=db.FetchedValue())
-    product_alias_group = db.Column(db.Integer, nullable=False, server_default=db.FetchedValue())
-    is_cross_insert = db.Column(BIT, nullable=False, server_default=db.FetchedValue())
+    id = Column(Integer, primary_key=True)
+    description = Column(Unicode(100), nullable=False)
+    code = Column(Unicode(20), nullable=False, unique=True)
+    service_id = Column(Unicode(50), unique=True)
+    balanceable = Column(BIT, nullable=False, server_default=FetchedValue())
+    enabled = Column(BIT, nullable=False, server_default=FetchedValue())
+    product_alias_group = Column(Integer, nullable=False, server_default=FetchedValue())
+    is_cross_insert = Column(BIT, nullable=False, server_default=FetchedValue())
 
 
 class ShipServiceLevel(db.Model):
     __tablename__ = 'ship_service_level'
     __bind_key__ = 'ordersDB'
 
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.Unicode(20), nullable=False, unique=True)
-    description = db.Column(db.Unicode(500))
+    id = Column(Integer, primary_key=True)
+    code = Column(Unicode(20), nullable=False, unique=True)
+    description = Column(Unicode(500))

@@ -11,16 +11,17 @@ from sqlalchemy.dialects.mssql import (BIT, DECIMAL, NUMERIC,
 from api.utils.model_helpers import get_column_in_models
 
 
-class LfhSQLAlchemy(SQLAlchemy):
+class Numeric(NUMERIC):
     """
     Fix Decimal type for serialization problem,
     with asdecimal=False as default
     If using original class, use type Numeric(10, 2, asdecimal=False)
     """
-    class Numeric(NUMERIC):
-        def __init__(self, precision=None, scale=None, decimal_return_scale=None, asdecimal=False):
-            super().__init__(precision, scale, decimal_return_scale, asdecimal)
+    def __init__(self, precision=None, scale=None, decimal_return_scale=None, asdecimal=False):
+        super().__init__(precision, scale, decimal_return_scale, asdecimal)
 
+
+class LfhSQLAlchemy(SQLAlchemy):
     MONEY = Numeric(18, 2)
     BIT = BIT
     DATETIMEOFFSET = DATETIMEOFFSET
