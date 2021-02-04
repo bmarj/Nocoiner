@@ -10,7 +10,6 @@ from .business import (
     get_user_by_id,
     get_user_by_username,
     authenticate_user,
-    get_user_permissions,
     query_users,
     query_roles,
     query_user_roles,

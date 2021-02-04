@@ -461,6 +461,34 @@ GO
 
 
 
+--GO
+
+-- Audit columns
+--ALTER TABLE 
+--    dbo.role_permission
+--ADD
+--    created_on datetime NULL,
+--    created_by_id int NULL,
+--    CONSTRAINT FK_role_permission_created_by_app_user FOREIGN KEY(created_by_id) REFERENCES dbo.app_user (id),
+--    changed_on datetime NULL,
+--    changed_by_id int NULL,
+--    CONSTRAINT FK_role_permission_changed_by_app_user FOREIGN KEY(changed_by_id) REFERENCES dbo.app_user (id)
+--GO
+
+GO
+
+ALTER TABLE 
+    dbo.app_user_role
+ADD
+   -- Audit columns
+    created_on datetime NULL,
+    created_by_id int NULL,
+    CONSTRAINT FK_app_user_role_created_by_app_user FOREIGN KEY(created_by_id) REFERENCES dbo.app_user (id),
+    changed_on datetime NULL,
+    changed_by_id int NULL,
+    CONSTRAINT FK_app_user_role_changed_by_app_user FOREIGN KEY(changed_by_id) REFERENCES dbo.app_user (id)
+GO
+
 
 
 

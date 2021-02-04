@@ -8,7 +8,7 @@ from .model import Permission, User, Role, RolePermission, UserRole
 def query_users():
     # join to eager load relations
     q = User.query\
-        .outerjoin(UserRole)\
+        .outerjoin(UserRole.user)\
         .outerjoin(Role)
     return q
 
@@ -20,7 +20,7 @@ def query_roles():
 def query_user_roles():
     # join to eager load relations
     q = UserRole.query\
-        .join(User)\
+        .join(User.user_roles)\
         .join(Role)
     return q
 
@@ -77,17 +77,17 @@ def create_user():
 
 # convenience methods for permssions and roles are also on User object
 
-def get_user_permissions(id):
-    """
-    get user permissions from database
-    """
-    q = Permission.query\
-        .join(RolePermission)\
-        .join(Role)\
-        .join(UserRole)\
-        .filter(UserRole.app_user_id == int(id))\
-        .all()
-    return q
+# def get_user_permissions(id):
+#     """
+#     get user permissions from database
+#     """
+#     q = Permission.query\
+#         .join(RolePermission)\
+#         .join(Role)\
+#         .join(UserRole)\
+#         .filter(UserRole.app_user_id == int(id))\
+#         .all()
+#     return q
 
 # def get_user_permissions_type2(id):
 #     """

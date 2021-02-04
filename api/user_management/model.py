@@ -3,7 +3,8 @@ import datetime
 from flask import g
 from werkzeug.security import generate_password_hash
 from api.models.model_base import db, BIT, DECIMAL, NUMERIC, DATETIMEOFFSET, MetaData
-#from sqlalchemy import Table
+from api.models.mixins import AuditMixin
+import sqlalchemy
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import backref, column_property, relationship
 
@@ -62,7 +63,7 @@ class RolePermission(db.Model):
     )
 
 
-class UserRole(db.Model):
+class UserRole(AuditMixin, db.Model):
     __tablename__ = "app_user_role"
     __bind_key__ = 'ordersDB'
 
@@ -72,6 +73,7 @@ class UserRole(db.Model):
     #db.UniqueConstraint("user_id", "role_id")
     user = db.relationship(
         "User",
+        foreign_keys=app_user_id,
         backref=backref("user_roles", uselist=True)
     )
     role = db.relationship(
@@ -79,6 +81,7 @@ class UserRole(db.Model):
         backref=backref("user_roles", uselist=True)
     )
 
+# UserRole.force_audited()
 
 class User(db.Model):
     __tablename__ = "app_user"
@@ -232,5 +235,4 @@ class User(db.Model):
 
     def __repr__(self):
         return self.get_full_name()
-
 
