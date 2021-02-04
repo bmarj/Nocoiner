@@ -5,10 +5,10 @@ from werkzeug.security import generate_password_hash
 from api.models.model_base import db, BIT, DECIMAL, NUMERIC, DATETIMEOFFSET, MetaData
 #from sqlalchemy import Table
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy.orm import backref, column_property, relationship
 
 
-def DefaultMeta(MetaData):
+class DefaultMeta(MetaData):
     __bind_key__ = 'ordersDB'
 
 
@@ -101,10 +101,12 @@ class User(db.Model):
 
     # permissions = db.relationship("Permission", 
     #     primaryjoin='(User.id == UserRole.app_user_id) AND (UserRole.role_id == Role.id) AND (Role.id == RolePermisssion.role_id) AND (RolePermission.permission_id == Permission.id)'
-    # )    
+    # )
 
     created_on = db.Column(db.DateTime, default=datetime.datetime.now, nullable=True)
     changed_on = db.Column(db.DateTime, default=datetime.datetime.now, nullable=True)
+
+    # full_name = column_property(first_name + " " + last_name)
 
     @property
     def plain_password(self):
