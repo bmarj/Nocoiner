@@ -28,6 +28,8 @@
   {% endif %}
 {% endmacro %}
 
+{# Use only in grid that has same number and order of columns.
+   Don't use with column chooser, column sorting! #}
 {% macro add_inline(form_type, permission, user) %}
   {% if user.has_permission(permission) %}
     <button class="btn btn-primary btn-add" id="inlineAdd"
