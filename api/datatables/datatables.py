@@ -1,5 +1,8 @@
 from __future__ import absolute_import
 
+from sqlalchemy.sql.sqltypes import String
+from api.models.model_base import NonUnicodeString
+
 import math
 import json
 
@@ -8,7 +11,7 @@ from sqlalchemy.dialects import mysql, postgresql, sqlite
 
 from api.utils.model_helpers import get_column_in_models
 from api.datatables.datatables_clean_regex import clean_regex
-from api.datatables.datatables_search_methods import SEARCH_METHODS
+from api.datatables.datatables_search_methods import SEARCH_METHODS, search_operators
 
 
 class DataTables:
@@ -204,13 +207,79 @@ class DataTables:
             def filter_for(col):
                 return col.op(op)(val)
         else:
-            val = '%' + global_search + '%'
+            # TODO: refine, extract and make configurable/pluggable,
+            #       at least for most important use cases
 
             def filter_for(col):
-                return col.cast(Text).ilike(val)
+                """ Filtering for datatable Search field.
+                    Applies some application specific column filtering rules.
+                    example: 'begi' search non-numeric columns for content that begins with searched prefix
+                             'word ' (with space afterwards) search whole word on textual columns
+                             '>=1' search numeric columns grater than 1
+
+                """
+                val = '' + global_search + ''
+                search_func = SEARCH_METHODS['like']
+                val_without_ops = val
+                if global_search.startswith(tuple(search_operators.keys())):
+                    has_expr = True
+                    val_without_ops = val_without_ops.lstrip('<').lstrip('>').lstrip('=')
+                else:
+                    has_expr = False
+                
+                if col.type.__visit_name__ == 'unicode':
+                    if has_expr:
+                        return None
+                    try:
+                        if global_search.endswith(' '):
+                            return or_(search_func(col, global_search.strip()),
+                                       search_func(col, global_search + '%') )
+                        else:
+                            val = global_search + '%'
+                            search_func = SEARCH_METHODS['like']
+                    except:
+                        return None
+                elif col.type.__class__ is String or col.type.__class__ is NonUnicodeString:
+                    if has_expr:
+                        return None                    
+                    try:
+                        if global_search.endswith(' '):
+                            return or_(search_func(col, global_search.strip()),
+                                       search_func(col, global_search + '%') )
+                        else:
+                            val = global_search + '%'
+                            search_func = SEARCH_METHODS['like']
+                    except:
+                        return None
+                elif col.type.__visit_name__ == 'integer' and has_expr:
+                    if not val_without_ops.isdigit():
+                        return None
+                    search_func = SEARCH_METHODS['like']
+                    val = global_search.strip()
+                elif col.type.__visit_name__ == 'NUMERIC' and has_expr:
+                    if not val_without_ops.lstrip('-').replace(',','').replace('.','').strip().isdigit():
+                        return None
+                    search_func = SEARCH_METHODS['numeric']
+                    val = global_search.strip()
+                # elif col.type.__visit_name__ == 'datetime':
+                #     return None
+                #     # search_func = SEARCH_METHODS['date']
+                else:
+                    if has_expr:
+                        return None
+                    # WARNING: this search remaining column types by converting them to string!
+                    #          For performance reasons, this needs to be removed for larger data.
+                    return col.cast(Text).like('%' + val + '%')
+                if not search_func:
+                    return None
+                try:
+                    filter_expr = search_func(col, val)
+                except:
+                    return None
+                return filter_expr
 
         global_filter = [
-            filter_for(col) for col in columns  # if hasattr(col, 'global_search') and col.global_search
+            filter_for(col) for col in columns if filter_for(col) is not None # if hasattr(col, 'global_search') and col.global_search
         ]
 
         self.filter_expressions.append(or_(*global_filter))
@@ -234,7 +303,7 @@ class DataTables:
             if orderable.lower() == 'false':
                 continue
 
-            # for sorting on related columns, query must use JOIN with related table            
+            # for sorting on related columns, query must use JOIN with related table
             column = get_column_in_models(models, column_name)
 
             if not column:

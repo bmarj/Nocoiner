@@ -6,6 +6,8 @@ from sqlalchemy import Text
 
 logger = logging.getLogger(__name__)
 
+DECIMAL_THOUSANDS_SEPARATOR = ','
+
 search_operators = {
     '=': lambda expr, value: expr == value,
     '>': lambda expr, value: expr > value,
@@ -36,7 +38,7 @@ def numeric_query(expr, value):
     if value == '':
         num_value = 0
     else:
-        num_value = float(value)
+        num_value = float(value.replace(DECIMAL_THOUSANDS_SEPARATOR, ''))
 
     return operator_func(expr, num_value)
 
@@ -46,7 +48,8 @@ def date_query(expr, value):
     try:
         date_value = date_parse(value)
     except ValueError:
-        date_value = datetime.datetime.now()
+        return None
+        # date_value = datetime.datetime.now()
 
     return operator_func(expr, date_value)
 
