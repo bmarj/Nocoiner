@@ -4,12 +4,12 @@ from flask import request, abort
 from flask_sqlalchemy import SQLAlchemy, BaseQuery, Model, Pagination
 from flask_sqlalchemy import orm, inspect, event
 from sqlalchemy.sql import func
-from sqlalchemy import MetaData
-from sqlalchemy import desc, text
+from sqlalchemy import desc, types
 from sqlalchemy.dialects.mssql import (BIT, DECIMAL, NUMERIC,
                                        DATETIMEOFFSET)
 from api.utils.model_helpers import get_column_in_models
 
+DEFAULT_COLLATION = "ascii"
 
 class Numeric(NUMERIC):
     """
@@ -19,6 +19,31 @@ class Numeric(NUMERIC):
     """
     def __init__(self, precision=None, scale=None, decimal_return_scale=None, asdecimal=False):
         super().__init__(precision, scale, decimal_return_scale, asdecimal)
+
+
+class NonUnicodeString(types.TypeDecorator):
+    """
+    Type for VARCHAR columns,
+    renders value in sql query predicate without N Unicode prefix.
+    """
+    impl = types.String
+
+    def process_bind_param(self, value, dialect):
+        # TODO: setup other encodings, 
+        return bytes(value, self.impl.collation or DEFAULT_COLLATION)
+
+
+# doesn't work:
+# https://github.com/sqlalchemy/sqlalchemy/issues/4442#issuecomment-453875342
+# class NonUnicodeStringDecorator(TypeDecorator):
+#     impl = types.String
+#     def literal_processor(self, dialect):
+#         def process(value):
+#             value = value.replace("'", "''")
+#             if dialect.identifier_preparer._double_percents:
+#                 value = value.replace("%", "%%")
+#             return "'%s'" % value
+#         return process
 
 
 class LfhSQLAlchemy(SQLAlchemy):

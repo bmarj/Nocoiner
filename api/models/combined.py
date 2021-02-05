@@ -1,8 +1,10 @@
 # coding: utf-8
 from sqlalchemy import event, Column, DateTime, Integer, ForeignKey, String, Boolean, FetchedValue, Unicode
+from sqlalchemy.dialects.mssql import VARCHAR
 from sqlalchemy.orm import relationship
-from api.models.model_base import db, BIT, Numeric, DECIMAL, DATETIMEOFFSET, MetaData
+from api.models.model_base import db, BIT, Numeric, DECIMAL, DATETIMEOFFSET
 from sqlalchemy.ext.hybrid import hybrid_property
+from api.models.model_base import NonUnicodeString
 
 class FulfillmentWarehouse(db.Model):
     __tablename__ = 'fulfillment_warehouse'
@@ -66,7 +68,7 @@ class OrderLine(db.Model):
     __bind_key__ = 'ordersDB'
 
     id = Column(Integer, primary_key=True)
-    sku = Column(String(159))
+    sku = Column(NonUnicodeString(159))
     order_id = Column(ForeignKey('order.id'), nullable=False)
     qty_ordered = Column(Integer, nullable=False)
     qty_shipped = Column(Integer, nullable=False, server_default=FetchedValue())

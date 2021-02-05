@@ -2,7 +2,7 @@ import datetime
 from sqlalchemy import event, Column, DateTime, Integer, ForeignKey, Boolean, FetchedValue
 from sqlalchemy.orm import relationship
 #import sqlalchemy as sa
-from api.models.model_base import db, BIT, DECIMAL, NUMERIC, DATETIMEOFFSET, MetaData
+from api.models.model_base import db, BIT, DECIMAL, NUMERIC, DATETIMEOFFSET
 from sqlalchemy.ext.declarative import declared_attr, as_declarative
 from flask import session
 
