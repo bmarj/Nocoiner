@@ -9,10 +9,8 @@
                     <i class="ti-layout-grid3-alt"></i> Order Lines View
                 </div>
                 <div class="tools">
-                  <button class="btn btn-primary btn-add" onclick="goToEditModal(this, '{{ url_for('.edit', id='') }}', '#editModal')">
-                    <i class="ti-write mr-1"></i>Edit</button>
-                  {# <button class="btn btn-warning btn-add" onclick="doActionPost(this, '{{ url_for('.cancel_order', id='') }}', '#editModal')"
-                          data-confirmation-message="Are you sure you want to cancel this order?"><i class="ti-trash mr-1"></i>Cancel order</button> #}
+                  {% from "_buttons.html" import add_button, edit_button, delete_button, edit, action %}
+                  {{ edit_button('.edit','order_lines', current_user) }}
                 </div>
             </div>
             <div class="card-body">
