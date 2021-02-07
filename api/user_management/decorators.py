@@ -10,7 +10,7 @@ def authorize(permission_key = None):
     """
     def check_authorization(func):
         @wraps(func)
-        @login_required        
+        @login_required
         def decorated_view(*args, **kwargs):
             if permission_key:
                 permission_name = permission_key

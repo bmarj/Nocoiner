@@ -44,8 +44,8 @@ def generic_edit(form_class, template, id=None, submit_target=None, **kwargs):
         return render_template("form_success.jinja")
 
     return render_template(template, form=form, 
-                           key=object_id, form_type=form_class.__name__, 
-            	           submit_target=submit_target, 
+                           key=object_id, form_type=form_class.__name__,
+            	           submit_target=submit_target,
                            classes=("was-validated" if request.method == 'POST' else ''),
                            **kwargs)
 
@@ -59,7 +59,7 @@ def generic_delete(form, id):
 
 def generic_form_edit(submit_target, permitted_forms, id=None, **kwargs):
     """ Add/Edit object specified by form name
-    """    
+    """
     object_id = id or request.values.get("key")
     object_type = request.values.get("form_type")
     form_class = [x for x in permitted_forms if x.__name__ == object_type][0]

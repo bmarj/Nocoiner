@@ -33,7 +33,7 @@
 {% macro add_inline(form_type, permission, user) %}
   {% if user.has_permission(permission) %}
     <button class="btn btn-primary btn-add" id="inlineAdd"
-      onclick="goToAddInlineFromModal(this, `/form_edit?form_type={{ form_type }}`, '#editModal')">
+      onclick="goToAddInlineFromModal(this, `/form_edit?form_type={{ form_type }}`)">
       <i class="ti-plus mr-2"></i>Add</button>
     <button class="btn btn-primary btn-success" id="inlineSave" style="display: none;"
       onclick="submitInlineAdd(this, `/form_edit?form_type={{ form_type }}`);">

@@ -103,10 +103,10 @@
 
     <script src="static/siqtheme.js"></script>
     <script src="static/pg_login.js" type="text/javascript"></script>
-  <script type="text/javascript" charset="utf-8">  
+  <script type="text/javascript" charset="utf-8">
     {% for category, message in get_flashed_messages(with_categories=true) %}
-      toastr.error('{{ message }}', '{{ category }}');          
-    {% endfor %}    
+      toastr.error('{{ message }}', '{{ category }}');
+    {% endfor %}
   </script>
 </body>
 

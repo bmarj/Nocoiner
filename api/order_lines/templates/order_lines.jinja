@@ -24,9 +24,6 @@
     </div>
 </div>
 
-<!-- modal dialog placeholder -->
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-</div>
 {% endblock content %}
 
 {% block extra_javascripts %}
@@ -35,7 +32,7 @@
 
     dtConf.ajax.url = '{{ url_for('.order_lines_data') }}';
 
-    dtConf.columns = [        
+    dtConf.columns = [
         { data:"sku", title:"SKU" },
         { data:"qty_ordered", title:"Qty Ordered" },
         { data:"qty_shipped", title:"Qty Shipped" },
@@ -67,11 +64,11 @@
       initDatatable('#datatable', dtConf);
     });
   </script>
-  
+
 {% endblock extra_javascripts %}
 
 {# additional features used on this page: #}
-{% block feature_javascripts %}  
+{% block feature_javascripts %}
   {% include '_feature_column_visibility.html' %}
   {% include '_feature_column_reorder.html' %}
   {# {% include '_feature_grouping.html' %} #}

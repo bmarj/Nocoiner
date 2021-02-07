@@ -473,7 +473,7 @@ function doActionPost(sender, urlToAction, dialogId) {
                     url: url,
                     encode: true,
                     success: function(data) {
-                        $(dialogId).replaceWith(data);
+                        $(dialogId).html(data);
                     },
                     error: function(e) { 
                         alert('Error. Try again.');
@@ -492,7 +492,7 @@ function doActionPost(sender, urlToAction, dialogId) {
                     url: url,
                     encode: true,
                     success: function(data) {
-                        $(dialogId).replaceWith(data);
+                        $(dialogId).html(data);
                     },
                     error: function(e) { 
                         alert('Error. Try again.');
@@ -514,19 +514,19 @@ function goToEditModal(sender, urlToAction, dialogId) {
             url: url,
             //data: data,
             success: function(data) {
-                // IS REDIRECT TO LOGIN?  
+                // IS REDIRECT TO LOGIN?
                 if (data.trimStart().startsWith("<!DOCTYPE html>")){
                     window.location = window.location.origin + '/login?returnUrl=' + url;
                     //$(document).replaceWith(data);
                 }
                 else{
-                    // $('#editModal').modal('hide');
-                    $(dialogId).replaceWith(data);
+                    // open new dialog, no need to close other
+                    $(dialogId).html(data);
                 }
             },
             error: function(e) { alert('Error. Try again.');}
         });
-    }        
+    }
 }
 
 // open edit modal
@@ -544,14 +544,46 @@ function goToAddModal(sender, urlToAction, dialogId) {
                     //$(document).replaceWith(data);
                 }
                 else{
-                    // $('#editModal').modal('hide');
-                    $(dialogId).replaceWith(data);
+                    // open new dialog, no need to close other
+                    $(dialogId).html(data);
                 }
             },
             error: function(e) { alert('Error. Try again.');}
         });
-    }        
+    }
 }
+
+function submitModal(sender, urlToAction, dialogId) {
+    let url = urlToAction;
+    if (url){
+        var form = $(dialogId + " .modal form");
+
+        var formData = form.serialize();
+        $.ajax({
+            type: 'POST',
+            //dataType: "json",
+            url: url,
+            data: formData,
+            encode: true,
+            success: function(data) {
+                // IS REDIRECT TO LOGIN?
+                if (data.trimStart().startsWith("<!DOCTYPE html>")){
+                    window.location = window.location.origin + '/login?returnUrl=' + url;
+                    //$(document).replaceWith(data);
+                }
+                else{
+                    // close submitted dialog, and open results in new dialog
+                    hideDialog();
+                    $(dialogId).html(data);
+                }
+            },
+            error: function(e) { 
+                alert('Error. Try again.');
+            }
+        });
+    }
+}
+
 
 function copyModalToRow(idModal, idRow){
     var hiddenHtml ='';
@@ -578,7 +610,7 @@ function copyModalToRow(idModal, idRow){
 }
 
 // Uses fields from modal dialog to position them for inline add
-function goToAddInlineFromModal(sender, urlToAction, dialogId) {
+function goToAddInlineFromModal(sender, urlToAction) {
     let url = urlToAction; // getEditUrl(sender, urlToAction);
     if (url){
         $.ajax({
@@ -589,58 +621,32 @@ function goToAddInlineFromModal(sender, urlToAction, dialogId) {
                 // IS REDIRECT TO LOGIN?  
                 if (data.trimStart().startsWith("<!DOCTYPE html>")){
                     window.location = window.location.origin + '/login?returnUrl=' + url;
-                    //$(document).replaceWith(data);
                 }
                 else{
-                    // $('#editModal').modal('hide');
-
                     $('#inlineAdd').hide();
                     $('#inlineSave').show();
                     $('#inlineCancel').show();
 
-                    $(dialogId).replaceWith(data);
-                    $(dialogId).modal('hide');
+                    // open new dialog, no need to close other
+                    $("#inlineEditModal").html(data);
+                    // close after opening
+                    $("#inlineEditModal .modal").modal('hide');
                     
-                    // var hiddenHtml ='';
-                    // // all hidden fields
-                    // hiddenInputs = $(dialogId).find('[type="hidden"]');
-                    // for (i=0; i<hiddenInputs.length; i++){
-                    //     hiddenHtml += hiddenInputs[i].outerHTML;
-                    //     // hiddenInputs[i].outerHTML = "";
-                    // }
-
-                    // var row = '';
-                    // inputControls = $(dialogId).find("div.controls");
-                    // for (i=0; i<inputControls.length; i++){
-                    //     row += '<td>' + inputControls[i].outerHTML;
-                    //     if (i == 0)
-                    //         row += hiddenHtml;
-                    //     row += '</td>';
-                    //     // inputControls[i].outerHTML = "";
-                    // }
-
-                    // $('#datatable tbody').prepend(
-                    //     ''
-                    //     + '<tr id="addinline">'
-                    //     + row
-                    //     + '</tr>'
-                    // );
                     $('#datatable tbody').prepend(
                         '<tr id="addinline"></tr>'
                     );
-                    copyModalToRow(dialogId, '#addinline');
+                    copyModalToRow("#inlineEditModal .modal", '#addinline');
                 }
             },
             error: function(e) { alert('Error. Try again.');}
         });
-    }        
+    }
 }
 
 function submitInlineAdd(sender, urlToAction) {
     let inlineRowId = "#addinline";
 
     let url = urlToAction;
-    let dialogId = "#editModal";
 
     var formData = $(inlineRowId).find("input, textarea, select").serialize();
     $.ajax({
@@ -656,31 +662,12 @@ function submitInlineAdd(sender, urlToAction) {
                 //$(document).replaceWith(data);
             }
             else{
-                $(dialogId).replaceWith(data);
-                $(dialogId).modal('hide');
-                if ($(dialogId).data("saved") === undefined ){
-                    // var hiddenHtml ='';
-                    // hiddenInputs = $(dialogId).find('[type="hidden"]');
-                    // for (i=0; i<hiddenInputs.length; i++){
-                    //     hiddenHtml += hiddenInputs[i].outerHTML;
-                    // }
-    
-                    // var row = '';
-                    // inputControls = $(dialogId).find("div.controls");
-                    // for (i=0; i<inputControls.length; i++){
-                    //     row += '<td>' + inputControls[i].outerHTML;
-                    //     if (i == 0)
-                    //         row += hiddenHtml;
-                    //     row += '</td>';
-                    // }
-    
-                    // $(inlineRowId).html(
-                    //     ''
-                    //     + '<tr id="addinline">'
-                    //     + row
-                    //     + '</tr>'
-                    // );
-                    copyModalToRow(dialogId, inlineRowId);
+                // open new dialog, no need to close other
+                $("#inlineEditModal").html(data);
+                // close after opening
+                $("#inlineEditModal .modal").modal('hide');
+                if ($("#inlineEditModal .modal").data("saved") === undefined ){
+                    copyModalToRow("#inlineEditModal .modal", inlineRowId);
                 }
                 else{
                     $('#addinline')[0].outerHTML = "";
@@ -715,49 +702,24 @@ function cancelInlineAdd(sender) {
 //     return true;
 // }
 
-
-function submitModal(sender, urlToAction, dialogId) {
-    let url = urlToAction;
-    if (url){
-        var form = $(dialogId + " form");
-
-        var formData = form.serialize();
-        $.ajax({
-            type: 'POST',
-            //dataType: "json",
-            url: url,
-            data: formData,
-            encode: true,
-            success: function(data) {
-                // IS REDIRECT TO LOGIN?  
-                if (data.trimStart().startsWith("<!DOCTYPE html>")){
-                    window.location = window.location.origin + '/login?returnUrl=' + url;
-                    //$(document).replaceWith(data);
-                }
-                else{
-                    $(dialogId).modal('hide');
-                    $(dialogId).replaceWith(data);
-                }
-            },
-            error: function(e) { 
-                alert('Error. Try again.');
-            }
-        });
-    }        
+function hideDialog(){
+    let dialogId = '#editModal';
+    $(dialogId + ' .modal').modal('hide');
+}
+function showDialog(){
+    let dialogId = '#editModal';
+    $(dialogId + ' .modal').modal('show');
 }
 
-function closeModal(dialogId) {
-    $(dialogId).modal('hide');
-}
 
 function setupModal(){
-    $('button[data-dismiss]').on('click', function(){ closeModal('#editModal'); });
+    $('button[data-dismiss]').on('click', function(){ hideDialog(); });
     // fields without name are not posted, so make them readonly
     $("form input:not([name])").attr('disabled', '');
     handleValidation();
     //setupSelect();
 
-    $('#editModal').on('shown.bs.modal', makeModalDraggable);
+    $('#editModal .modal').on('shown.bs.modal', makeModalDraggable);
 
 }
 
@@ -773,7 +735,7 @@ function makeModalDraggable(event){
           });
         $('.modal-dialog').draggable();
       
-        $('#editModal').on('show.bs.modal', function() {
+        $('#editModal .modal').on('show.bs.modal', function() {
             $(this).find('.modal-body').css({
                 'max-height': '100%'
             });
