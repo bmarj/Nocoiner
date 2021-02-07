@@ -1,4 +1,4 @@
-from flask import Blueprint, session, jsonify, request, render_template, flash
+from flask import Blueprint, session, jsonify, url_for, request, render_template, flash
 from flask_sqlalchemy import orm
 from marshmallow import EXCLUDE
 # from marshmallow.exceptions import ValidationError
@@ -38,7 +38,9 @@ def orders_data():
 def edit(id):
     obj = get_order_by_id(id)
     form = OrderForm(obj=obj)
-    return render_template("edit_order_shipping.jinja", form=form, key=id)
+    return render_template("edit_order_shipping.jinja",
+                           submit_target = url_for('.update'),
+                           form=form, key=id)
 
 @bp.route('/update', methods=['POST'])
 @authorize('orders')
@@ -58,7 +60,9 @@ def update():
     # additional processing or validation:
     form.validation_summary = 'Fill all required fields'
     
-    return render_template("edit_order_shipping.jinja", form=form, key=object_id, classes="was-validated")
+    return render_template("edit_order_shipping.jinja",
+        submit_target = url_for('.update'),
+        form=form, key=object_id, classes="was-validated")
 
 @bp.route("/cancel/<id>", methods=['POST'])
 @authorize('orders')

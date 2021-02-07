@@ -1,21 +1,10 @@
 {% extends 'form_base.jinja' %}
-{% from "_formhelpers.html" import render_form_fields, validation_summary %}
+{% from "_formhelpers.html" import render_form_fields, render_form_header, render_form_footer %}
 
 {% block modalcontent %}
 
     <div class="modal-content dialog-size-form">
-        <div class="modal-header">
-            <h5 class="modal-title" id="editModalLabel">
-                {% if key %}
-                    Edit
-                {% else %}
-                    Add
-                {% endif %}
-            </h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
+        {{ render_form_header(key) }}
         <div class="modal-body">
             <form class="validate {{ classes }}" action="" method="POST" novalidate>
                 {% if form_type %}
@@ -27,12 +16,7 @@
                 {{ render_form_fields(form) }}
             </form>
         </div>
-        <div class="modal-footer">
-            {{ validation_summary(form) }}
-            <button id="btnUpdate" type="button" class="btn btn-primary"
-                    onclick="submitModal(this,'{{ submit_target }}');">Save</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        </div>
+        {{ render_form_footer(submit_target, form) }}
     </div>
 
 {% endblock modalcontent %}

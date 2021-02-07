@@ -184,13 +184,13 @@ def permissions_data():
 @bp.route('/user_add', methods=['GET', 'POST'])
 @authorize('users')
 def user_add():
-    return generic_add(UserForm, 'user_add.jinja')
+    return generic_add(UserForm, 'user_add.jinja', url_for('.user_add'))
 
 @bp.route('/user_edit/<id>', methods=['GET'])
 @bp.route('/user_edit', methods=['POST'])
 @authorize('users')
 def user_edit(id=None):
-    return generic_edit(UserForm, 'user_edit.jinja', id)
+    return generic_edit(UserForm, 'user_edit.jinja', url_for('.user_edit'), id)
 
 @bp.route("/user_delete/<id>", methods=['POST'])
 @authorize('users')

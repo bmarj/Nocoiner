@@ -1,7 +1,7 @@
 from flask import request, render_template, flash
 
 
-def generic_add(form_class, template, id=None, submit_target=None):
+def generic_add(form_class, template, submit_target=None):
     obj = form_class.Meta.model()
 
     if request.method == 'GET':
@@ -19,7 +19,7 @@ def generic_add(form_class, template, id=None, submit_target=None):
     return render_template(template, form=form, key=None, form_type=form_class.__name__, submit_target=submit_target,
                            classes=("was-validated" if request.method == 'POST' else ''))
 
-def generic_edit(form_class, template, id=None, submit_target=None, **kwargs):
+def generic_edit(form_class, template, submit_target=None, id=None, **kwargs):
     """ Used for opening edit form and also POSTing values.
         Pattern used to reduce code duplication
     """
@@ -64,8 +64,8 @@ def generic_form_edit(submit_target, permitted_forms, id=None, **kwargs):
     object_type = request.values.get("form_type")
     form_class = [x for x in permitted_forms if x.__name__ == object_type][0]
     if not object_id:
-        return generic_add(form_class, 'form_edit.jinja', None, submit_target)
-    return generic_edit(form_class, 'form_edit.jinja', object_id, submit_target=submit_target, **kwargs)
+        return generic_add(form_class, 'form_edit.jinja', submit_target)
+    return generic_edit(form_class, 'form_edit.jinja', submit_target, object_id, **kwargs)
 
 def generic_form_delete(permitted_forms, id):
     """ Delete object specified by form name

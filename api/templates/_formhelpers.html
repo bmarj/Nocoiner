@@ -86,3 +86,35 @@
     {% endfor %}
   </div>
 {% endmacro %}
+
+{% macro render_form_header(key) %}
+  <div class="modal-header">
+    <h5 class="modal-title" id="editModalLabel">
+        {% if key %}
+            Edit
+        {% else %}
+            Add
+        {% endif %}
+    </h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{% endmacro %}
+
+{% macro render_form_footer(submit_target, form) %}
+  <div class="modal-footer">
+    {% if form and form.validation_summary %}
+    <div class="mr-auto">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item ">
+          <span class="text-danger">{{ form.validation_summary }}</span>
+        </li>
+      </ul>  
+    </div>
+    {% endif %}
+    <button id="btnUpdate" type="button" class="btn btn-primary"
+            onclick="submitModal(this,'{{ submit_target }}');">Save</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+  </div>
+{% endmacro %}
