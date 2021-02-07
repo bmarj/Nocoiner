@@ -18,18 +18,18 @@
                   {{ render_field(form.Col, class='form-control') }}
                   {{ render_field(form.Qty, class='form-control') }}
                   {{ render_field(form.UPC, class='form-control') }}
-                </form>                
-            </div>                        
-            <div class="modal-footer">                
+                </form>
+            </div>
+            <div class="modal-footer">
                 {{ validation_summary(form) }}
                 <button id="btnUpdate" type="button" class="btn btn-primary"
-                        onclick="submitModal(this,'/inventory/update','#editModal');">Save</button>
+                        onclick="submitModal(this,'/inventory/update');">Save</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
     <script type="text/javascript" charset="utf-8">
       setupModal();
-      $('#editModal').modal('show');
+      showDialog();
     </script>
 </div>

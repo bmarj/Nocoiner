@@ -1,20 +1,20 @@
 {% macro add_button(target, permission, user) %}
   {% if user.has_permission(permission) %}
-    <button class="btn btn-primary btn-add" onclick="goToAddModal(this, `{{ url_for(target) }}`, '#editModal')">
+    <button class="btn btn-primary btn-add" onclick="goToAddModal(this, `{{ url_for(target) }}`)">
       <i class="ti-plus mr-2"></i>Add</button>
   {% endif %}
 {% endmacro %}
 
 {% macro edit_button(target, permission, user) %}
   {% if user.has_permission(permission) %}
-    <button class="btn btn-primary btn-add" onclick="goToEditModal(this, `{{ url_for(target, id='') }}`, '#editModal')">
+    <button class="btn btn-primary btn-add" onclick="goToEditModal(this, `{{ url_for(target, id='') }}`)">
       <i class="ti-write mr-2"></i>Edit</button>
   {% endif %}
 {% endmacro %}
 
 {% macro delete_button(target, permission, user) %}
   {% if user.has_permission(permission) %}
-    <button class="btn btn-danger btn-add" onclick="doActionPost(this, `{{ url_for(target, id='') }}`, '#editModal')"
+    <button class="btn btn-danger btn-add" onclick="doActionPost(this, `{{ url_for(target, id='') }}`)"
       data-confirmation-message="Are you sure you want to delete this row?">
       <i class="ti-trash mr-2"></i>Delete</button>
   {% endif %}
@@ -23,7 +23,7 @@
 
 {% macro add(form_type, permission, user) %}
   {% if user.has_permission(permission) %}
-    <button class="btn btn-primary btn-add" onclick="goToAddModal(this, `/form_edit?form_type={{ form_type }}`, '#editModal')">
+    <button class="btn btn-primary btn-add" onclick="goToAddModal(this, `/form_edit?form_type={{ form_type }}`)">
       <i class="ti-plus mr-2"></i>Add</button>
   {% endif %}
 {% endmacro %}
@@ -46,21 +46,21 @@
 
 {% macro edit(form_type, permission, user) %}
   {% if user.has_permission(permission) %}
-    <button class="btn btn-primary btn-add" onclick="goToEditModal(this, `/form_edit/{id}?form_type={{ form_type }}`, '#editModal')">
+    <button class="btn btn-primary btn-add" onclick="goToEditModal(this, `/form_edit/{id}?form_type={{ form_type }}`)">
       <i class="ti-write mr-2"></i>Edit</button>
   {% endif %}
 {% endmacro %}
 
 {% macro copy(form_type, permission, user) %}
   {% if user.has_permission(permission) %}
-    <button class="btn btn-primary btn-add" onclick="goToEditModal(this, `/form_edit/{id}?form_type={{ form_type }}&action=copy`, '#editModal')">
+    <button class="btn btn-primary btn-add" onclick="goToEditModal(this, `/form_edit/{id}?form_type={{ form_type }}&action=copy`)">
       <i class="ti-layers mr-2"></i>Copy</button>
   {% endif %}
 {% endmacro %}
 
 {% macro delete(form_type, permission, user) %}
   {% if user.has_permission(permission) %}
-    <button class="btn btn-danger btn-add" onclick="doActionPost(this, `/delete/{id}?form_type={{ form_type }}`, '#editModal')"
+    <button class="btn btn-danger btn-add" onclick="doActionPost(this, `/delete/{id}?form_type={{ form_type }}`)"
       data-confirmation-message="Are you sure you want to delete this row?">
       <i class="ti-trash mr-2"></i>Delete</button>
   {% endif %}
@@ -68,7 +68,7 @@
 
 {% macro action(target, permission, user, caption, confirmation_message=None) %}
   {% if user.has_permission(permission) %}
-    <button class="btn btn-primary btn-add" onclick="doActionPost(this, `{{ url_for(target, id='') }}`, '#editModal')"
+    <button class="btn btn-primary btn-add" onclick="doActionPost(this, `{{ url_for(target, id='') }}`)"
       {% if confirmation_message %}
        data-confirmation-message="{{ confirmation_message }}"
       {% endif %}

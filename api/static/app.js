@@ -5,8 +5,7 @@ $(document).ready(
 );
 
 function setupAll() {
-    disableSubmitOnEnter();
-    setupInlineAdd();
+    //disableSubmitOnEnter();
     setupTable();
     //setupColvisButton();
     //setupDatatable();
@@ -466,7 +465,7 @@ function doActionPost(sender, urlToAction, dialogId) {
 
                 var url = urlToAction.replace('{' + attrName + '}', attrValues[0]);
                 // go to url
-                // window.location.href = url;                
+                // window.location.href = url;
                 $.ajax({
                     type: 'POST',
                     //dataType: "json",
@@ -506,7 +505,7 @@ function doActionPost(sender, urlToAction, dialogId) {
 
 
 // open edit modal
-function goToEditModal(sender, urlToAction, dialogId) {
+function goToEditModal(sender, urlToAction) {
     let url = getEditUrl(sender, urlToAction);
     if (url){
         $.ajax({
@@ -520,6 +519,7 @@ function goToEditModal(sender, urlToAction, dialogId) {
                     //$(document).replaceWith(data);
                 }
                 else{
+                    let dialogId = newDialog();
                     // open new dialog, no need to close other
                     $(dialogId).html(data);
                 }
@@ -530,7 +530,7 @@ function goToEditModal(sender, urlToAction, dialogId) {
 }
 
 // open edit modal
-function goToAddModal(sender, urlToAction, dialogId) {
+function goToAddModal(sender, urlToAction) {
     let url = urlToAction; // getEditUrl(sender, urlToAction);
     if (url){
         $.ajax({
@@ -538,12 +538,13 @@ function goToAddModal(sender, urlToAction, dialogId) {
             url: url,
             //data: data,
             success: function(data) {
-                // IS REDIRECT TO LOGIN?  
+                // IS REDIRECT TO LOGIN?
                 if (data.trimStart().startsWith("<!DOCTYPE html>")){
                     window.location = window.location.origin + '/login?returnUrl=' + url;
                     //$(document).replaceWith(data);
                 }
                 else{
+                    let dialogId = newDialog();
                     // open new dialog, no need to close other
                     $(dialogId).html(data);
                 }
@@ -553,10 +554,11 @@ function goToAddModal(sender, urlToAction, dialogId) {
     }
 }
 
-function submitModal(sender, urlToAction, dialogId) {
+function submitModal(sender, urlToAction) {
     let url = urlToAction;
-    if (url){
-        var form = $(dialogId + " .modal form");
+    if (url){        
+        let modalSelector = currentDialogId() + ' .modal';
+        var form = $(modalSelector).find("form");
 
         var formData = form.serialize();
         $.ajax({
@@ -572,6 +574,7 @@ function submitModal(sender, urlToAction, dialogId) {
                     //$(document).replaceWith(data);
                 }
                 else{
+                    let dialogId = currentDialogId();
                     // close submitted dialog, and open results in new dialog
                     hideDialog();
                     $(dialogId).html(data);
@@ -702,24 +705,47 @@ function cancelInlineAdd(sender) {
 //     return true;
 // }
 
+
+// dialogs are used like stack, with newDialog, CloseDialog and currentDialogId as push, pop and peek
+function newDialog(){
+    if (document.currentDialog == undefined)
+        return document.currentDialog = "#editModal";
+    else
+        return document.currentDialog = document.currentDialog + "I";
+}
+
+function closeDialog(){
+    hideDialog();
+    if (document.currentDialog == "#editModal")
+        // set it to undefined
+        delete document.currentDialog;
+    else
+        document.currentDialog = document.currentDialog.slice(0,-1);
+}
+
+function currentDialogId(){
+    return document.currentDialog;
+}
+
 function hideDialog(){
-    let dialogId = '#editModal';
-    $(dialogId + ' .modal').modal('hide');
+    let modalSelector = currentDialogId() + ' .modal';
+    $(modalSelector).modal('hide');
 }
 function showDialog(){
-    let dialogId = '#editModal';
-    $(dialogId + ' .modal').modal('show');
+    let modalSelector = currentDialogId() + ' .modal';
+    $(modalSelector).modal('show');
 }
 
 
 function setupModal(){
-    $('button[data-dismiss]').on('click', function(){ hideDialog(); });
+    let modalSelector = currentDialogId() + ' .modal';
+    $(modalSelector).find('button[data-dismiss]').on('click', function(){ closeDialog(); });
     // fields without name are not posted, so make them readonly
-    $("form input:not([name])").attr('disabled', '');
+    $(modalSelector).find("form input:not([name])").attr('disabled', '');
     handleValidation();
     //setupSelect();
 
-    $('#editModal .modal').on('shown.bs.modal', makeModalDraggable);
+    $(modalSelector).on('shown.bs.modal', makeModalDraggable);
 
 }
 
@@ -728,14 +754,15 @@ function makeModalDraggable(event){
     // only if jQueryUI exists
     if ($().resizable != undefined)
     {
-        $('.modal-content').resizable({
+        let modalSelector = currentDialogId() + ' .modal';
+        $(modalSelector).find('.modal-content').resizable({
             //alsoResize: ".modal-dialog",
             minHeight: $('.modal-content').height(),
             minWidth: 300
           });
-        $('.modal-dialog').draggable();
+        $(modalSelector).find('.modal-dialog').draggable();
       
-        $('#editModal .modal').on('show.bs.modal', function() {
+        $(modalSelector).on('show.bs.modal', function() {
             $(this).find('.modal-body').css({
                 'max-height': '100%'
             });
@@ -840,34 +867,6 @@ function toggleExpandIcon(button) {
     }
 }
 
-
-// inline add:
-function applyInlineAddState(btn) {
-    if (btn.getAttribute('data-adding') == "true") {
-        btn.innerHTML = '<i class="fal fa-eject mr-1"></i>Cancel';
-        $('#' + btn.getAttribute('data-edit-form')).show(300);
-    }
-    else {
-        btn.innerHTML = '<i class="fal fa-plus mr-1"></i>Add';
-        $('#' + btn.getAttribute('data-edit-form')).hide(300);
-    }
-}
-function toggleInlineAdd(btn) {
-    btn.setAttribute('data-adding', btn.getAttribute('data-adding') == "false" ? "true" : "false");
-    applyInlineAddState(btn);
-}
-
-function setupInlineAdd() {
-    var els = document.querySelectorAll("[data-adding]:not([initialized])");
-    els.forEach(function (btn) {
-        btn.addEventListener("click", function () {
-            toggleInlineAdd(btn);
-        });
-        applyInlineAddState(btn);
-        // prevent multiple initializations from adding multiple event handlers
-        btn.setAttribute("initialized", "");
-    });
-}
 
 function getSelect2SelectedTextByID(fieldId) {
     if ($('select#' + fieldId + '.select2').length > 0)

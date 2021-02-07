@@ -26,7 +26,7 @@
             <div class="modal-footer">
                 {{ validation_summary(form) }}
                 <button id="btnUpdate" type="button" class="btn btn-primary"
-                        onclick="submitModal(this,'{{ url_for('.update') }}','#editModal');">Save</button>
+                        onclick="submitModal(this,'{{ url_for('.update') }}');">Save</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
         </div>
