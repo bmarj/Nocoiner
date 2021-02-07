@@ -1,6 +1,5 @@
 <div class="modal" tabindex="-1" role="dialog" data-saved aria-labelledby="editModalLabel">
   <script type="text/javascript" charset="utf-8">
-    closeDialog();
     table_reload();
     {% for category, message in get_flashed_messages(with_categories=true) %}
       toastr.success('{{ message }}', '{{ category }}');

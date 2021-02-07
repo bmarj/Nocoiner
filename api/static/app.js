@@ -443,7 +443,7 @@ function getEditUrl(sender, urlToAction) {
 }
 
 // go to delete action
-function doActionPost(sender, urlToAction, dialogId) {
+function doActionPost(sender, urlToAction) {
     var table = findRelatedTable(sender);
     var selectedRows = getSelectedRows(table);
     if (selectedRows.length == 0) {
@@ -472,7 +472,16 @@ function doActionPost(sender, urlToAction, dialogId) {
                     url: url,
                     encode: true,
                     success: function(data) {
+                        let dialogId = newDialog();
+                        let modalSelector = currentDialogId() + ' .modal';
                         $(dialogId).html(data);
+                        if ($(modalSelector).data("saved") === undefined ){
+                            // returned other form
+                        }
+                        else {
+                            // returned success form
+                            closeDialog();
+                        }
                     },
                     error: function(e) { 
                         alert('Error. Try again.');
@@ -491,7 +500,16 @@ function doActionPost(sender, urlToAction, dialogId) {
                     url: url,
                     encode: true,
                     success: function(data) {
+                        let dialogId = newDialog();
+                        let modalSelector = currentDialogId() + ' .modal';
                         $(dialogId).html(data);
+                        if ($(modalSelector).data("saved") === undefined ){
+                            // returned other form
+                        }
+                        else {
+                            // returned success form
+                            closeDialog();
+                        }
                     },
                     error: function(e) { 
                         alert('Error. Try again.');
@@ -556,7 +574,7 @@ function goToAddModal(sender, urlToAction) {
 
 function submitModal(sender, urlToAction) {
     let url = urlToAction;
-    if (url){        
+    if (url){
         let modalSelector = currentDialogId() + ' .modal';
         var form = $(modalSelector).find("form");
 
@@ -575,9 +593,17 @@ function submitModal(sender, urlToAction) {
                 }
                 else{
                     let dialogId = currentDialogId();
+                    let modalSelector = currentDialogId() + ' .modal';
                     // close submitted dialog, and open results in new dialog
                     hideDialog();
                     $(dialogId).html(data);
+                    if ($(modalSelector).data("saved") === undefined ){
+                        // returned other form
+                    }
+                    else {
+                        // returned success form
+                        closeDialog();
+                    }
                 }
             },
             error: function(e) { 
@@ -670,9 +696,11 @@ function submitInlineAdd(sender, urlToAction) {
                 // close after opening
                 $("#inlineEditModal .modal").modal('hide');
                 if ($("#inlineEditModal .modal").data("saved") === undefined ){
+                    // returned other form
                     copyModalToRow("#inlineEditModal .modal", inlineRowId);
                 }
                 else{
+                    // returned success form
                     $('#addinline')[0].outerHTML = "";
                     $('#inlineAdd').show();
                     $('#inlineSave').hide();
