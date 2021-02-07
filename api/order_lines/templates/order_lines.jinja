@@ -55,11 +55,6 @@
         dataSrc:  function ( row ) { return 'Order #: <b class="text-sapphire">' + row.order.order_number + '</b>'; },
     }*/
 
-    // this function provides API for modal dialog to refresh source grid
-    function table_reload() {
-      $('#datatable').DataTable().ajax.reload(null, false);
-    };
-
     $(document).ready(function () {
       initDatatable('#datatable', dtConf);
     });

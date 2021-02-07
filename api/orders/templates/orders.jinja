@@ -45,11 +45,6 @@
         { data:"sales_channel.description", title:"Sales Channel" },
     ];
 
-    // this function provides API for modal dialog to refresh source grid
-    function table_reload() {
-      $('#datatable').DataTable().ajax.reload(null, false);
-    };
-
     $(document).ready(function () {
       tb = initDatatable('#datatable', dtConf);
       /* yadcf.init(tb, [

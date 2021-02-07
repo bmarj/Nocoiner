@@ -50,11 +50,6 @@
           '<i class="fa fas fa-square" />';
     };
 
-    // this function provides API for modal dialog to refresh source grid
-    function table_reload() {
-      $('#datatable').DataTable().ajax.reload(null, false);
-    };
-
     $(document).ready(function () {
       initDatatable('#datatable', dtConf);
     });

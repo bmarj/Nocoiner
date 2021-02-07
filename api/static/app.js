@@ -1021,3 +1021,8 @@ function initDatatable(datatableId, dtConf){
     var debounce = new searchDebounce(table, 500);
     return table;
 }
+
+// this function provides API for modal dialog to refresh source grid
+function datatableReload() {
+    $('#datatable').DataTable().ajax.reload(null, false);
+};

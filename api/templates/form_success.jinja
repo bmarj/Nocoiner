@@ -1,6 +1,10 @@
-<div class="modal" tabindex="-1" role="dialog" data-saved aria-labelledby="editModalLabel">
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel"
+  data-saved>
   <script type="text/javascript" charset="utf-8">
-    table_reload();
+    datatableReload();
+    toastr.options.positionClass= "toast-bottom-right";
+    toastr.options.hideDuration = "600";
+    toastr.options.closeButton = true;
     {% for category, message in get_flashed_messages(with_categories=true) %}
       toastr.success('{{ message }}', '{{ category }}');
     {% endfor %}
