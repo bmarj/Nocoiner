@@ -6,7 +6,7 @@ $(document).ready(
 
 function setupAll() {
     //disableSubmitOnEnter();
-    setupTable();
+    setupTable("table"); // all tables
     //setupColvisButton();
     //setupDatatable();
     //setupDatePicker();
@@ -14,9 +14,9 @@ function setupAll() {
     disableFormAutocomplete();    
 }
 
-function setupTable() {
+function setupTable(datatableId) {
     // double click behavior
-    // $("table.table-hover tbody tr").dblclick(function () {
+    // $(datatableId + ".table-hover tbody tr").dblclick(function () {
     //     var links = this.getElementsByTagName("a");
     //     if (links.length > 0)
     //         window.location = links[0].href;
@@ -25,7 +25,7 @@ function setupTable() {
 
     // select/deselect row on click
     // turned on for tables with .clickable-rows class
-    $("table.clickable-rows tbody tr").on("click", function (event) {
+    $(datatableId + ".clickable-rows tbody tr").on("click", function (event) {
         rowClass = 'selected';
         if ($(this).hasClass(rowClass)) {
             $(this).removeClass(rowClass);
@@ -1042,7 +1042,7 @@ function initDatatable(datatableId, dtConf){
     dtConf.columns.forEach((t) => t.defaultContent === undefined ? t.defaultContent = "" : null);
     let table = $(datatableId)
         .on('draw.dt', function(e, settings, data, xhr) {
-            setupTable();
+            setupTable(datatableId);
         } )
         .DataTable(dtConf);
     setupColvisButton();
