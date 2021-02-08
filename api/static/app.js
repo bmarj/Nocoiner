@@ -30,7 +30,9 @@ function setupTable(datatableId) {
         if ($(this).hasClass(rowClass)) {
             $(this).removeClass(rowClass);
         } else {
-            $(this).addClass(rowClass).siblings().removeClass(rowClass);
+            $(this).addClass(rowClass);
+            if (!event.ctrlKey)
+                $(this).siblings().removeClass(rowClass);
         }
     });
 
