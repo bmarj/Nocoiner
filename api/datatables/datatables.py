@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from operator import and_
 
 from sqlalchemy.sql.sqltypes import String
 from api.models.model_base import NonUnicodeString
@@ -97,9 +98,13 @@ class DataTables:
         """Launch filtering, sorting and paging to output results."""
         query = self.query
 
+        # apply data domain context
+        self._set_context_filter_expression()
+        query = query.filter(
+            *[e for e in self.filter_expressions if e is not None])
         # count before filtering
         self.cardinality = query.count()
-
+        
         self._set_column_filter_expressions()
         self._set_global_filter_expression()
         self._set_sort_expressions()
@@ -139,6 +144,22 @@ class DataTables:
         # self.results = [{k: v
         #                  for k, v in zip(column_names, row)}
         #                 for row in query.all()]
+
+    def _set_context_filter_expression(self):
+        # filtering contextual or detail grids
+        i = 0
+        while self.params.get('filtered_by[{:d}][field]'.format(i), False):
+            column_name = self.params.get('filtered_by[{:d}][field]'.format(i), False)
+            value = self.params.get('filtered_by[{:d}][value]'.format(i), None)
+            i += 1
+
+            models = self.query.get_model_classes()
+            column = get_column_in_models(models, column_name)
+
+            if column and value is not None:
+                filter_expr = column == value
+                self.filter_expressions.append(filter_expr)
+
 
     def _set_column_filter_expressions(self):
         """Construct the query: filtering.

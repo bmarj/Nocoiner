@@ -1003,9 +1003,37 @@ var defaultDatatablesConfig =
                 window.location = window.location.origin + '/login?returnUrl=' + window.location.pathname;
                 return false;
             }
-        }
+        },
+        data: {filtered_by: [{}]}
     },
     lengthMenu: lengthMenuItems,
+    pageLength: 10
+}
+
+var simpleDatatablesDOM = 
+    //"<'row'<'col-sm-12 offset-11 col-md-1'B>>" +
+    //"<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-4'B><'col-sm-12 col-md-4'f>>" +
+    "<'row'<'col-sm-12'tr>>" +
+    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>";
+var simpleDatatablesConfig =
+{
+    processing: false, // for "Processing" message
+    serverSide: true,
+    filter: false,
+    deferRender: false,
+    rowId: 'id',
+    dom: simpleDatatablesDOM,
+    colReorder: false,
+    stateSave: false,
+    ajax: {
+        error: function(xhr, error, thrown) {
+            if (xhr.status == 401) {
+                window.location = window.location.origin + '/login?returnUrl=' + window.location.pathname;
+                return false;
+            }
+        },
+        data: {filtered_by: [{}]}
+    },
     pageLength: 10
 }
 

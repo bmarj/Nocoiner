@@ -5,8 +5,10 @@
         {% block modalcontent %}{% endblock modalcontent %}
     </div>
 
+    {% block feature_javascripts %} {% endblock feature_javascripts %}
     <script type="text/javascript" charset="utf-8">
       setupModal();
       showDialog();
     </script>
+    {% block extra_javascripts %} {% endblock extra_javascripts %}
 </div>

@@ -5,6 +5,7 @@ from marshmallow import EXCLUDE
 
 from api.datatables import DataTables
 from api.user_management import login_required, authorize
+from api.utils.common import generic_edit, generic_form_edit, generic_form_delete
 from .business import query_orders, get_order_by_id, set_order_status
 from .schemas import (
     OrdersSchema)
@@ -72,3 +73,26 @@ def cancel_order(id):
     obj.query.session.commit()
     flash('Order cancelled', category="Success")
     return render_template("form_success.jinja")
+
+
+@bp.route('/order_details/<id>', methods=['GET'])
+@bp.route('/order_details', methods=['POST'])
+@authorize('orders')
+def order_details(id=None):
+    return generic_edit(OrderForm, 'order_details.jinja', url_for('.order_details'), id)
+
+
+# generic editing
+# need to change only permited forms
+@bp.route('/form_edit/<id>', methods=['GET'])
+@bp.route('/form_edit', methods=['GET','POST'])
+@authorize('orders')
+def form_edit(id=None):
+    permitted_forms = [OrderForm]
+    return generic_form_edit(url_for('.form_edit'), permitted_forms, id)
+
+@bp.route("/delete/<id>", methods=['POST'])
+@authorize('orders')
+def form_delete(id):
+    permitted_forms = [OrderForm]
+    return generic_form_delete(permitted_forms, id)

@@ -10,6 +10,7 @@
                 </div>
                 <div class="tools">
                   {% from "_buttons.html" import add_button, edit_button, delete_button, edit, action %}
+                  {{ edit_button('.order_details','orders', current_user, 'Order details') }}
                   {{ edit_button('.edit','orders', current_user) }}
                   {{ action('.cancel_order','orders', current_user, 'Cancel order', "Do you want to cancel order?") }}
                 </div>
