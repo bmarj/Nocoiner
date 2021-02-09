@@ -32,6 +32,13 @@ tr:not(.selected) .draggable a {
     visibility: hidden;
 }
 
+/* hidden successful validation  */
+.form-control.is-valid, .was-validated .form-control:valid {
+    border-color: #495057;
+    background-image: initial;
+    padding-right: initial;
+}
+
 .dialog-size-grid{
   width: 300%; 
   left: -75%;

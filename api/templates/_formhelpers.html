@@ -5,7 +5,7 @@
         <div class="controls">
             {{ field(class_="form-control", **kwargs)|safe }}
             {% if field.errors %}
-                <p class="help-block">{{ field.errors|join(' ') }}</p>
+                <p class="help-block mb-0">{{ field.errors|join(' ') }}</p>
             {% endif %}
             {% if field.description %}
                 <p class="help-block">{{ field.description }}</p>
@@ -152,16 +152,22 @@
 {% endmacro %}
 
 {% macro render_footer(submit_target, form) %}
-    {% if form and form.validation_summary %}
-    <div class="mr-auto">
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item ">
-          <span class="text-danger">{{ form.validation_summary }}</span>
-        </li>
-      </ul>  
+    <div class="row">
+      <div class="text-left col-8">
+        {% if form and form.validation_summary %}
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item ">
+              <span class="text-danger">{{ form.validation_summary }}</span>
+            </li>
+          </ul>
+        {% endif %}
+      </div>
+      <div class="col-4">
+        <div class="tools">
+          <button id="btnUpdate" type="button" class="btn btn-primary"
+                  onclick="submitModal(this,'{{ submit_target }}');">Save</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
     </div>
-    {% endif %}
-    <button id="btnUpdate" type="button" class="btn btn-primary"
-            onclick="submitModal(this,'{{ submit_target }}');">Save</button>
-    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 {% endmacro %}
