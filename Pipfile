@@ -19,6 +19,7 @@ dateutils = "*"
 pymssql = "*"
 flask-login = "*"
 docxtpl = "*"
+flask-migrate = "*"
 
 [dev-packages]
 flake8 = "*"

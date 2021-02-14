@@ -2,6 +2,7 @@
 from sqlalchemy import event, Column, DateTime, Integer, ForeignKey, String, Boolean, FetchedValue, Unicode
 from sqlalchemy.dialects.mssql import VARCHAR
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 from api.models.model_base import db, BIT, Numeric, DECIMAL, DATETIMEOFFSET
 from sqlalchemy.ext.hybrid import hybrid_property
 from api.models.model_base import NonUnicodeString
@@ -13,7 +14,7 @@ class FulfillmentWarehouse(db.Model):
     id                  = Column(Integer, primary_key=True)
     name                = Column(String(64), nullable=False)
     code                = Column(String(20), nullable=False, unique=True)
-    enabled             = Column(BIT, nullable=False, server_default=FetchedValue())
+    enabled             = Column(BIT, nullable=False, server_default="1")
 
 
 class Order(db.Model):
@@ -42,13 +43,13 @@ class Order(db.Model):
     buyer_postal_code   = Column(Unicode(100))
     buyer_country       = Column(Unicode(500))
     sales_channel_id    = Column(ForeignKey('sales_channel.id'), nullable=False)
-    created_timestamp   = Column(DateTime, nullable=False, server_default=FetchedValue())
-    total_qty           = Column(Integer, nullable=False, server_default=FetchedValue())
+    created_timestamp   = Column(DateTime, nullable=False, server_default=func.now())
+    total_qty           = Column(Integer, nullable=False, server_default="0")
     order_status_id     = Column(ForeignKey('order_status.id'), nullable=False)
-    processing_status   = Column(Unicode(20), nullable=False, server_default=FetchedValue())
+    processing_status   = Column(Unicode(20), nullable=False, server_default='Pending')
     referring_order     = Column(Integer)
-    is_prime            = Column(BIT, nullable=False, server_default=FetchedValue())
-    is_premium          = Column(BIT, nullable=False, server_default=FetchedValue())
+    is_prime            = Column(BIT, nullable=False, server_default="0")
+    is_premium          = Column(BIT, nullable=False, server_default="0")
     shipping_priority   = Column(Unicode(128))
 
     order_status        = relationship('OrderStatus',
@@ -68,7 +69,7 @@ class OrderLine(db.Model):
     order_id            = Column(ForeignKey('order.id'), nullable=False)
     qty_ordered         = Column(Integer, nullable=False)
     qty_shipped         = Column(Integer, nullable=False,
-                                 server_default=FetchedValue())
+                                 server_default="0")
     price               = Column(Numeric(10, 2), nullable=False)
     tax                 = Column(Numeric(10, 2))
     currency_code       = Column(Unicode(3), nullable=False)
@@ -80,17 +81,17 @@ class OrderLine(db.Model):
     order_line_status_id \
                         = Column(ForeignKey('order_line_status.id'))
     exported            = Column(BIT, nullable=False,
-                                 server_default=FetchedValue())
+                                 server_default="0")
     date_exported       = Column(DateTime)
     username            = Column(Unicode(256))
     notes               = Column(Unicode)
-    created_date        = Column(DateTime, server_default=FetchedValue())
+    created_date        = Column(DateTime, server_default=func.now())
     processed_date      = Column(DateTime)
     promise_date        = Column(DateTime)
     fulfillment_warehouse_id \
                         = Column(ForeignKey('fulfillment_warehouse.id'))
     is_premium          = Column(BIT, nullable=False,
-                                 server_default=FetchedValue())
+                                 server_default="0")
     shipping_priority   = Column(Unicode(128))
 
     fulfillment_warehouse = relationship('FulfillmentWarehouse',
@@ -131,13 +132,13 @@ class SalesChannel(db.Model):
     code                = Column(Unicode(20), nullable=False, unique=True)
     service_id          = Column(Unicode(50), unique=True)
     balanceable         = Column(BIT, nullable=False,
-                                 server_default=FetchedValue())
+                                 server_default="0")
     enabled             = Column(BIT, nullable=False,
-                                 server_default=FetchedValue())
+                                 server_default="1")
     product_alias_group = Column(Integer, nullable=False,
-                                 server_default=FetchedValue())
+                                 server_default="0")
     is_cross_insert     = Column(BIT, nullable=False,
-                                 server_default=FetchedValue())
+                                 server_default="0")
 
 
 class ShipServiceLevel(db.Model):

@@ -1,0 +1,39 @@
+BM: 
+Migrations initialized with
+$ flask db init --multidb
+
+Before creating initial migration, in multi db mode, run: 
+/*
+CREATE TABLE alembic_version (
+	version_num VARCHAR(32) NOT NULL, 
+	CONSTRAINT alembic_version_pkc PRIMARY KEY (version_num)
+)
+*/
+
+$ flask db migrate -m "Initial migration"
+
+Added lines in env.py:
+    if not name:
+        continue
+to skip <default> DB sync (we are using bindings for all DBs), because it caused deadlocks
+
+HOW TO USE IT:
+First use:
+  Create DB.
+  run $ flask db upgrade
+  Seed data.
+
+Prepare migration schema changes from LAST UPGRADE
+$ flask db migrate -m "Migration name"
+  or $ flask db migrate
+Note: after migrate command, new schema changes won't be detected until upgrade is run.
+
+Upgrade DB
+$ flask db upgrade
+
+After upgrade, Changes made since last migration can be added to new migration.
+To revert/downgrade DB use:
+
+$ flask db downgrade
+
+

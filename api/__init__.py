@@ -4,6 +4,7 @@ from flask import Flask
 
 from api.config import config
 from api.utils import template_filters
+from flask_migrate import Migrate
 from api.models.model_base import db
 from api.models.schema_base import ma
 from api.user_management import um
@@ -49,7 +50,6 @@ def create_app(test_config=None):
     db.init_app(app)
     ma.init_app(app)
     um.init_app(app)
-
     # attach routes and custom error pages here
 
     from api.errors.blueprint import errors
@@ -69,5 +69,10 @@ def create_app(test_config=None):
 
     # from api.inventory.blueprint import inventory
     # app.register_blueprint(inventory, url_prefix='/inventory')
+
+    # create all missing tables
+    # db.create_all(app=app)
+    # enable migrations with Flask-migrate and Alembic
+    migrate = Migrate(app, db)
 
     return app
