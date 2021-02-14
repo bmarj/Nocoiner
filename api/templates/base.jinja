@@ -208,6 +208,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="/static/app.js"></script>
     {% block extra_javascripts %} {% endblock extra_javascripts %}
+    <script>
+        $(document).ready(function () {
+            initDatatable('#datatable');
+        });
+    </script>
 </body>
 
 </html>

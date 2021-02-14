@@ -1040,13 +1040,25 @@ var simpleDatatablesConfig =
 }
 
 function initDatatable(datatableId, dtConf){
-    // default empty string content for values returned as null
-    dtConf.columns.forEach((t) => t.defaultContent === undefined ? t.defaultContent = "" : null);
+    // skip if already initialized
+    if ($.fn.dataTable.isDataTable(datatableId))
+        return;
+
+    let conf = dtConf;
+    if ($(datatableId).data("settings"))
+        conf = window[$(datatableId).data("settings")];
+
+    // if initialized with data- attributes, columns can be empty
+    if (conf.columns){
+        // default empty string content for values returned as null
+        conf.columns.forEach((t) => t.defaultContent === undefined ? t.defaultContent = "" : null);
+    }
+
     let table = $(datatableId)
         .on('draw.dt', function(e, settings, data, xhr) {
             setupTable(datatableId);
         } )
-        .DataTable(dtConf);
+        .DataTable(conf);
     setupColvisButton();
     var debounce = new searchDebounce(table, 500);
     return table;

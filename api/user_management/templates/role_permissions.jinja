@@ -16,8 +16,16 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="datatable" class="table table-bordered table-hover clickable-rows" width="100%">
-                      <thead class="thead-light"></thead>
+                    <!-- initialize with HTML only -->
+                    <table id="datatable" class="table table-bordered table-hover clickable-rows" width="100%"
+                      data-settings="defaultDatatablesConfig"
+                      data-ajax="{{ url_for('.role_permissions_data') }}" >
+                      <thead class="thead-light">
+                        <tr>
+                          <th data-data="role.name">Role</th>
+                          <th data-data="permission.name">Permission</th>
+                        </tr>
+                      </thead>
                     </table>
                 </div>
             </div>
@@ -26,26 +34,3 @@
 </div>
 
 {% endblock content %}
-
-{% block extra_javascripts %}
-  <script>
-    let dtConf = defaultDatatablesConfig;
-
-    dtConf.ajax.url = '{{ url_for('.role_permissions_data') }}';
-
-    dtConf.columns = [
-        { data:"role.name", title:"Role" },
-        { data:"permission.name", title:"Permission" },
-    ];
-
-
-    $(document).ready(function () {
-      initDatatable('#datatable', dtConf);
-    });
-  </script>
-
-{% endblock extra_javascripts %}
-
-{# additional features used on this page: #}
-{% block feature_javascripts %}
-{% endblock feature_javascripts %}

@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 Flask = "*"
+SQLAlchemy = "==1.3.23"
 Flask-SQLAlchemy = "*"
 flask-sqlacodegen = "*"
 pyodbc = "*"
@@ -17,6 +18,7 @@ wtforms-alchemy = "*"
 dateutils = "*"
 pymssql = "*"
 flask-login = "*"
+docxtpl = "*"
 
 [dev-packages]
 flake8 = "*"
