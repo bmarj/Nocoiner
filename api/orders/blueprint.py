@@ -11,9 +11,9 @@ from .schemas import (
     OrdersSchema)
 from .forms import OrderForm
 
-orders = bp = Blueprint('orders', __name__,
-                   template_folder='templates',
-                   static_folder='static', static_url_path='/static')
+bp = Blueprint('orders', __name__,
+               template_folder='templates',
+               static_folder='static', static_url_path='/static')
 
 @bp.route("/")
 @authorize('orders')

@@ -1,7 +1,10 @@
 import os
-from flask import Blueprint, session, jsonify, url_for, request, render_template, flash, current_app
+import jinja2
+from flask import Blueprint, jsonify, url_for, request, render_template, flash, current_app, send_file
 from flask_sqlalchemy import orm
 from marshmallow import EXCLUDE
+from docxtpl import DocxTemplate
+from sqlalchemy.sql.functions import current_user
 # from marshmallow.exceptions import ValidationError
 
 from api.datatables import DataTables
@@ -11,9 +14,9 @@ from .schemas import (
     OrderLinesSchema)
 from .forms import OrderLineForm
 
-order_lines = bp = Blueprint('order_lines', __name__,
-                   template_folder='templates',
-                   static_folder='static', static_url_path='/static')
+bp = Blueprint('order_lines', __name__,
+               template_folder='templates',
+               static_folder='static', static_url_path='/static')
 
 
 @bp.route("/")
@@ -80,14 +83,11 @@ def cancel_order(id):
 @bp.route("/report")
 @authorize('order_lines')
 def order_lines_report():
-    from docxtpl import DocxTemplate
-    from flask import send_file
-    
     query = query_order_line()
     response_schema = OrderLinesSchema(many=True)
     results = response_schema.dump(query.limit(50).all())
 
-    root = os.path.join(current_app.root_path, 'order_lines', 'report_templates')
+    root = os.path.join(current_app.root_path, bp.name, 'report_templates')
 
     doc = DocxTemplate(os.path.join(root, "test_template1.docx"))
     context = {
@@ -96,7 +96,9 @@ def order_lines_report():
         'count': len(results),
         'data': results,
     }
-    doc.render(context)
+    # jinja env for jinja filters (optional)
+    jinja_env = jinja2.Environment()
+    doc.render(context, jinja_env)
 
     doc.save(os.path.join(root, "test_report1.docx"))
     return send_file(os.path.join(root, "test_report1.docx"))

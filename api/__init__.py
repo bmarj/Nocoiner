@@ -52,26 +52,12 @@ def create_app(test_config=None):
     um.init_app(app)
     # attach routes and custom error pages here
 
-    from api.errors.blueprint import errors
-    app.register_blueprint(errors)
+    from api import errors, monitor, orders, order_lines
+    app.register_blueprint(errors.bp)
+    app.register_blueprint(monitor.bp, url_prefix='/monitor')
+    app.register_blueprint(orders.bp, url_prefix='/orders')
+    app.register_blueprint(order_lines.bp, url_prefix='/order_lines')
 
-    from api.checks.blueprint import checks
-    app.register_blueprint(checks, url_prefix='/checks')
-
-    from api.orders.blueprint import orders
-    app.register_blueprint(orders, url_prefix='/orders')
-
-    from api.fake_firebase.blueprint import firebase
-    app.register_blueprint(firebase, url_prefix='/firebase')
-
-    from api.order_lines.blueprint import order_lines
-    app.register_blueprint(order_lines, url_prefix='/order_lines')
-
-    # from api.inventory.blueprint import inventory
-    # app.register_blueprint(inventory, url_prefix='/inventory')
-
-    # create all missing tables
-    # db.create_all(app=app)
     # enable migrations with Flask-migrate and Alembic
     migrate = Migrate(app, db)
 

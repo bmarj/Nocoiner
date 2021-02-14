@@ -3,27 +3,27 @@ from flask.helpers import flash
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.exc import IntegrityError, OperationalError
 
-errors = Blueprint('errors', __name__,
+bp = Blueprint('errors', __name__,
                    template_folder='templates',
                    static_folder='static', static_url_path='/static')
 
-@errors.app_errorhandler(404)
+@bp.app_errorhandler(404)
 def page_not_found(e):
     #return "Not found", 404
     return render_template('404.jinja'), 404
 
-@errors.app_errorhandler(500)
+@bp.app_errorhandler(500)
 def internal_server_error(e):
     # TODO: log error details etc
     return "Unexpected error", 500
     # return render_template('500.html'), 500
 
-@errors.app_errorhandler(ValidationError)
+@bp.app_errorhandler(ValidationError)
 def data_validation_error(e):
     validation_errors = e.args[0]
     return jsonify(validation_errors)
 
-@errors.app_errorhandler(IntegrityError)
+@bp.app_errorhandler(IntegrityError)
 def sql_integrity_error(e):
     description = e.args[0]
     message = "Data related error occured"
@@ -35,7 +35,7 @@ def sql_integrity_error(e):
     flash(message, category="Action failed")
     return render_template("form_error.jinja")
 
-@errors.app_errorhandler(OperationalError)
+@bp.app_errorhandler(OperationalError)
 def sql_op_error(e):
     description = e.args[0]
     message = "Database related error occured"

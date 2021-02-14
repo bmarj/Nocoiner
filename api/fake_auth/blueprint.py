@@ -1,20 +1,20 @@
 from flask import Blueprint, session, jsonify, make_response
 import json
 
-auth = Blueprint('auth', __name__,
-                 template_folder='templates',
-                 static_folder='static', static_url_path='/static')
+bp = Blueprint('auth', __name__,
+               template_folder='templates',
+               static_folder='static', static_url_path='/static')
 
 
-@auth.route('/login', methods=['POST'])
+@bp.route('/login', methods=['POST'])
 def login():
     return '', 200
 
-@auth.route('/logout', methods=['GET'])
+@bp.route('/logout', methods=['GET'])
 def logout():
     return 'OK', 200
 
-@auth.route('/auth_test', methods=['GET'])
+@bp.route('/auth_test', methods=['GET'])
 def get_auth_info():
     return make_response(
         json.dumps(
