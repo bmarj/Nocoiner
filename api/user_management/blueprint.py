@@ -2,6 +2,7 @@
 import json
 from flask import Blueprint, redirect, request, jsonify, url_for, current_app, flash, render_template
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from .anonymous_user import AnonymousUser
 from .decorators import authorize
 from ..utils.common import generic_edit, generic_delete, generic_add, generic_form_delete, generic_form_edit
 
@@ -46,6 +47,7 @@ class UserManager(LoginManager):
         # registers blueprint into same url namespace as login manager
         app.register_blueprint(user_management, url_prefix='/')
         self.user_loader(self.load_user)
+        self.anonymous_user = AnonymousUser
         self.unauthorized_handler(self.handle_unauthorized)
         super().init_app(app)
     
