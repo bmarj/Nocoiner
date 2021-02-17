@@ -65,7 +65,7 @@ class DockerDevConfig(Config):
     DEBUG = True
 
 # way to map the value of `FLASK_ENV` to a configuration
-config = {"dev": DevelopmentConfig,
-          "prod": ProductionConfig,
+config = {"development": DevelopmentConfig,
+          "production": ProductionConfig,
           "docker": DockerDevConfig
           }

@@ -29,7 +29,8 @@ def create_app(test_config=None):
     app.testing = False
 
     # check environment variables to see which config to load
-    env = os.environ.get("FLASK_ENV", "dev")
+    # setting default environment to production as a fail-safe
+    env = os.environ.get("FLASK_ENV", "production")
     # for configuration options, look at api/config.py
     if test_config:
         # purposely done so we can inject test configurations
