@@ -2,7 +2,8 @@
 from api import create_app
 
 # for gunicorn, by default it searches for "application"
-application = create_app()
+application = app = create_app()
+
 
 if __name__ == '__main__':
     application.run()

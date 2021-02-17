@@ -20,6 +20,7 @@ pymssql = "*"
 flask-login = "*"
 docxtpl = "*"
 flask-migrate = "*"
+gunicorn = "*"
 
 [dev-packages]
 flake8 = "*"
