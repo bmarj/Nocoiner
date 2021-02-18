@@ -21,6 +21,7 @@ flask-login = "*"
 docxtpl = "*"
 flask-migrate = "*"
 gunicorn = "*"
+psycopg2 = "*"
 
 [dev-packages]
 flake8 = "*"
