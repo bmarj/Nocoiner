@@ -4,8 +4,8 @@ from flask import request, abort
 from flask_sqlalchemy import SQLAlchemy, BaseQuery, Model, Pagination
 from flask_sqlalchemy import orm, inspect, event
 from sqlalchemy.sql import func
-from sqlalchemy import desc, types
-from sqlalchemy.dialects.mssql import (BIT, DECIMAL, NUMERIC,
+from sqlalchemy import desc, types, NUMERIC
+from sqlalchemy.dialects.mssql import (BIT, DECIMAL,
                                        DATETIMEOFFSET)
 from api.utils.model_helpers import get_column_in_models
 

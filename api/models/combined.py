@@ -14,7 +14,7 @@ class FulfillmentWarehouse(db.Model):
     id                  = Column(Integer, primary_key=True)
     name                = Column(String(64), nullable=False)
     code                = Column(String(20), nullable=False, unique=True)
-    enabled             = Column(BIT, nullable=False, server_default="1")
+    enabled             = Column(Boolean, nullable=False, server_default="1")
 
 
 class Order(db.Model):
@@ -48,8 +48,8 @@ class Order(db.Model):
     order_status_id     = Column(ForeignKey('order_status.id'), nullable=False)
     processing_status   = Column(Unicode(20), nullable=False, server_default='Pending')
     referring_order     = Column(Integer)
-    is_prime            = Column(BIT, nullable=False, server_default="0")
-    is_premium          = Column(BIT, nullable=False, server_default="0")
+    is_prime            = Column(Boolean, nullable=False, server_default="0")
+    is_premium          = Column(Boolean, nullable=False, server_default="0")
     shipping_priority   = Column(Unicode(128))
 
     order_status        = relationship('OrderStatus',
@@ -80,7 +80,7 @@ class OrderLine(db.Model):
                         = Column(Unicode(128))
     order_line_status_id \
                         = Column(ForeignKey('order_line_status.id'))
-    exported            = Column(BIT, nullable=False,
+    exported            = Column(Boolean, nullable=False,
                                  server_default="0")
     date_exported       = Column(DateTime)
     username            = Column(Unicode(256))
@@ -90,7 +90,7 @@ class OrderLine(db.Model):
     promise_date        = Column(DateTime)
     fulfillment_warehouse_id \
                         = Column(ForeignKey('fulfillment_warehouse.id'))
-    is_premium          = Column(BIT, nullable=False,
+    is_premium          = Column(Boolean, nullable=False,
                                  server_default="0")
     shipping_priority   = Column(Unicode(128))
 
@@ -131,13 +131,13 @@ class SalesChannel(db.Model):
     description         = Column(Unicode(100), nullable=False)
     code                = Column(Unicode(20), nullable=False, unique=True)
     service_id          = Column(Unicode(50), unique=True)
-    balanceable         = Column(BIT, nullable=False,
+    balanceable         = Column(Boolean, nullable=False,
                                  server_default="0")
-    enabled             = Column(BIT, nullable=False,
+    enabled             = Column(Boolean, nullable=False,
                                  server_default="1")
     product_alias_group = Column(Integer, nullable=False,
                                  server_default="0")
-    is_cross_insert     = Column(BIT, nullable=False,
+    is_cross_insert     = Column(Boolean, nullable=False,
                                  server_default="0")
 
 

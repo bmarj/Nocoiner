@@ -7,7 +7,6 @@ Create Date: 2021-02-14 15:17:24.739471
 """
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.dialects import mssql
 
 # revision identifiers, used by Alembic.
 revision = '848da2d42120'
@@ -41,7 +40,7 @@ def upgrade_ordersDB():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=64), nullable=False),
     sa.Column('code', sa.String(length=20), nullable=False),
-    sa.Column('enabled', mssql.BIT(), server_default='1', nullable=False),
+    sa.Column('enabled', sa.Boolean(), server_default='1', nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('code')
     )
@@ -64,10 +63,10 @@ def upgrade_ordersDB():
     sa.Column('description', sa.Unicode(length=100), nullable=False),
     sa.Column('code', sa.Unicode(length=20), nullable=False),
     sa.Column('service_id', sa.Unicode(length=50), nullable=True),
-    sa.Column('balanceable', mssql.BIT(), server_default='0', nullable=False),
-    sa.Column('enabled', mssql.BIT(), server_default='1', nullable=False),
+    sa.Column('balanceable', sa.Boolean(), server_default='0', nullable=False),
+    sa.Column('enabled', sa.Boolean(), server_default='1', nullable=False),
     sa.Column('product_alias_group', sa.Integer(), server_default='0', nullable=False),
-    sa.Column('is_cross_insert', mssql.BIT(), server_default='0', nullable=False),
+    sa.Column('is_cross_insert', sa.Boolean(), server_default='0', nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('code'),
     sa.UniqueConstraint('service_id')
@@ -107,8 +106,8 @@ def upgrade_ordersDB():
     sa.Column('order_status_id', sa.Integer(), nullable=False),
     sa.Column('processing_status', sa.Unicode(length=20), server_default='Pending', nullable=False),
     sa.Column('referring_order', sa.Integer(), nullable=True),
-    sa.Column('is_prime', mssql.BIT(), server_default='0', nullable=False),
-    sa.Column('is_premium', mssql.BIT(), server_default='0', nullable=False),
+    sa.Column('is_prime', sa.Boolean(), server_default='0', nullable=False),
+    sa.Column('is_premium', sa.Boolean(), server_default='0', nullable=False),
     sa.Column('shipping_priority', sa.Unicode(length=128), nullable=True),
     sa.ForeignKeyConstraint(['order_status_id'], ['order_status.id'], ),
     sa.ForeignKeyConstraint(['sales_channel_id'], ['sales_channel.id'], ),
@@ -128,7 +127,7 @@ def upgrade_ordersDB():
     sa.Column('line_type', sa.Unicode(length=10), nullable=True),
     sa.Column('purchase_order_number', sa.Unicode(length=128), nullable=True),
     sa.Column('order_line_status_id', sa.Integer(), nullable=True),
-    sa.Column('exported', mssql.BIT(), server_default='0', nullable=False),
+    sa.Column('exported', sa.Boolean(), server_default='0', nullable=False),
     sa.Column('date_exported', sa.DateTime(), nullable=True),
     sa.Column('username', sa.Unicode(length=256), nullable=True),
     sa.Column('notes', sa.Unicode(), nullable=True),
@@ -136,7 +135,7 @@ def upgrade_ordersDB():
     sa.Column('processed_date', sa.DateTime(), nullable=True),
     sa.Column('promise_date', sa.DateTime(), nullable=True),
     sa.Column('fulfillment_warehouse_id', sa.Integer(), nullable=True),
-    sa.Column('is_premium', mssql.BIT(), server_default='0', nullable=False),
+    sa.Column('is_premium', sa.Boolean(), server_default='0', nullable=False),
     sa.Column('shipping_priority', sa.Unicode(length=128), nullable=True),
     sa.ForeignKeyConstraint(['fulfillment_warehouse_id'], ['fulfillment_warehouse.id'], ),
     sa.ForeignKeyConstraint(['order_id'], ['order.id'], ),
