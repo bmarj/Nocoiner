@@ -1,9 +1,14 @@
-# mssql-python3.6-pyodbc
-FROM ubuntu:20.04
-# apt-get and system utilities
-# RUN apt-get update && apt-get install -y \
-#     curl apt-utils apt-transport-https debconf-utils gcc build-essential g++-5\
-#     && rm -rf /var/lib/apt/lists/*
+# For more information, please refer to https://aka.ms/vscode-docker-python
+FROM python:3.8-slim-buster
+
+EXPOSE 8000
+
+# Keeps Python from generating .pyc files in the container
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Turns off buffering for easier container logging
+ENV PYTHONUNBUFFERED=1
+
 # # adding custom MS repository
 # RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 # RUN curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
@@ -31,43 +36,17 @@ RUN apt-get update && apt-get install -y locales \
 RUN pip3 install --upgrade pip
 # # install SQL Server Python SQL Server connector module - pyodbc
 RUN pip3 install pyodbc
-# RUN pip3 install setuptools
-# RUN pip3 install imutils
-# RUN pip3 install flask_restful
-# RUN pip3 install flask_sqlalchemy
-# RUN pip3 install numpy
-# RUN pip3 install flask_httpauth
-# RUN pip3 install Flask-JWT
-# RUN pip3 install flask_babel
-# RUN pip3 install werkzeug
-# RUN pip3 install requests
-# RUN pip3 install flask_cors
-# RUN pip3 install urllib3
-# RUN pip3 install bs4
-# RUN pip3 install flask_jwt_extended
-# RUN pip3 install python-csv
-# RUN pip3 install uuid
-# RUN pip3 install scipy
-# RUN pip3 install flask_httpauth
-# RUN pip3 install colorgram.py
-# RUN pip3 install opencv-python
-# RUN pip3 install pillow
-# RUN pip3 install colorthief
-# install additional utilities
 
-ARG DEBIAN_FRONTEND=noninteractive
-ENV TZ=Europe/Moscow
-RUN TZ="America/New_York" apt-get update && apt-get install gettext nano vim -y 
-# add sample code
-RUN mkdir /web
-ADD . /web
-WORKDIR /web
+# Install pip requirements
+COPY requirements.txt .
+RUN python -m pip install -r requirements.txt
 
-COPY . /web
+WORKDIR /app
+COPY . /app
 
-RUN pip3 install -r requirements.txt
+# Switching to a non-root user, please refer to https://aka.ms/vscode-docker-python-user-rights
+RUN useradd appuser && chown -R appuser /app
+USER appuser
 
-EXPOSE 8000
-ENV FLASK_ENV=production
-# ENTRYPOINT ["python3"]
-CMD ["gunicorn", "--bind", ":8000", "--workers", "4", "app:application"]
+# During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app:app"]
