@@ -1,0 +1,63 @@
+{% extends 'base.jinja' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="caption uppercase">
+                    <i class="ti-layout-grid3-alt"></i> Report 1
+                </div>
+                <div class="tools">
+                  {% from "_buttons.html" import add_button, edit_button, delete_button, edit, action %}
+                  {# {{ edit_button('.order_details','orders', current_user, 'Order details') }}
+                  {{ edit_button('.edit','orders', current_user) }}
+                  {{ action('.cancel_order','orders', current_user, 'Cancel order', "Do you want to cancel order?") }} #}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="datatable" class="table table-bordered table-hover clickable-rows" width="100%">
+                      <thead class="thead-light"></thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_javascripts %}
+  <script>
+    let dtConf = defaultDatatablesConfig;
+
+    dtConf.ajax.url = '{{ url_for('.report1_data') }}';
+
+    dtConf.columns = [
+//        { data:"order_number", title:"Order Number" },
+//        { data:"purchase_date", title:"Purchase Date" },
+        { data:"order.ship_name", title:"Shipping Name" },
+/*        { data:"ship_address", title:"Shipping Address" },
+        { data:"ship_address_2", title:"Shipping Address 2" },
+        { data:"ship_city", title:"Shipping City" },
+        { data:"ship_state", title:"Shipping State" },
+        { data:"shipping_priority", title:"Shipping Priority" },
+        { data:"sales_channel.description", title:"Sales Channel" },
+ */   ];
+
+    $(document).ready(function () {
+      tb = initDatatable('#datatable', dtConf);
+      /* yadcf.init(tb, [
+        { column_number: 0, filter_type: "text", filter_match_mode: 'startsWith' },
+      ]); */
+    });
+  </script>
+
+{% endblock extra_javascripts %}
+
+{# additional features used on this page: #}
+{% block feature_javascripts %}
+  {% include '_feature_column_visibility.html' %}
+  {# {% include '_feature_column_filtering.html' %} #}
+{% endblock feature_javascripts %}
