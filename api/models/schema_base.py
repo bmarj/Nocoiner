@@ -3,7 +3,7 @@ from marshmallow import pre_load, post_load, post_dump, Schema
 from flask_marshmallow import Marshmallow
 from flask_marshmallow.sqla import (
     SQLAlchemyAutoSchema, SQLAlchemySchema, SQLAlchemyAutoSchemaOpts)
-from api.models.combined import db
+from api.models.model_base import db
 
 ma = Marshmallow()
 
