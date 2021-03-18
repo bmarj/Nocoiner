@@ -38,6 +38,10 @@ class DataTables:
         self.query = query
         self.schema = schema
         self.related_model_classes = related_model_classes
+        if hasattr(self.query, 'get_model_classes'):
+            self.models = self.query.get_model_classes()
+        else:
+            self.models = related_model_classes
         self.results = None
         self.allow_regex_searches = allow_regex_searches
 
@@ -49,6 +53,7 @@ class DataTables:
 
         self.yadcf_params = []
         self.filter_expressions = []
+        self.group_filter_expressions = []
         self.error = None
         try:
             self.run()
@@ -95,30 +100,34 @@ class DataTables:
     #                                       [r[0] for r in v]))
 
     def run(self):
-        """Launch filtering, sorting and paging to output results."""
+        """Launch filtering, sorting and paging to output results.
+        """
         query = self.query
 
         # apply data domain context
         self._set_context_filter_expression()
-        query = query.filter(
-            *[e for e in self.filter_expressions if e is not None])
+        query = query.filter(*self.filter_expressions)
         # count before filtering
         self.cardinality = query.count()
         
         self._set_column_filter_expressions()
-        self._set_global_filter_expression()
+        self._set_global_filter_expression(only_aggregates=False)
+        self._set_global_filter_expression(only_aggregates=True)
         self._set_sort_expressions()
         # self._set_yadcf_data(query)
 
         # apply filters
-        query = query.filter(
-            *[e for e in self.filter_expressions if e is not None])
+        if self.filter_expressions:
+            query = query.filter(*self.filter_expressions)
+
+        # HAVING filters
+        if self.group_filter_expressions:
+            query = query.having(*self.group_filter_expressions)
 
         self.cardinality_filtered = query.count()
 
         # apply sorts
-        query = query.order_by(
-            *[e for e in self.sort_expressions if e is not None])
+        query = query.order_by(*self.sort_expressions)
 
         # add paging options
         length = int(self.params.get('length'))
@@ -153,8 +162,7 @@ class DataTables:
             value = self.params.get('filtered_by[{:d}][value]'.format(i), None)
             i += 1
 
-            models = self.query.get_model_classes()
-            column = get_column_in_models(models, column_name)
+            column = get_column_in_models(self.models, column_name)
 
             if column and value is not None:
                 filter_expr = column == value
@@ -167,7 +175,6 @@ class DataTables:
         Add filtering when per column searching is used.
         """
         columns = []
-        models = self.query.get_model_classes()
         i = 0
         while self.params.get('columns[{:d}][data]'.format(i), False):
             column_name = self.params.get('columns[{:d}][data]'.format(i))
@@ -188,7 +195,7 @@ class DataTables:
                 if search_val != '':
                     search_val = '%' + search_val + '%'
 
-            column = get_column_in_models(models, column_name)
+            column = get_column_in_models(self.models, column_name)
             if column:
                 columns.append([column, search_val])
 
@@ -198,16 +205,23 @@ class DataTables:
             if value:
                 search_func = SEARCH_METHODS['like']
                 filter_expr = search_func(column, value)
-            self.filter_expressions.append(filter_expr)
+            if filter_expr is not None:
+                self.filter_expressions.append(filter_expr)
 
-    def _set_global_filter_expression(self):
+    def _set_global_filter_expression(self, only_aggregates=False):
+        """Parse filters for quick search field.
+
+           :params only_aggregates: if sum(), count() columns or scalar columns
+                                    will be parsed in this function
+           :type only_aggregates: Boolean
+        """
+
         # global search filter
         global_search = self.params.get('search[value]', '')
         if global_search == '':
             return
 
         columns = []
-        models = self.query.get_model_classes()
         i = 0
         while self.params.get('columns[{:d}][data]'.format(i), False):
             column_name = self.params.get('columns[{:d}][data]'.format(i))
@@ -216,7 +230,7 @@ class DataTables:
             i += 1
             if searchable.lower() == 'false':
                 continue
-            column = get_column_in_models(models, column_name)
+            column = get_column_in_models(self.models, column_name)
             if column:
                 columns.append(column)
 
@@ -239,15 +253,25 @@ class DataTables:
                              '>=1' search numeric columns grater than 1
 
                 """
+                # skip all other columns if processing aggregates
+                if only_aggregates:
+                    if not hasattr(col.property.expression, "element") or \
+                        col.property.expression.element.identifier not in ("sum", "count", "min", "max"):
+                        return None
+                else:
+                    if hasattr(col.property.expression, "element") and \
+                        col.property.expression.element.identifier in ("sum", "count", "min", "max"):
+                        return None
                 val = '' + global_search + ''
                 search_func = SEARCH_METHODS['like']
                 val_without_ops = val
+
                 if global_search.startswith(tuple(search_operators.keys())):
                     has_expr = True
                     val_without_ops = val_without_ops.lstrip('<').lstrip('>').lstrip('=')
                 else:
                     has_expr = False
-                
+
                 if col.type.__visit_name__ == 'unicode':
                     if has_expr:
                         return None
@@ -262,7 +286,7 @@ class DataTables:
                         return None
                 elif col.type.__class__ is String or col.type.__class__ is NonUnicodeString:
                     if has_expr:
-                        return None                    
+                        return None
                     try:
                         if global_search.endswith(' '):
                             return or_(search_func(col, global_search.strip()),
@@ -275,7 +299,7 @@ class DataTables:
                 elif col.type.__visit_name__ == 'integer' and has_expr:
                     if not val_without_ops.isdigit():
                         return None
-                    search_func = SEARCH_METHODS['like']
+                    search_func = SEARCH_METHODS['numeric']
                     val = global_search.strip()
                 elif col.type.__visit_name__ == 'NUMERIC' and has_expr:
                     if not val_without_ops.lstrip('-').replace(',','').replace('.','').strip().isdigit():
@@ -286,7 +310,7 @@ class DataTables:
                 #     return None
                 #     # search_func = SEARCH_METHODS['date']
                 else:
-                    if has_expr:
+                    if has_expr or only_aggregates:
                         return None
                     # WARNING: this search remaining column types by converting them to string!
                     #          For performance reasons, this needs to be removed for larger data.
@@ -302,8 +326,10 @@ class DataTables:
         global_filter = [
             filter_for(col) for col in columns if filter_for(col) is not None # if hasattr(col, 'global_search') and col.global_search
         ]
-
-        self.filter_expressions.append(or_(*global_filter))
+        if only_aggregates:
+            self.group_filter_expressions.append(or_(*[f for f in global_filter if f is not None]))
+        else:
+            self.filter_expressions.append(or_(*[f for f in global_filter if f is not None]))
 
     def _set_sort_expressions(self):
         """Construct the query: sorting.
@@ -311,7 +337,6 @@ class DataTables:
         Add sorting(ORDER BY) on the columns needed to be applied on.
         """
         sort_expressions = []
-        models = self.query.get_model_classes()
         i = 0
         while self.params.get('order[{:d}][column]'.format(i), False):
             column_nr = int(self.params.get('order[{:d}][column]'.format(i)))
@@ -325,7 +350,7 @@ class DataTables:
                 continue
 
             # for sorting on related columns, query must use JOIN with related table
-            column = get_column_in_models(models, column_name)
+            column = get_column_in_models(self.models, column_name)
 
             if not column:
                 # # making sorting by unknown column not fatal
@@ -348,7 +373,8 @@ class DataTables:
             #     else:
             #         raise ValueError(
             #             'Invalid order direction: {}'.format(direction))
-            sort_expressions.append(sort_expr)
+            if sort_expr is not None:
+                sort_expressions.append(sort_expr)
 
         self.sort_expressions = sort_expressions
 
