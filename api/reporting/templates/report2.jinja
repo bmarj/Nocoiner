@@ -8,7 +8,7 @@
         <div class="card mb-3">
             <div class="card-header">
                 <div class="caption uppercase">
-                    <i class="ti-layout-grid3-alt"></i> Sales by Country
+                    <i class="ti-layout-grid3-alt"></i> Sales by State
                 </div>
                 <div class="tools">
                   {% from "_buttons.html" import add_button, edit_button, delete_button, edit, action %}
@@ -36,12 +36,12 @@
               <!-- initialize with HTML only -->
               <table id="datatable" class="table table-bordered table-hover clickable-rows" width="100%"
                 data-settings="reportDatatablesConfig"
-                data-ajax-url="{{ url_for('.report1_data') }}"
+                data-ajax-url="{{ url_for('.report2_data') }}"
                 data-ajax-datasrc="dataReceived" >
                 <thead class="thead-light">
                   <tr>
-                    <th data-data="ship_country">Country</th>
-                    <th data-data="sum_qty_shipped">Shipped Qty</th>
+                    <th data-data="ship_state">State</th>
+                    {# <th data-data="sum_qty_shipped">Shipped Qty</th> #}
                     <th data-data="sum_qty_ordered">Ordered Qty</th>
                     <th data-data="sum_price">Value</th>
                   </tr>
@@ -62,13 +62,12 @@
     function dataReceived(json) {
         //Make your callback here.
         let vis = datatableGetVisibleColumns(tb);
-        updateChart(chart1, json, "ship_country", "sum_qty_ordered");
-        updateChart(chart2, json, "ship_country", "sum_price");
+
+        updateChart(chart1, json, "ship_state", "sum_qty_ordered");
+        updateChart(chart2, json, "ship_state", "sum_price");
         return json.data;
     }
     var dtConf_OL = reportDatatablesConfig;
-    //dtConf_OL.ajax.data.filtered_by = [{field: 'purchase_date', value: {{ key }} }]
-    //dtConf_OL.ajax.data.grouped_by = [{field: 'sku'}, {field: 'line_type'}]
 
     $(document).ready(function () {
       tb = initDatatable('#datatable', dtConf_OL);

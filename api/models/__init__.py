@@ -1,2 +1,1 @@
-# from .combined import *
-from .reporting_schema import *
+from .combined import *

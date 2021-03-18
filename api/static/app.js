@@ -1039,6 +1039,45 @@ var simpleDatatablesConfig =
     pageLength: 10
 }
 
+var reportDatatablesDOM = 
+    //"<'row'<'col-sm-12 offset-11 col-md-1'B>>" +
+    "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-4'B><'col-sm-12 col-md-4'f>>" +
+    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>" +
+    "<'row'<'col-sm-12'tr>>" +
+    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>";
+var reportDatatablesConfig =
+{
+    processing: true, // for "Processing" message
+    serverSide: true,
+    filter: true,
+    deferRender: true,
+    rowId: 'id',
+    dom: reportDatatablesDOM,
+    colReorder: true,
+    stateSave: true,
+    buttons: [
+        {
+            extend: 'colvis',
+            class: 'btn btn-outline-secondary'
+            //collectionLayout: 'fixed two-column'
+        }
+    ],
+    ajax: {
+        error: function(xhr, error, thrown) {
+            if (xhr.status == 401) {
+                window.location = window.location.origin + '/login?returnUrl=' + window.location.pathname;
+                return false;
+            }
+        },
+        data: {filtered_by: [{}]}
+    },
+    lengthMenu: [
+        [10, 25, 50, 100, 1000, 10000],
+        ['10', '25', '50', '100', '1000', '10000']
+    ],
+    pageLength: 1000
+}
+
 function initDatatable(datatableId, dtConf){
     // skip if already initialized
     if ($.fn.dataTable.isDataTable(datatableId))
@@ -1047,6 +1086,10 @@ function initDatatable(datatableId, dtConf){
     let conf = dtConf;
     if ($(datatableId).data("settings"))
         conf = window[$(datatableId).data("settings")];
+    if ($(datatableId).data("ajax-url"))
+        conf.ajax.url = $(datatableId).data("ajax-url");
+    if ($(datatableId).data("ajax-datasrc"))
+        conf.ajax.dataSrc = window[$(datatableId).data("ajax-datasrc")];
 
     // if initialized with data- attributes, columns can be empty
     if (conf.columns){
@@ -1068,3 +1111,14 @@ function initDatatable(datatableId, dtConf){
 function datatableReload() {
     $('#datatable').DataTable().ajax.reload(null, false);
 };
+
+// get columns that are not hidden with column chooser
+// pass in prop to get specific from column description
+// example: datatableGetVisibleColumns($("#datatable"), "mData")
+function datatableGetVisibleColumns(datatable, prop=null) {
+    var visible_columns = datatable.context[0].aoColumns.flatMap( (c) => { return c.bVisible ? (prop ? c[prop] : c) : [] });
+    return visible_columns;
+}
+
+
+

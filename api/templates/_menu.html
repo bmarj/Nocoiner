@@ -103,7 +103,7 @@
                 {% endif %}
             </li>
             {% endif %}
-            {% if user.any_permission('report') %}
+            {% if user.any_permission('users') %}
             <li class="maincat">
                 <a href="#">
                     <i class="ti-bar-chart"></i>
@@ -113,7 +113,16 @@
                 <div class="subcat">
                     <ul>
                         <li>
-                            <a href="/report">Report</a>
+                            <a href="/reporting/report1">Sales by Country</a>
+                        </li>
+                        <li>
+                            <a href="/reporting/report2">Sales by State</a>
+                        </li>
+                        <li>
+                            <a href="/reporting/report3">Orders by SKU</a>
+                        </li>
+                        <li>
+                            <a href="/reporting/report4">Orders by Date</a>
                         </li>
                     </ul>
                 </div>

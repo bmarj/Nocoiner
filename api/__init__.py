@@ -53,11 +53,11 @@ def create_app(test_config=None):
     um.init_app(app)
     # attach routes and custom error pages here
 
-    # from api import errors, monitor, orders, order_lines
-    # app.register_blueprint(errors.bp)
-    # app.register_blueprint(monitor.bp, url_prefix='/monitor')
-    # app.register_blueprint(orders.bp, url_prefix='/orders')
-    # app.register_blueprint(order_lines.bp, url_prefix='/order_lines')
+    from api import errors, monitor, orders, order_lines
+    app.register_blueprint(errors.bp)
+    app.register_blueprint(monitor.bp, url_prefix='/monitor')
+    app.register_blueprint(orders.bp, url_prefix='/orders')
+    app.register_blueprint(order_lines.bp, url_prefix='/order_lines')
 
     from api import reporting
     app.register_blueprint(reporting.bp, url_prefix='/reporting')

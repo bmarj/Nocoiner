@@ -3,6 +3,7 @@ import json
 from flask import request, abort
 from flask_sqlalchemy import SQLAlchemy, BaseQuery, Model, Pagination
 from flask_sqlalchemy import orm, inspect, event
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.sql import func
 from sqlalchemy import desc, types, NUMERIC
 from sqlalchemy.dialects.mssql import (BIT, DECIMAL,
@@ -30,6 +31,8 @@ class NonUnicodeString(types.TypeDecorator):
 
     def process_bind_param(self, value, dialect):
         # TODO: setup other encodings, 
+        if isinstance(dialect, postgresql.dialect):
+            return value
         return bytes(value, self.impl.collation or DEFAULT_COLLATION)
 
 
