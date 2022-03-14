@@ -8,124 +8,82 @@ from sqlalchemy.sql.expression import distinct
 from api.models.model_base import db, BIT, Numeric, DATETIMEOFFSET, NonUnicodeString
 
 
-class OrderView(db.Model):
-    __tablename__ = 'materialized_order_view'
-    __bind_key__ = 'reportDB'
+class TradeAgregated(db.Model):
+    __tablename__ = 'vwTrade'
+    __bind_key__ = 'mainDB'
+    #__table_args__ = {'extend_existing': True}
 
-    guid_order_line = Column(Unicode(40), primary_key=True)
-    order_id = Column(Unicode(100))
-    purchase_date = Column(DateTime)
-    ship_name = Column(Unicode(500))
-    ship_city = Column(Unicode(500))
-    ship_state = Column(Unicode(500))
-    ship_postal_code = Column(Unicode(100))
-    ship_country = Column(Unicode(500))
-    sales_order_number = Column(Integer)
-    sales_channel = Column(Integer)
-    order_status = Column(Integer)
-    processing_status = Column(Integer)
-    shipping_priority_order = Column(Unicode(128))
-    qty_ordered = Column(Integer)
-    qty_shipped = Column(Integer)
-    price = Column(Numeric(18,2))
-    tax = Column(Numeric(18,2))
-    shipping_price = Column(Numeric(18,2))
-    shipping_tax = Column(Numeric(18,2))
-    sku = Column(Unicode(128))
-    line_type = Column(Unicode(10))
-    processed_date = Column(DateTime)
-    purchase_order_number = Column(Unicode(128))
-    order_line_status = Column(Unicode(10))
-    exported = Column(BIT)
-    username = Column(Unicode(256))
-    linked_order_id = Column(Unicode(128))
-    promise_date = Column(DateTime)
-    fulfillment_warehouse_id = Column(Integer)
-    is_premium_order_line = Column(BIT)
-    shipping_priority_order_line = Column(Unicode(128))
-    tracking_number = Column(Unicode(128))
-    brand = Column(Unicode(128))
-    line_cost = Column(Numeric(18,2))
-    markup = Column(Integer)
-    purchase_year = Column(Integer)
-    purchase_month = Column(Integer)
-    purchase_month_name = Column(Unicode(128))
-    purchase_year_month = Column(DateTime)
-    purchase_year_month_day = Column(DateTime)
+    id = Column(Integer, primary_key=True)
+    symbol = Column(String(20), nullable=False)
+    change_entry_price = Column(Numeric(18, 6), nullable=False)
+    change_size = Column(Numeric(18, 2), nullable=False)
+    amount_change = Column(Numeric(18, 2), nullable=False)
+    entry_price = Column(Numeric(18, 2), nullable=False)
+    amount = Column(Numeric(18, 2), nullable=False)
+    position_size = Column(Numeric(18, 2), nullable=False)
+    update_time = Column(DateTime)
+    leader_id = Column(ForeignKey('Leader.id'), nullable=False)
+    created_timestamp = Column(DateTime, nullable=False, server_default=func.now())
+    direction = Column(String(50), nullable=False)
+    description = Column(String(50), nullable=False)
+
+    leader = Column(String(50), nullable=False)
 
     # expression columns 
-    sum_qty_ordered = column_property(
-        func.sum(qty_ordered)
+    abs_position_size = column_property(
+        func.abs(position_size)
     )
-    sum_qty_shipped = column_property(
-        func.sum(qty_shipped)
+    abs_position_amount = column_property(
+        func.abs(amount)
     )
-    sum_price = column_property(
-        func.sum(price)
+    abs_change_size = column_property(
+        func.abs(change_size)
     )
-    sum_line_cost = column_property(
-        func.sum(line_cost)
+    sum_amount = column_property(
+        func.sum(amount)
     )
-    count_orders = column_property(
-        func.count(distinct(order_id))
+    sum_amount_change = column_property(
+        func.sum(amount_change)
     )
-    count_order_lines = column_property(
-        func.count(guid_order_line)
+    avg_position_size = column_property(
+        func.avg(position_size)
     )
-    # SalesChannel = relationship('SalesChannel',
-    #                               primaryjoin='foreign(OrderView.sales_channel) == remote(SalesChannel.sales_channel)')
+    sum_abs_amount = column_property(
+        func.sum(func.abs(amount))
+    )
+    sum_abs_amount_change = column_property(
+        func.sum(func.abs(amount_change))
+    )
+    sum_abs_position_size = column_property(
+        func.sum(func.abs(position_size))
+    )
+    sum_abs_change_size = column_property(
+        func.sum(func.abs(change_size))
+    )
+    avg_abs_position_size = column_property(
+        func.avg(func.abs(position_size))
+    )
+    avg_entry_price = column_property(
+        func.avg(entry_price)
+    )
+    # # count_orders = column_property(
+    # #     func.count(distinct(order_id))
+    # # )
+    # # count_order_lines = column_property(
+    # #     func.count(guid_order_line)
+    # # )
 
-class InventoryView(db.Model):
-    __tablename__ = 'materialized_inventory'
-    __bind_key__ = 'reportDB'
-
-    lid = Column(Integer, primary_key=True)
-    col = Column(Unicode(10))
-    row = Column(Unicode(10))
-    level = Column(Unicode(10))
-    qty = Column(Integer)
-    lastmodtime = Column(DateTime)
-    available_qty = Column(Integer)
-    upc = Column(Unicode(25))
-    sku = Column(Unicode(128))
-    brand = Column(Unicode(64))
-    supplier = Column(Unicode(64))
-    gender = Column(Unicode(64))
-    product_name = Column(Unicode(128))
-    product_type = Column(Unicode(16))
-    price = Column(Numeric(18,2))
-    cost = Column(Numeric(18,2))
-
-
-# class SalesChannel(db.Model):
-#     __tablename__ = 'sales_channel'
-#     __bind_key__ = 'reportDB'
-
-#     sales_channel = Column(Integer, primary_key=True)
-#     description = Column(Unicode(100), unique=True)
-#     abbr = Column(Unicode(10), unique=True)
-#     service_id = Column(Unicode(50), unique=True)
-#     balanceable = Column(BIT)
-#     enabled = Column(BIT)
-#     product_alias_group = Column(Integer)
-#     is_cross_insert = Column(BIT)
-
-
-
-# class Warehouses(db.Model):
-#     __tablename__ = 'warehouses'
-#     __bind_key__ = 'reportDB'
-
-#     warehouse_id = Column(Integer, primary_key=True)
-#     name = Column(String(64))
-#     abbr = Column(String(10))
-#     enabled = Column(BIT)
-
-
-# class ZipCodes(db.Model):
-#     __tablename__ = 'zip_codes'
-#     __bind_key__ = 'ordersDB'
-
-#     zip_code = Column(String(25))
-#     state = Column(String(5))
-#     id = Column(Integer, primary_key=True)
+    # @property
+    # def position_desc(self):
+    #     if self.direction == 'sell-close':
+    #         return "take profit"
+    #     if self.direction == 'buy-close':
+    #         return "take profit - short"
+    #     if self.direction == 'sell' and self.amount >= 0:
+    #         return "take profit"
+    #     if self.direction == 'buy' and self.amount < 0:
+    #         return "take profit - short"
+    #     if self.direction == 'sell' and self.amount < 0:
+    #         return "enter short"
+    #     if self.direction == 'buy' and self.amount >= 0:
+    #         return "enter long"

@@ -1,6 +1,7 @@
 import os
 # import inspect
 from flask import Flask
+from flask.helpers import url_for
 
 from api.config import config
 from api.utils import template_filters
@@ -53,14 +54,12 @@ def create_app(test_config=None):
     um.init_app(app)
     # attach routes and custom error pages here
 
-    from api import errors, monitor, orders, order_lines
+    from api import errors, monitor, trades, reporting
     app.register_blueprint(errors.bp)
     app.register_blueprint(monitor.bp, url_prefix='/monitor')
-    app.register_blueprint(orders.bp, url_prefix='/orders')
-    app.register_blueprint(order_lines.bp, url_prefix='/order_lines')
-
-    from api import reporting
+    app.register_blueprint(trades.bp, url_prefix='/leaderboard')
     app.register_blueprint(reporting.bp, url_prefix='/reporting')
+    trades.start_scheduler(30, 'http://127.0.0.1:5055/leaderboard/process_traders')
 
     # enable migrations with Flask-migrate and Alembic
     migrate = Migrate(app, db)

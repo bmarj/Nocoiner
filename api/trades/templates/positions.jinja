@@ -1,0 +1,66 @@
+{% extends 'base.jinja' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="caption uppercase">
+                    <i class="ti-layout-grid3-alt"></i> Active positions
+                </div>
+                <!--<div class="tools">
+                  {% from "_buttons.html" import add_button, edit_button, delete_button, edit, action %}
+                </div> -->
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="datatable" class="table table-bordered table-hover clickable-rows" width="100%">
+                      <thead class="thead-light"></thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_javascripts %}
+  <script>
+    let dtConf = defaultDatatablesConfig;
+
+    dtConf.ajax.url = '{{ url_for('.positions_data') }}';
+    {% if trader_id %}
+      dtConf.ajax.data.filtered_by = [{field: 'leader_id', value: {{ trader_id }} }]
+    {% endif %}
+
+    dtConf.columns = [
+        { data:"symbol", title:"Symbol" },
+        { data:"entry_price", title:"Position entry price", render: $.fn.dataTable.render.number(',', '.', 4, '$'), className: "text-right" },
+        { data:"amount", title:"Amount", render: $.fn.dataTable.render.number(',', '.', 4), className: "text-right" },
+        { data:"position_size", title:"Position size", render: $.fn.dataTable.render.number(',', '.', 2, '$'), className: "text-right" },
+        { data:"created_timestamp", title:"Time" },
+        { data:"leader.name", title:"Trader" },
+        { data:"is_active", title:"Active" },
+    ];
+    // custom row coloring
+    dtConf.fnRowCallback = function( row, data, iDisplayIndex, iDisplayIndexFull ) {
+        data.is_active == true ? row.classList.add('text-lime') : null;
+        data.is_active == false ? row.classList.add('table-salmon','text-chili') : null;
+    };
+    $(document).ready(function () {
+      tb = initDatatable('#datatable', dtConf);
+      /* yadcf.init(tb, [
+        { column_number: 0, filter_type: "text", filter_match_mode: 'startsWith' },
+      ]); */
+      var timer = setInterval(datatableReload, 30000)
+    });
+  </script>
+
+{% endblock extra_javascripts %}
+
+{# additional features used on this page: #}
+{% block feature_javascripts %}
+  {% include '_feature_column_visibility.html' %}
+  {# {% include '_feature_column_filtering.html' %} #}
+{% endblock feature_javascripts %}

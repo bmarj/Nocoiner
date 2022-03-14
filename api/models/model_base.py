@@ -146,7 +146,7 @@ db = LfhSQLAlchemy(query_class=LfhQuery)
 
 # adapted from: https://ruddra.com/dynamically-constructing-filters-based-on-string-input-using-sqlalchemy/
 def filter_query(query, filter_condition, related_model_classes=[]):
-    '''    
+    '''
     Return filtered queryset based on condition.
     :param query: takes query
     :param filter_condition: Its a list, ie: [(key,operator,value)]

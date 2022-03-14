@@ -1,7 +1,7 @@
 from marshmallow_sqlalchemy import fields
 from wtforms_components import StringField, IntegerField
 from wtforms import PasswordField, BooleanField
-from wtforms.validators import DataRequired, Required, ValidationError
+from wtforms.validators import DataRequired, ValidationError
 from wtforms_alchemy import QuerySelectField
 from flask_wtf import FlaskForm
 from api.models.form_base import ModelForm, FormMeta

@@ -11,10 +11,13 @@
                 {{ form.hidden_tag() }}
                 <div class="row">
                 <div class="form-group col-12">
-                    {{ render_field(form.sku, readonly=true) }}
+                    {{ render_field(form.name) }}
                 </div>
                 <div class="form-group col-12">
-                    {{ render_field(form.order_line_status) }}
+                    {{ render_field(form.encrypted_uid) }}
+                </div>
+                <div class="form-group col-12">
+                    {{ render_field(form.is_active) }}
                 </div>
                 </div>
             </form>

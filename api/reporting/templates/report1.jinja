@@ -8,24 +8,13 @@
         <div class="card mb-3">
             <div class="card-header">
                 <div class="caption uppercase">
-                    <i class="ti-layout-grid3-alt"></i> Sales by Country
-                </div>
-                <div class="tools">
-                  {% from "_buttons.html" import add_button, edit_button, delete_button, edit, action %}
-                  {# {{ edit_button('.order_details','orders', current_user, 'Order details') }}
-                  {{ edit_button('.edit','orders', current_user) }}
-                  {{ action('.cancel_order','orders', current_user, 'Cancel order', "Do you want to cancel order?") }} #}
+                    <i class="ti-layout-grid3-alt"></i> Transaction analysis
                 </div>
             </div>
 
             <div class="row mb-3">
                 <!-- Chart -->
-                <div class="col-md-6">
-                    <div class="">
-                        <div class="card-body" id="report1-chart"></div>
-                    </div>
-                </div>
-                <div class="col-md-6">
+                <div class="col-12">
                     <div class="">
                         <div class="card-body" id="report2-chart"></div>
                     </div>
@@ -39,12 +28,6 @@
                 data-ajax-url="{{ url_for('.report1_data') }}"
                 data-ajax-datasrc="dataReceived" >
                 <thead class="thead-light">
-                  <tr>
-                    <th data-data="ship_country">Country</th>
-                    <th data-data="sum_qty_shipped">Shipped Qty</th>
-                    <th data-data="sum_qty_ordered">Ordered Qty</th>
-                    <th data-data="sum_price">Value</th>
-                  </tr>
                 </thead>
               </table>
             </div>
@@ -62,18 +45,37 @@
     function dataReceived(json) {
         //Make your callback here.
         let vis = datatableGetVisibleColumns(tb);
-        updateChart(chart1, json, "ship_country", "sum_qty_ordered");
-        updateChart(chart2, json, "ship_country", "sum_price");
+        updateBubbleChart(chart2, json, "position_size", "change_entry_price", 'change_size', "position_desc",
+                          ['take profit', 'enter long', 'take profit - short', 'enter short']);
         return json.data;
     }
     var dtConf_OL = reportDatatablesConfig;
-    //dtConf_OL.ajax.data.filtered_by = [{field: 'purchase_date', value: {{ key }} }]
-    //dtConf_OL.ajax.data.grouped_by = [{field: 'sku'}, {field: 'line_type'}]
+    dtConf_OL.columns = [
+        { data:"symbol", title:"Symbol" },
+        { data:"direction", title:"Direction" },
+        { data:"position_desc", title:"Description", sortable: false },
+        { data:"change_entry_price", title:"Change entry price", render: exRate, className: "text-right" },
+        { data:"change_size", title:"Change size", render: money, className: "text-right" },
+        { data:"position_size", title:"New Position size", money, className: "text-right" },
+        { data:"entry_price", title:"Position entry price", exRate, className: "text-right" },
+        { data:"amount_change", title:"Amount change", render: amount4, className: "text-right" },
+        { data:"amount", title:"Amount", render: amount4, className: "text-right" },
+        { data:"leader.name", title:"Trader" },
+        { data:"created_timestamp", title:"Time" },
+    ];
+
+    // custom row coloring
+    dtConf_OL.fnRowCallback = function( row, data, iDisplayIndex, iDisplayIndexFull ) {
+        data.position_size > 0 && data.change_size > 0 ? row.classList.add('text-success') : null;
+        data.position_size > 0 && data.change_size < 0 ? row.classList.add('text-danger') : null;
+        data.position_size < 0 && data.change_size < 0 ? row.classList.add('table-taffy','text-jade') : null;
+        data.position_size < 0 && data.change_size > 0 ? row.classList.add('table-taffy','text-imperial') : null;
+    };
 
     $(document).ready(function () {
       tb = initDatatable('#datatable', dtConf_OL);
-      chart1 = report1ChartInit("#report1-chart", "Items ordered");
-      chart2 = report1ChartInit("#report2-chart", "Value of orders");
+      chart2 = reportBubbleChartInit("#report2-chart", "Transaction sizes by position size and price", 
+                                     "Price in USDT", "Position size (negative value indicates short position)");
     });
   </script>
 

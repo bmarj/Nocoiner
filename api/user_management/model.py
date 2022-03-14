@@ -1,6 +1,6 @@
 # coding: utf-8
 import datetime
-from flask import g
+from flask_login import current_user
 from flask_sqlalchemy.model import Model
 from werkzeug.security import generate_password_hash
 
@@ -12,11 +12,11 @@ from api.models.model_base import db, BIT, DECIMAL, NUMERIC, DATETIMEOFFSET
 from api.models.mixins import AuditMixin
 
 # class DefaultMeta(MetaData):
-#     __bind_key__ = 'ordersDB'
+#     __bind_key__ = 'mainDB'
 
 class Role(db.Model):
     __tablename__ = "role"
-    __bind_key__ = 'ordersDB'
+    __bind_key__ = 'mainDB'
 
     id              = Column(Integer, Sequence("role_id_seq"), primary_key=True)
     name            = Column(String(64), unique=True, nullable=False)
@@ -29,7 +29,7 @@ class Role(db.Model):
 
 class Permission(db.Model):
     __tablename__ = "permission"
-    __bind_key__ = 'ordersDB'
+    __bind_key__ = 'mainDB'
     id              = Column(Integer, Sequence("permission_id_seq"), primary_key=True)
     name            = Column(String(100), unique=True, nullable=False)
 
@@ -48,7 +48,7 @@ class Permission(db.Model):
 
 class RolePermission(db.Model):
     __tablename__ = "role_permission"
-    __bind_key__ = 'ordersDB'
+    __bind_key__ = 'mainDB'
 
     id              = Column(Integer, primary_key=True)
     role_id         = Column(Integer, ForeignKey("role.id"))
@@ -62,7 +62,7 @@ class RolePermission(db.Model):
 
 class UserRole(AuditMixin, db.Model):
     __tablename__ = "app_user_role"
-    __bind_key__ = 'ordersDB'
+    __bind_key__ = 'mainDB'
 
     id              = Column(Integer, primary_key=True)
     app_user_id     = Column(Integer, ForeignKey("app_user.id"))
@@ -79,8 +79,8 @@ class UserRole(AuditMixin, db.Model):
 
 class User(db.Model):
     __tablename__ = "app_user"
-    __bind_key__ = 'ordersDB'
-    
+    __bind_key__ = 'mainDB'
+
     id              = Column(Integer, Sequence("app_user_id_seq"), primary_key=True)
     first_name      = Column(String(64), nullable=False)
     last_name       = Column(String(64), nullable=False)
@@ -126,7 +126,7 @@ class User(db.Model):
     @classmethod
     def get_user_id(cls):
         try:
-            return g.user.id
+            return current_user.id
         except Exception:
             return None
 

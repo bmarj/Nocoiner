@@ -7,9 +7,9 @@ from .model import Permission, User, Role, RolePermission, UserRole
 ###
 def query_users():
     # join to eager load relations
-    q = User.query\
-        .outerjoin(UserRole.user)\
-        .outerjoin(Role)
+    q = User.query
+        # .outerjoin(UserRole.user)\
+        # .outerjoin(Role)
     return q
 
 def query_roles():

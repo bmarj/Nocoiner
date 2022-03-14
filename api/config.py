@@ -32,7 +32,7 @@ class DevelopmentConfig(Config):
     """
 
     # SQLALCHEMY_DATABASE_URI = ""
-    SQLALCHEMY_ECHO = True
+    # SQLALCHEMY_ECHO = True
     # SQLALCHEMY_TRACK_MODIFICATIONS = False
     TEMPLATES_AUTO_RELOAD = True  # for jinja2 development
     DEBUG = True

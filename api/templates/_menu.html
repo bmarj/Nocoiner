@@ -5,44 +5,59 @@
             <li class="header-menu">
                 Categories
             </li>
-            {% if user.any_permission('orders', 'order_lines') %}
+            {% if user.any_permission('anonymous', 'trades', 'leaders') %}
             <li class="maincat">
                 <a href="#">
-                    <i class="ti-package"></i>
-                    <span class="menu-text">Order management</span>
-                    {# <span class="badge badge-pill badge-danger">3</span> #}
+                    <i class="ti-bar-chart"></i>
+                    <span class="menu-text">Analytics</span>
                 </a>
-                {% if user.has_permission('orders') %}
+                {% if user.any_permission('anonymous', 'trades', 'leaders') %}
                 <div class="subcat">
                     <ul>
                         <li>
-                            <a href="/orders">Orders view</a>
+                            <a href="/reporting/transactions">Transactions</a>
                         </li>
-                    </ul>
-                </div>
-                {% endif %}
-                {% if user.has_permission('order_lines') %}
-                <div class="subcat">
-                    <ul>
                         <li>
-                            <a href="/order_lines">Order Lines view</a>
+                            <a href="/reporting/tradedvalue">Coin traded value</a>
+                        </li>
+                        <li>
+                            <a href="/reporting/tradeactivity">Trades activity</a>
                         </li>
                     </ul>
                 </div>
                 {% endif %}
             </li>
             {% endif %}
-            {% if user.any_permission('inventory') %}
+            {% if user.any_permission('anonymous', 'trades', 'leaders') %}
             <li class="maincat">
                 <a href="#">
-                    <i class="ti-layout-grid3-alt"></i>
-                    <span class="menu-text">Inventory management</span>
+                    <i class="ti-package"></i>
+                    <span class="menu-text">Trades and positions</span>
+                    {# <span class="badge badge-pill badge-danger">3</span> #}
                 </a>
-                {% if user.has_permission('inventory') %}
+                {% if user.any_permission('anonymous', 'trades') %}
                 <div class="subcat">
                     <ul>
                         <li>
-                            <a href="/inventory">Inventory View</a>
+                            <a href="/leaderboard/trades">Trades</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+                {% if user.any_permission('anonymous', 'trades') %}
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="/leaderboard/positions">Positions</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+                {% if user.any_permission('anonymous', 'trades') %}
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="/leaderboard/traders">Traders</a>
                         </li>
                     </ul>
                 </div>
@@ -97,32 +112,6 @@
                     <ul>
                         <li>
                             <a href="/permissions">Permissions</a>
-                        </li>
-                    </ul>
-                </div>
-                {% endif %}
-            </li>
-            {% endif %}
-            {% if user.any_permission('users') %}
-            <li class="maincat">
-                <a href="#">
-                    <i class="ti-bar-chart"></i>
-                    <span class="menu-text">Reports</span>
-                </a>
-                {% if user.has_permission('users') %}
-                <div class="subcat">
-                    <ul>
-                        <li>
-                            <a href="/reporting/report1">Sales by Country</a>
-                        </li>
-                        <li>
-                            <a href="/reporting/report2">Sales by State</a>
-                        </li>
-                        <li>
-                            <a href="/reporting/report3">Orders by SKU</a>
-                        </li>
-                        <li>
-                            <a href="/reporting/report4">Orders by Date</a>
                         </li>
                     </ul>
                 </div>

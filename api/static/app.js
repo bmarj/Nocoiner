@@ -1120,5 +1120,47 @@ function datatableGetVisibleColumns(datatable, prop=null) {
     return visible_columns;
 }
 
+// https://stackoverflow.com/questions/6491463/accessing-nested-javascript-objects-and-arrays-by-string-path
+// get value of an object property specified by path, accepts default value if not found
+const getValueForPath = (object, path, defaultValue) => path
+   .split(/[\.\[\]\'\"]/)
+   .filter(p => p)
+   .reduce((o, p) => o ? o[p] : defaultValue, object);
+
+// zip arrays function
+// from: https://www.tutorialspoint.com/javascript-equivalent-of-python-s-zip-function
+const zip = (...arr) => {
+    const zipped = [];
+    arr.forEach((element, ind) => {
+        element.forEach((el, index) => {
+            if (!zipped[index]) {
+                zipped[index] = [];
+            };
+            if (!zipped[index][ind]) {
+                zipped[index][ind] = [];
+            }
+            zipped[index][ind] = el || '';
+        })
+    });
+    return zipped;
+};
 
 
+const arrSumFlat = (arr) => {
+    if (!arr.length)
+        return 0;
+    return arr.flat().reduce((a, b) => a + b);
+};
+
+
+const money = $.fn.dataTable.render.number(',', '.', 2, '$');
+const exRate = $.fn.dataTable.render.number(',', '.', 4, '$');
+const amount2 = $.fn.dataTable.render.number(',', '.', 2);
+const amount4 = $.fn.dataTable.render.number(',', '.', 2);
+
+const asMoney = (v) => {
+    return (v).toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    });
+}

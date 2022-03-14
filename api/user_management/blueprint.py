@@ -50,7 +50,7 @@ class UserManager(LoginManager):
         self.anonymous_user = AnonymousUser
         self.unauthorized_handler(self.handle_unauthorized)
         super().init_app(app)
-    
+
     def load_user(self, id):
         user = get_user_by_id(id)
         return user

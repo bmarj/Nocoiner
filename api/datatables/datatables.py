@@ -39,7 +39,7 @@ class DataTables:
         self.schema = schema
         self.related_model_classes = related_model_classes
         if hasattr(self.query, 'get_model_classes'):
-            self.models = self.query.get_model_classes()
+            self.models = self.query.get_model_classes(related_model_classes)
         else:
             self.models = related_model_classes
         self.results = None
@@ -127,7 +127,11 @@ class DataTables:
         self.cardinality_filtered = query.count()
 
         # apply sorts
-        query = query.order_by(*self.sort_expressions)
+        if self.sort_expressions:
+            query = query.order_by(*self.sort_expressions)
+        elif not query.order_by:
+            # if not sorted, sort by PK
+            query = query.order_by(*query.selectable.primary_key)
 
         # add paging options
         length = int(self.params.get('length'))
@@ -253,14 +257,21 @@ class DataTables:
                              '>=1' search numeric columns grater than 1
 
                 """
+                # skip model @property and column_property calculated fields
+                if not hasattr(col, "property"):
+                    return None
                 # skip all other columns if processing aggregates
                 if only_aggregates:
                     if not hasattr(col.property.expression, "element") or \
-                        col.property.expression.element.identifier not in ("sum", "count", "min", "max"):
+                        not hasattr(col.property.expression.element, "identifier") or \
+                        col.property.expression.element.identifier not in ("sum", "count", "min", "max",
+                                                                           "abs", "avg"):
                         return None
                 else:
                     if hasattr(col.property.expression, "element") and \
-                        col.property.expression.element.identifier in ("sum", "count", "min", "max"):
+                        ( not hasattr(col.property.expression.element, "identifier") or
+                        col.property.expression.element.identifier in ("sum", "count", "min", "max",
+                                                                       "abs", "avg")):
                         return None
                 val = '' + global_search + ''
                 search_func = SEARCH_METHODS['like']

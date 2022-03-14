@@ -8,26 +8,15 @@
         <div class="card mb-3">
             <div class="card-header">
                 <div class="caption uppercase">
-                    <i class="ti-layout-grid3-alt"></i> Sales by State
-                </div>
-                <div class="tools">
-                  {% from "_buttons.html" import add_button, edit_button, delete_button, edit, action %}
-                  {# {{ edit_button('.order_details','orders', current_user, 'Order details') }}
-                  {{ edit_button('.edit','orders', current_user) }}
-                  {{ action('.cancel_order','orders', current_user, 'Cancel order', "Do you want to cancel order?") }} #}
+                    <i class="ti-layout-grid3-alt"></i> Trading activity analysis
                 </div>
             </div>
 
             <div class="row mb-3">
                 <!-- Chart -->
-                <div class="col-md-6">
+                <div class="col-12">
                     <div class="">
                         <div class="card-body" id="report1-chart"></div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="">
-                        <div class="card-body" id="report2-chart"></div>
                     </div>
                 </div>
             </div>
@@ -39,12 +28,6 @@
                 data-ajax-url="{{ url_for('.report2_data') }}"
                 data-ajax-datasrc="dataReceived" >
                 <thead class="thead-light">
-                  <tr>
-                    <th data-data="ship_state">State</th>
-                    {# <th data-data="sum_qty_shipped">Shipped Qty</th> #}
-                    <th data-data="sum_qty_ordered">Ordered Qty</th>
-                    <th data-data="sum_price">Value</th>
-                  </tr>
                 </thead>
               </table>
             </div>
@@ -56,23 +39,24 @@
 
 {% block extra_javascripts %}
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <script src="/reporting/static/report_charts.js"></script>
+  <script src="/reporting/static/report_charts.js?1"></script>
   <script>
     var chart1;
     function dataReceived(json) {
         //Make your callback here.
-        let vis = datatableGetVisibleColumns(tb);
-
-        updateChart(chart1, json, "ship_state", "sum_qty_ordered");
-        updateChart(chart2, json, "ship_state", "sum_price");
+        updateBarChart(chart1, json, "symbol", "number_of_trades", "leader");
         return json.data;
     }
     var dtConf_OL = reportDatatablesConfig;
+    dtConf_OL.columns = [
+        { data:"symbol", title:"Symbol" },
+        { data:"leader_id", title:"Trader" },
+        { data:"number_of_trades", title:"Number of trades", className: "text-right", sortable: false },
+    ];
 
     $(document).ready(function () {
       tb = initDatatable('#datatable', dtConf_OL);
-      chart1 = report1ChartInit("#report1-chart", "Items ordered");
-      chart2 = report1ChartInit("#report2-chart", "Value of orders");
+      chart1 = reportBarChartInit("#report1-chart", "Number of trades", "bar");
     });
   </script>
 
