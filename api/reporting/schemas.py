@@ -26,6 +26,7 @@ class TradeSchema(SQLAlchemyAutoSchema):
     # sum_amount_change = fields.Number()
     # avg_position_size = fields.Number()
     position_desc = fields.String()
+    profit = fields.Number()
 
 
 class TradeAgregatedSchema(SQLAlchemyAutoSchema):

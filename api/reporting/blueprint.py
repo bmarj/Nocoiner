@@ -2,7 +2,7 @@ from flask import Blueprint, session, jsonify, url_for, request, render_template
 from flask_sqlalchemy import orm
 from marshmallow import EXCLUDE
 # from marshmallow.exceptions import ValidationError
-from sqlalchemy.sql import select, desc
+from sqlalchemy.sql import select, desc, or_, and_
 from sqlalchemy.orm import object_session
 from sqlalchemy import func, bindparam
 
@@ -33,25 +33,6 @@ def report1_data():
     query = (m.Trade.query
               .join(m.Leader))
     response_schema = TradeSchema(many=True)
-
-    # instantiating a DataTable for the query and table needed
-    rowTable = DataTables(request.args, query, response_schema)
-    # returns what is needed by DataTable
-    return jsonify(rowTable.output_result())
-    ## aggregates defined in query work this way
-    # query = dbsession.query(t.ship_country, t.sum_qty_ordered,
-    #                         func.sum(t.qty_shipped).label('sum_qty_shipped'),
-    #                         func.sum(t.qty_ordered).label('sum_qty_ordered')
-    #                        ).group_by(t.ship_country).having(func.sum(t.qty_ordered) > 3000).order_by(desc(func.sum(t.qty_ordered)))
-
-    # aggregates defined in model have advantage of sorting by that columns
-    query = dbsession.query(t.ship_country,
-                            t.sum_qty_shipped,
-                            t.sum_qty_ordered,
-                            t.sum_price,
-                           ).group_by(t.ship_country)
-                            #.having(t.sum_qty_ordered > 3000)
-                            #.order_by(desc(t.sum_qty_ordered))
 
     # instantiating a DataTable for the query and table needed
     rowTable = DataTables(request.args, query, response_schema)
@@ -169,6 +150,30 @@ def report3_data():
     rowTable = DataTables(request.args, query, response_schema)
     # returns what is needed by DataTable
     return jsonify(rowTable.output_result())
+
+
+@bp.route("/profitloss")
+def report4():
+    return render_template("report4.jinja")
+
+@bp.route("/report4_data")
+def report4_data():
+    """Return server side data."""
+    # defining the initial query depending on your purpose
+    query = (m.Trade.query
+              .join(m.Leader)
+              .filter(or_(m.Trade.direction in ('sell-close', 'buy-close'), 
+                          and_(m.Trade.direction == 'buy', m.Trade.amount < 0),
+                          and_(m.Trade.direction == 'sell', m.Trade.amount >= 0) 
+                          ))
+            )
+    response_schema = TradeSchema(many=True)
+
+    # instantiating a DataTable for the query and table needed
+    rowTable = DataTables(request.args, query, response_schema)
+    # returns what is needed by DataTable
+    return jsonify(rowTable.output_result())
+
 
 
 # @bp.route("/report2")

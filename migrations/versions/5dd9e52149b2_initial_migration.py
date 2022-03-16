@@ -1,17 +1,16 @@
-"""Initial migration
+"""initial_migration
 
-Revision ID: 76e395106e09
+Revision ID: 5dd9e52149b2
 Revises: 
-Create Date: 2021-10-13 21:14:07.385144
+Create Date: 2022-03-14 23:49:25.998990
 
 """
-from configparser import Error
 from alembic import op
 import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '76e395106e09'
+revision = '5dd9e52149b2'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,6 +22,9 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=50), nullable=False),
     sa.Column('encrypted_uid', sa.String(length=50), nullable=False),
+    sa.Column('description', sa.String(length=4000), nullable=True),
+    sa.Column('all_pnl', api.models.model_base.Numeric(precision=18, scale=2), nullable=True),
+    sa.Column('all_roi', api.models.model_base.Numeric(precision=18, scale=2), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
@@ -62,9 +64,9 @@ def upgrade():
     op.create_table('KnownPosition',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('symbol', sa.String(length=20), nullable=False),
-    sa.Column('entry_price', sa.Numeric(precision=18, scale=2), nullable=False),
-    sa.Column('amount', sa.Numeric(precision=18, scale=2), nullable=False),
-    sa.Column('position_size', sa.Numeric(precision=18, scale=2), nullable=False),
+    sa.Column('entry_price', api.models.model_base.Numeric(precision=18, scale=2), nullable=False),
+    sa.Column('amount', api.models.model_base.Numeric(precision=18, scale=2), nullable=False),
+    sa.Column('position_size', api.models.model_base.Numeric(precision=18, scale=2), nullable=False),
     sa.Column('update_time', sa.DateTime(), nullable=True),
     sa.Column('created_timestamp', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.Column('leader_id', sa.Integer(), nullable=False),
@@ -75,16 +77,17 @@ def upgrade():
     op.create_table('Trade',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('symbol', sa.String(length=20), nullable=False),
-    sa.Column('change_entry_price', sa.Numeric(precision=18, scale=6), nullable=False),
-    sa.Column('change_size', sa.Numeric(precision=18, scale=2), nullable=False),
-    sa.Column('amount_change', sa.Numeric(precision=18, scale=2), nullable=False),
-    sa.Column('entry_price', sa.Numeric(precision=18, scale=2), nullable=False),
-    sa.Column('amount', sa.Numeric(precision=18, scale=2), nullable=False),
-    sa.Column('position_size', sa.Numeric(precision=18, scale=2), nullable=False),
+    sa.Column('change_entry_price', api.models.model_base.Numeric(precision=18, scale=6), nullable=False),
+    sa.Column('change_size', api.models.model_base.Numeric(precision=18, scale=2), nullable=False),
+    sa.Column('amount_change', api.models.model_base.Numeric(precision=18, scale=2), nullable=False),
+    sa.Column('entry_price', api.models.model_base.Numeric(precision=18, scale=2), nullable=False),
+    sa.Column('amount', api.models.model_base.Numeric(precision=18, scale=2), nullable=False),
+    sa.Column('position_size', api.models.model_base.Numeric(precision=18, scale=2), nullable=False),
     sa.Column('update_time', sa.DateTime(), nullable=True),
     sa.Column('leader_id', sa.Integer(), nullable=False),
     sa.Column('created_timestamp', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
     sa.Column('direction', sa.String(length=50), nullable=False),
+    sa.Column('last_price', api.models.model_base.Numeric(precision=18, scale=6), nullable=True),
     sa.ForeignKeyConstraint(['leader_id'], ['Leader.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -110,11 +113,30 @@ def upgrade():
     sa.ForeignKeyConstraint(['role_id'], ['role.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    # op.create_table('vwTrade',
+    # sa.Column('id', sa.Integer(), nullable=False),
+    # sa.Column('symbol', sa.String(length=20), nullable=False),
+    # sa.Column('change_entry_price', api.models.model_base.Numeric(precision=18, scale=6), nullable=False),
+    # sa.Column('change_size', api.models.model_base.Numeric(precision=18, scale=2), nullable=False),
+    # sa.Column('amount_change', api.models.model_base.Numeric(precision=18, scale=2), nullable=False),
+    # sa.Column('entry_price', api.models.model_base.Numeric(precision=18, scale=2), nullable=False),
+    # sa.Column('amount', api.models.model_base.Numeric(precision=18, scale=2), nullable=False),
+    # sa.Column('position_size', api.models.model_base.Numeric(precision=18, scale=2), nullable=False),
+    # sa.Column('update_time', sa.DateTime(), nullable=True),
+    # sa.Column('leader_id', sa.Integer(), nullable=False),
+    # sa.Column('created_timestamp', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=False),
+    # sa.Column('direction', sa.String(length=50), nullable=False),
+    # sa.Column('description', sa.String(length=50), nullable=False),
+    # sa.Column('leader', sa.String(length=50), nullable=False),
+    # sa.ForeignKeyConstraint(['leader_id'], ['Leader.id'], ),
+    # sa.PrimaryKeyConstraint('id')
+    # )
     # ### end Alembic commands ###
 
 
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
+    # op.drop_table('vwTrade')
     op.drop_table('role_permission')
     op.drop_table('app_user_role')
     op.drop_table('Trade')

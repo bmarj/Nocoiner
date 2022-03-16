@@ -24,6 +24,9 @@ class Leader(db.Model):
 class Trade(db.Model):
     __tablename__ = 'Trade'
     __bind_key__ = 'mainDB'
+    __table_args__ = {
+        'implicit_returning': False
+    }
 
     id = Column(Integer, primary_key=True)
     symbol = Column(String(20), nullable=False)
@@ -37,6 +40,7 @@ class Trade(db.Model):
     leader_id = Column(ForeignKey('Leader.id'), nullable=False)
     created_timestamp = Column(DateTime, nullable=False, server_default=func.now())
     direction = Column(String(50), nullable=False)
+    last_price = Column(Numeric(18, 6))
 
     leader = relationship('Leader', backref='trades')
 
@@ -77,6 +81,26 @@ class Trade(db.Model):
             return "enter short"
         if self.direction == 'buy' and self.amount >= 0:
             return "enter long"
+
+
+    @property
+    def profit(self):
+        price_change = (self.last_price or self.entry_price) - self.entry_price
+        if self.direction == 'sell-close':
+            return -self.amount_change * price_change
+        if self.direction == 'buy-close':
+            return -self.amount_change * price_change
+        if self.direction == 'sell' and self.amount >= 0:
+            if self.amount_change + self.amount < 0:
+                # closed long and opened short
+                return abs(self.amount) * price_change
+            return -self.amount_change * price_change
+        if self.direction == 'buy' and self.amount < 0:
+            if self.amount_change + self.amount > 0:
+                # closed short and opened long
+                return -abs(self.amount) * price_change
+            return -self.amount_change * price_change
+        return None
 
 
 class KnownPosition(db.Model):
