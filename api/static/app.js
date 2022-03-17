@@ -1075,7 +1075,7 @@ var reportDatatablesConfig =
         [10, 25, 50, 100, 1000, 10000],
         ['10', '25', '50', '100', '1000', '10000']
     ],
-    pageLength: 1000
+    pageLength: 25
 }
 
 function initDatatable(datatableId, dtConf){
