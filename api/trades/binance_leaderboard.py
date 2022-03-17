@@ -60,6 +60,10 @@ def process_leader(leader: Leader):
 
     positions = res.json()['data']['otherPositionRetList']
 
+    if positions is None:
+        print(f"Positions not found: {leader.name}")
+        return
+
     position_summary = {p['symbol']: p['amount'] for p in positions}
 
     # first time use, move to app init
