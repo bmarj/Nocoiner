@@ -13,18 +13,11 @@ class LeaderSchema(SQLAlchemyAutoSchema):
 class TradeSchema(SQLAlchemyAutoSchema):
     class Meta(GridSimpleMeta):
         model = m.Trade
-        exclude = []
-                #    'sum_amount',
-                #    'sum_amount_change',
-                #    'avg_position_size']
-    leader = fields.Nested(LeaderSchema)
 
+    leader = fields.Nested(LeaderSchema)
     # redefine data type for expression columns in model
     abs_position_size = fields.Number()
     abs_position_amount = fields.Number()
-    # sum_amount = fields.Number()
-    # sum_amount_change = fields.Number()
-    # avg_position_size = fields.Number()
     position_desc = fields.String()
     profit = fields.Number()
 
@@ -33,10 +26,6 @@ class TradeAgregatedSchema(SQLAlchemyAutoSchema):
     class Meta(GridSimpleMeta):
         model = r.TradeAgregated
         exclude = []
-                #    'sum_amount',
-                #    'sum_amount_change',
-                #    'avg_position_size']
-    # trader = fields.String(default=None, attribute='leader')
 
     leader = fields.String()
     # redefine data type for expression columns in model
@@ -51,13 +40,9 @@ class TradeAgregatedSchema(SQLAlchemyAutoSchema):
     sum_abs_amount_change = fields.Number()
     sum_abs_position_size = fields.Number()
     avg_abs_position_size = fields.Number()
-    avg_entry_price  = fields.Number()
+    avg_entry_price = fields.Number()
     description = fields.String()
 
-
-class PositionSchema(SQLAlchemyAutoSchema):
-    class Meta(GridSimpleMeta):
-        model = m.KnownPosition
 
 class PositionSchema(SQLAlchemyAutoSchema):
     class Meta(GridSimpleMeta):
@@ -70,4 +55,3 @@ class PositionSchema(SQLAlchemyAutoSchema):
     # trader = fields.String(attribute='leader.name')
 
     # tradername = fields.Nested(LeaderSchema, only=['name'])
-

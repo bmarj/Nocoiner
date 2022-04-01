@@ -9,6 +9,8 @@ from api.models.model_base import db, BIT, Numeric, DATETIMEOFFSET, NonUnicodeSt
 
 
 class TradeAgregated(db.Model):
+    """aggregates defined in model have advantage of sorting by that columns
+    """
     __tablename__ = 'vwTrade'
     __bind_key__ = 'mainDB'
     #__table_args__ = {'extend_existing': True}

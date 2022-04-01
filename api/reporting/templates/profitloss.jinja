@@ -30,7 +30,7 @@
               <!-- initialize with HTML only -->
               <table id="datatable" class="table table-bordered table-hover clickable-rows" width="100%"
                 data-settings="reportDatatablesConfig"
-                data-ajax-url="{{ url_for('.report4_data') }}"
+                data-ajax-url="{{ url_for('.profitloss_data') }}"
                 data-ajax-datasrc="dataReceived" >
                 <thead class="thead-light">
                 </thead>
@@ -52,8 +52,6 @@
         //let vis = datatableGetVisibleColumns(tb);
         updateBarChart(chart1, json, "id", 'profit', "position_desc",
                           ['take profit', 'take profit - short']);
-//        updateAreaChart(chart2, json, "id", 'profit', "change_size", "position_desc",
-//                          ['take profit', 'take profit - short']);
         return json.data;
     }
     var dtConf_OL = reportDatatablesConfig;
@@ -65,7 +63,6 @@
         //{ data:"change_entry_price", title:"Change entry price", render: exRate, className: "text-right" },
         { data:"change_size", title:"Change size", render: money, className: "text-right" },
         //{ data:"position_size", title:"New Position size", render: money, className: "text-right" },
-        
         { data:"amount_change", title:"Amount change", render: amount4, className: "text-right" },
         //{ data:"amount", title:"Amount", render: amount4, className: "text-right" },
         { data:"entry_price", title:"Position entry price", render: exRate, className: "text-right" },
@@ -86,8 +83,6 @@
     $(document).ready(function () {
       tb = initDatatable('#datatable', dtConf_OL);
       chart1 = reportBarChartInit("#report1-chart", "Profit / loss by trade", "bar");
-//      chart2 = reportAreaChartInit("#report2-chart", "Historical profit / loss",
-//                                     "Profit / loss", "Date and time", "area");
     });
   </script>
 

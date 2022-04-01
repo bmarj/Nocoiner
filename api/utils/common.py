@@ -15,7 +15,7 @@ def generic_add(form_class, template, submit_target=None):
         obj.query.session.commit()
         flash('Data saved', category="Success")
         return render_template("form_success.jinja")
-  
+
     return render_template(template, form=form, key=None, form_type=form_class.__name__, submit_target=submit_target,
                            classes=("was-validated" if request.method == 'POST' else ''))
 
@@ -24,7 +24,7 @@ def generic_edit(form_class, template, submit_target=None, id=None, **kwargs):
         Pattern used to reduce code duplication
     """
     object_id = id or request.values.get("key")
-    
+
     obj = form_class.Meta.model.query.get(object_id)
 
     if request.method == 'GET':
@@ -43,9 +43,9 @@ def generic_edit(form_class, template, submit_target=None, id=None, **kwargs):
         flash('Data saved', category="Success")
         return render_template("form_success.jinja")
 
-    return render_template(template, form=form, 
+    return render_template(template, form=form,
                            key=object_id, form_type=form_class.__name__,
-            	           submit_target=submit_target,
+                           submit_target=submit_target,
                            classes=("was-validated" if request.method == 'POST' else ''),
                            **kwargs)
 
