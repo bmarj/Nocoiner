@@ -1009,7 +1009,8 @@ var defaultDatatablesConfig =
         data: {filtered_by: [{}]}
     },
     lengthMenu: lengthMenuItems,
-    pageLength: 10
+    pageLength: 10,
+    keepConditions: true
 }
 
 var simpleDatatablesDOM = 
@@ -1075,7 +1076,8 @@ var reportDatatablesConfig =
         [10, 25, 50, 100, 1000, 10000],
         ['10', '25', '50', '100', '1000', '10000']
     ],
-    pageLength: 25
+    pageLength: 25,
+    keepConditions: true
 }
 
 function initDatatable(datatableId, dtConf){
