@@ -63,6 +63,10 @@ class UserManager(LoginManager):
         else:
             return redirect(url_for('user_management.login'))
 
+@bp.route('/')
+def homepage():
+    go_to_page = current_app.config.get('HOME_PAGE', '/home')
+    return redirect(go_to_page)
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():

@@ -17,9 +17,9 @@ from .schemas import (
     PositionSchema)
 # from .forms import OrderForm
 
-bp = Blueprint('reports', __name__,
+bp = Blueprint('reporting', __name__,
                template_folder='templates',
-               static_folder='static', static_url_path='/static')
+               static_folder='static', static_url_path='/reporting/static')
 
 
 @bp.route("/transactions")

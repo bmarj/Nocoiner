@@ -57,9 +57,11 @@ def create_app(test_config=None):
     from api import errors, monitor, trades, reporting
     app.register_blueprint(errors.bp)
     app.register_blueprint(monitor.bp, url_prefix='/monitor')
-    app.register_blueprint(trades.bp, url_prefix='/leaderboard')
-    app.register_blueprint(reporting.bp, url_prefix='/reporting')
-    trades.start_scheduler(30, 'http://127.0.0.1:5055/leaderboard/process_traders')
+    app.register_blueprint(trades.bp, url_prefix='/')
+    app.register_blueprint(reporting.bp, url_prefix='/')
+
+    if app.config.get('TRADE_POOLING_ENDPOINT'):
+        trades.start_scheduler(30, app.config.get('TRADE_POOLING_ENDPOINT'))
 
     # enable migrations with Flask-migrate and Alembic
     migrate = Migrate(app, db)

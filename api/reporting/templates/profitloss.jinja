@@ -28,7 +28,7 @@
 
             <div class="card-body">
               <!-- initialize with HTML only -->
-              <table id="datatable" class="table table-bordered table-hover clickable-rows" width="100%"
+              <table id="datatable" class="table table-bordered table-hover clickable-rows table-responsive1" width="100%"
                 data-settings="reportDatatablesConfig"
                 data-ajax-url="{{ url_for('.profitloss_data') }}"
                 data-ajax-datasrc="dataReceived" >
@@ -44,7 +44,7 @@
 
 {% block extra_javascripts %}
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <script src="/reporting/static/report_charts.js"></script>
+  <script src="{{ url_for('reporting.static', filename='report_charts.js') }}"></script>
   <script>
     var chart1;
     function dataReceived(json) {

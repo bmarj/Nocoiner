@@ -15,16 +15,16 @@
                 <div class="subcat">
                     <ul>
                         <li>
-                            <a href="/reporting/profitloss">Profit / loss</a>
+                            <a href="{{ url_for('reporting.profitloss') }}">Profit / loss</a>
                         </li>
                         <li>
-                            <a href="/reporting/transactions">Transactions</a>
+                            <a href="{{ url_for('reporting.transactions') }}">Transactions</a>
                         </li>
                         <li>
-                            <a href="/reporting/tradedvalue">Coin traded value</a>
+                            <a href="{{ url_for('reporting.tradedvalue') }}">Coin traded value</a>
                         </li>
                         <li>
-                            <a href="/reporting/tradeactivity">Trades activity</a>
+                            <a href="{{ url_for('reporting.tradeactivity') }}">Trades activity</a>
                         </li>
                     </ul>
                 </div>
@@ -42,7 +42,7 @@
                 <div class="subcat">
                     <ul>
                         <li>
-                            <a href="/leaderboard/trades">Trades</a>
+                            <a href="{{ url_for('trades.trades_view') }}">Trades</a>
                         </li>
                     </ul>
                 </div>
@@ -51,7 +51,7 @@
                 <div class="subcat">
                     <ul>
                         <li>
-                            <a href="/leaderboard/positions">Positions</a>
+                            <a href="{{ url_for('trades.positions_view') }}">Positions</a>
                         </li>
                     </ul>
                 </div>
@@ -60,7 +60,7 @@
                 <div class="subcat">
                     <ul>
                         <li>
-                            <a href="/leaderboard/traders">Traders</a>
+                            <a href="{{ url_for('trades.traders_view') }}">Traders</a>
                         </li>
                     </ul>
                 </div>
