@@ -4,7 +4,7 @@ from flask_login import current_user
 from flask_sqlalchemy.model import Model
 from werkzeug.security import generate_password_hash
 
-from sqlalchemy import event, Column, DateTime, Integer, ForeignKey, String, Sequence, Boolean
+from sqlalchemy import event, Column, DateTime, Integer, ForeignKey, String, Boolean
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import backref, relationship, column_property
 
@@ -18,7 +18,7 @@ class Role(db.Model):
     __tablename__ = "role"
     __bind_key__ = 'mainDB'
 
-    id              = Column(Integer, Sequence("role_id_seq"), primary_key=True)
+    id              = Column(Integer, primary_key=True)
     name            = Column(String(64), unique=True, nullable=False)
     #permissions = relationship("Permission")
     #role_permissions = relationship("RolePermission", uselist=True)
@@ -30,7 +30,7 @@ class Role(db.Model):
 class Permission(db.Model):
     __tablename__ = "permission"
     __bind_key__ = 'mainDB'
-    id              = Column(Integer, Sequence("permission_id_seq"), primary_key=True)
+    id              = Column(Integer, primary_key=True)
     name            = Column(String(100), unique=True, nullable=False)
 
     def __repr__(self):
@@ -56,7 +56,7 @@ class RolePermission(db.Model):
 
     role            = relationship("Role",
                                    backref=backref("role_permissions", uselist=True))
-    permission      = relationship("Permission", 
+    permission      = relationship("Permission",
                                    backref=backref("role_permissions", uselist=True))
 
 
@@ -67,21 +67,21 @@ class UserRole(AuditMixin, db.Model):
     id              = Column(Integer, primary_key=True)
     app_user_id     = Column(Integer, ForeignKey("app_user.id"))
     role_id         = Column(Integer, ForeignKey("role.id"))
-    
+
     user            = relationship("User",
                                    foreign_keys=app_user_id,
                                    backref=backref("user_roles", uselist=True))
     role            = relationship("Role",
                                    backref=backref("user_roles", uselist=True))
 
-    #UniqueConstraint("user_id", "role_id")
-# UserRole.force_audited()
+    # UniqueConstraint("user_id", "role_id")
+    # UserRole.force_audited()
 
 class User(db.Model):
     __tablename__ = "app_user"
     __bind_key__ = 'mainDB'
 
-    id              = Column(Integer, Sequence("app_user_id_seq"), primary_key=True)
+    id              = Column(Integer, primary_key=True)
     first_name      = Column(String(64), nullable=False)
     last_name       = Column(String(64), nullable=False)
     username        = Column(String(64), unique=True, nullable=False)
@@ -212,4 +212,3 @@ class User(db.Model):
 
     def __repr__(self):
         return self.get_full_name()
-
