@@ -9,6 +9,6 @@ def ends_with_dot(text):
     return text
 
 def init_app(app):
-  """Initialize a Flask application with custom filters."""
-  app.jinja_env.filters['titlecase_label'] = titlecase_label
-  app.jinja_env.filters['end_dot'] = ends_with_dot
+    """Initialize a Flask application with custom filters."""
+    app.jinja_env.filters['titlecase_label'] = titlecase_label
+    app.jinja_env.filters['end_dot'] = ends_with_dot
