@@ -52,11 +52,12 @@ def create_app(test_config=None):
     um.init_app(app)
     # attach routes and custom error pages here
 
-    from api import errors, monitor, trades, reporting
+    from api import errors, monitor, trades, reporting, ainavigator
     app.register_blueprint(errors.bp)
     app.register_blueprint(monitor.bp, url_prefix='/monitor')
     app.register_blueprint(trades.bp, url_prefix='/')
     app.register_blueprint(reporting.bp, url_prefix='/')
+    app.register_blueprint(ainavigator.bp, url_prefix='/')
 
     if app.config.get('TRADE_POOLING_ENDPOINT'):
         trades.start_scheduler(30, app.config.get('TRADE_POOLING_ENDPOINT'))

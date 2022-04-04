@@ -25,6 +25,7 @@ flask-migrate = "*"
 # psycopg2 = "*"
 requests = "*"
 apscheduler = "*"
+openai = "*"
 
 [dev-packages]
 flake8 = "*"

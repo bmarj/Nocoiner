@@ -1,0 +1,13 @@
+{% macro navbar_robot() %}
+<!-- BOF Header Search -->
+<form id="robotForm" class="navbar-search" role="search" action="{{ url_for('ainavigator.robot') }}">
+  <div class="input-group">
+      <div class="input-group-prepend">
+          <div class="input-group-text"><i class="ti-target text-carolina"></i></div>
+      </div>
+      <input type="text" placeholder="I want to see..." class="form-control" name="input_query"
+          id="input_query">
+  </div>
+</form>
+<!-- EOF Header Search -->
+{% endmacro %}
