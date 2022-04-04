@@ -24,7 +24,9 @@ def find_column_in_models_deep(model_classes, property_path, default=None):
     for model_class in model_list:
         column = getattr(model_class, paths[0], None)
         if column and hasattr(column.property, 'entity'):
-            return find_column_in_models(column.property.entity.entity, '.'.join(paths[1:]), default)
+            return find_column_in_models(column.property.entity.entity,
+                                         '.'.join(paths[1:]),
+                                         default)
         # else:
         #     return column, model_class
         # found, last one in path

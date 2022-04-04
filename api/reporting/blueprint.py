@@ -1,4 +1,4 @@
-from flask import Blueprint, session, jsonify, url_for, request, render_template, flash
+from flask import Blueprint, session, jsonify, url_for, request, render_template, flash, current_app
 from flask_sqlalchemy import orm
 from marshmallow import EXCLUDE
 # from marshmallow.exceptions import ValidationError
@@ -114,3 +114,28 @@ def profitloss_data():
     rowTable = DataTables(request.args, query, response_schema)
     # returns what is needed by DataTable
     return jsonify(rowTable.output_result())
+
+
+# import openai
+# openai.api_key = current_app.config['OPENAI_API_KEY']
+# openai.api_base = current_app.config['OPENAI_BASE_ADDRESS']
+# @bp.route("/forinrobot")
+# def robot():
+#     # List Engines (Models)
+#     engines = openai.Engine.list()
+#     # Print all engines IDs
+#     for engine in engines.data:
+#         print(engine.id)
+
+#     # Create a completion, return results streaming as they are generated. Run with `python3 -u` to ensure unbuffered output.
+#     completion = openai.Completion.create(
+#         engine="gpt-j-6b",
+#         prompt="Once upon a time there was a Goose. ",
+#         max_tokens=160,
+#         stream=True)
+
+#     # Print each token as it is returned
+#     for c in completion:
+#         print(c.choices[0].text, end='')
+
+#     print("")

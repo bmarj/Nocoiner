@@ -23,7 +23,7 @@ def query_trader_positions(trader_id=None):
     # join to eager load relations
     q = KnownPosition.query
     if trader_id:
-        q= q.filter(KnownPositions.leader.id == trader_id)
+        q = q.filter(KnownPositions.leader.id == trader_id)
     return q
 
 def query_active_positions(trader_id=None):
@@ -31,7 +31,7 @@ def query_active_positions(trader_id=None):
     q = KnownPosition.query\
         .filter(KnownPosition.is_active)
     if trader_id:
-        q= q.filter(KnownPositions.leader.id == trader_id)
+        q = q.filter(KnownPositions.leader.id == trader_id)
     return q
 
 def query_traders():
