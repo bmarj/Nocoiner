@@ -7,8 +7,18 @@ function submitRobotForm(form) {
         data: jform.serialize(),
         success: function (data) {
             jform.trigger("reset");
+            if (data['status'] != 'success')
+                return;
             // redirect to the url, relative to the current page
-            window.location.href = data['result'];
+            let oldPath = window.location.pathname+window.location.search;
+            let oldHash = window.location.hash;
+            window.location.assign(data['result']);
+            if (oldPath == window.location.pathname+window.location.search){
+                // if the page is the same but hash changed, we need to reload the page
+                if (oldHash != window.location.hash){
+                    window.location.reload();
+                }
+            }
         },
         error: function (data) {
             console.log('Error:', data);

@@ -1072,11 +1072,9 @@ var reportDatatablesConfig =
         },
         data: {filtered_by: [{}]}
     },
-    lengthMenu: [
-        [10, 25, 50, 100, 1000, 10000],
-        ['10', '25', '50', '100', '1000', '10000']
-    ],
-    pageLength: 25,
+    lengthMenu: [lengthMenuItems[0].concat(1000, 10000),
+                 lengthMenuItems[1].concat('1000', '10000')],
+    pageLength: lengthMenuItems[0][0],
     keepConditions: true
 }
 
@@ -1097,6 +1095,13 @@ function initDatatable(datatableId, dtConf){
     if (conf.columns){
         // default empty string content for values returned as null
         conf.columns.forEach((t) => t.defaultContent === undefined ? t.defaultContent = "" : null);
+    }
+
+    // if page opened with keepConditions link, these settings enable conditions to be applied
+    if (window.location.href.includes("#datatable=")){
+        conf.stateSave = false;
+        // will defer loading
+        conf.deferLoading = true;
     }
 
     let table = $(datatableId)

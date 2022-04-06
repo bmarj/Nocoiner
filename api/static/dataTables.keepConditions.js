@@ -1249,11 +1249,16 @@
                              // @todo Should maybe check if the order found is current order?...
                              let colName = hashComponent.substring(1);
                              let colNum = parseInt(colName);
-                             if (isNaN(colNum)){
-                               let found = _this9._dtSettings.aoColumns.filter(e => e.mData === colName);
-                               if (found.length > 0) {
-                                colNum = found[0].idx;
-                               }
+                             // If the column name is a number, then we need to find column index by name
+                             if (isNaN(colNum)) {
+                                 let found = _this9._dtSettings.aoColumns.filter(e => e.mData === colName);
+                                 if (found.length > 0) {
+                                     colNum = found[0].idx;
+                                 }
+                                 else {
+                                     // if column is not found by name, use first column
+                                     colNum = 0;
+                                 }
                              }
  
                              // Execute the api method to order the column accordingly
