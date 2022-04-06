@@ -29,6 +29,7 @@ def query_trader_positions(trader_id=None):
 def query_active_positions(trader_id=None):
     # join to eager load relations
     q = KnownPosition.query\
+        .join(Leader)\
         .filter(KnownPosition.is_active)
     if trader_id:
         q = q.filter(KnownPositions.leader.id == trader_id)
@@ -52,6 +53,7 @@ def get_trade_by_id(object_id):
 def get_positions(symbols: List[str], leader_id: int):
     # join to eager load relations
     q = KnownPosition.query\
+        .join(Leader)\
         .filter(KnownPosition.is_active,
                 KnownPosition.leader_id == leader_id,
                 KnownPosition.symbol.in_(symbols))\

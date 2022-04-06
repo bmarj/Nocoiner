@@ -17,6 +17,10 @@ def find_column_in_models(model_classes, property_path, default=None):
     return default, None
 
 def find_column_in_models_deep(model_classes, property_path, default=None):
+    """Find column in models, even if it is not in the list of model_classes.
+       Don't use this function for filtering and sorting: entity have to be joined
+       and included in model_classes.
+    """
     paths = property_path.split('.')
     model_list = model_classes
     if not hasattr(model_classes, '__iter__'):
