@@ -109,7 +109,7 @@ class DataTables:
         query = query.filter(*self.filter_expressions)
         # count before filtering
         self.cardinality = query.count()
-        
+
         self._set_column_filter_expressions()
         self._set_global_filter_expression(only_aggregates=False)
         self._set_global_filter_expression(only_aggregates=True)
@@ -129,9 +129,10 @@ class DataTables:
         # apply sorts
         if self.sort_expressions:
             query = query.order_by(*self.sort_expressions)
-        elif not query.order_by:
+        elif len(query._order_by_clauses) == 0:
+            query = query.order_by(query._raw_columns[0].c._all_columns[0])
             # if not sorted, sort by PK
-            query = query.order_by(*query.selectable.primary_key)
+            # query = query.order_by(*query.selectable.primary_key)
 
         # add paging options
         length = int(self.params.get('length'))
@@ -171,7 +172,6 @@ class DataTables:
             if column and value is not None:
                 filter_expr = column == value
                 self.filter_expressions.append(filter_expr)
-
 
     def _set_column_filter_expressions(self):
         """Construct the query: filtering.
@@ -252,8 +252,10 @@ class DataTables:
             def filter_for(col):
                 """ Filtering for datatable Search field.
                     Applies some application specific column filtering rules.
-                    example: 'begi' search non-numeric columns for content that begins with searched prefix
-                             'word ' (with space afterwards) search whole word on textual columns
+                    example: 'begi' search non-numeric columns for content that
+                                    begins with searched prefix
+                             'word ' (with space afterwards) search whole word
+                                     on textual columns
                              '>=1' search numeric columns grater than 1
 
                 """
@@ -264,14 +266,16 @@ class DataTables:
                 if only_aggregates:
                     if not hasattr(col.property.expression, "element") or \
                         not hasattr(col.property.expression.element, "identifier") or \
-                        col.property.expression.element.identifier not in ("sum", "count", "min", "max",
+                        col.property.expression.element.identifier not in ("sum", "count",
+                                                                           "min", "max",
                                                                            "abs", "avg"):
                         return None
                 else:
                     if hasattr(col.property.expression, "element") and \
-                        ( not hasattr(col.property.expression.element, "identifier") or
-                        col.property.expression.element.identifier in ("sum", "count", "min", "max",
-                                                                       "abs", "avg")):
+                        (not hasattr(col.property.expression.element, "identifier") or
+                         col.property.expression.element.identifier in ("sum", "count",
+                                                                        "min", "max",
+                                                                        "abs", "avg")):
                         return None
                 val = '' + global_search + ''
                 search_func = SEARCH_METHODS['like']
@@ -289,7 +293,7 @@ class DataTables:
                     try:
                         if global_search.endswith(' '):
                             return or_(search_func(col, global_search.strip()),
-                                       search_func(col, global_search + '%') )
+                                       search_func(col, global_search + '%'))
                         else:
                             val = global_search + '%'
                             search_func = SEARCH_METHODS['like']
@@ -301,7 +305,7 @@ class DataTables:
                     try:
                         if global_search.endswith(' '):
                             return or_(search_func(col, global_search.strip()),
-                                       search_func(col, global_search + '%') )
+                                       search_func(col, global_search + '%'))
                         else:
                             val = global_search + '%'
                             search_func = SEARCH_METHODS['like']
@@ -313,7 +317,8 @@ class DataTables:
                     search_func = SEARCH_METHODS['numeric']
                     val = global_search.strip()
                 elif col.type.__visit_name__ == 'NUMERIC' and has_expr:
-                    if not val_without_ops.lstrip('-').replace(',','').replace('.','').strip().isdigit():
+                    if not val_without_ops.lstrip('-').replace(',', '').replace('.', '')\
+                                          .strip().isdigit():
                         return None
                     search_func = SEARCH_METHODS['numeric']
                     val = global_search.strip()
@@ -335,7 +340,8 @@ class DataTables:
                 return filter_expr
 
         global_filter = [
-            filter_for(col) for col in columns if filter_for(col) is not None # if hasattr(col, 'global_search') and col.global_search
+            filter_for(col) for col in columns if filter_for(col) is not None
+            # if hasattr(col, 'global_search') and col.global_search
         ]
         if only_aggregates:
             self.group_filter_expressions.append(or_(*[f for f in global_filter if f is not None]))
