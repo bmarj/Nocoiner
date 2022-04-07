@@ -6,7 +6,7 @@ import requests
 
 from api.datatables import DataTables
 from api.user_management import login_required, authorize
-from api.utils.common import generic_add, generic_edit, generic_form_edit, generic_add
+from api.utils.common import generic_add, generic_edit, generic_form_edit
 from api.models.binance_leader_trades import Leader
 from .business import query_active_positions, query_traders, query_trades
 from .schemas import (
@@ -96,7 +96,7 @@ def process_leaders(id):
 # Use with 'edit_button' button
 # Used for editing with all permited_forms withing blueprint
 @bp.route('/form_edit/<id>', methods=['GET'])
-@bp.route('/form_edit', methods=['GET','POST'])
+@bp.route('/form_edit', methods=['GET', 'POST'])
 # @authorize('trades')
 def form_edit(id=None):
     permitted_forms = [LeaderForm]
