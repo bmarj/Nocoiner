@@ -26,6 +26,7 @@ flask-migrate = "*"
 requests = "*"
 apscheduler = "*"
 openai = "*"
+flask-limiter = "*"
 
 [dev-packages]
 flake8 = "*"

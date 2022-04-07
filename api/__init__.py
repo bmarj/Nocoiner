@@ -52,6 +52,9 @@ def create_app(test_config=None):
     um.init_app(app)
     # attach routes and custom error pages here
 
+    from api.utils.rate_limiter import limiter
+    limiter.init_app(app)
+
     from api import errors, monitor, trades, reporting, ainavigator
     app.register_blueprint(errors.bp)
     app.register_blueprint(monitor.bp, url_prefix='/monitor')

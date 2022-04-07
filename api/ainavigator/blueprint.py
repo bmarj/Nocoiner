@@ -1,12 +1,19 @@
 from flask import request, Blueprint, jsonify, current_app
+from flask_login import current_user
 from datetime import datetime
+from api.utils.rate_limiter import limiter
+from werkzeug.urls import url_parse
 import openai
 
 bp = Blueprint('ainavigator', __name__,
                template_folder='templates',
                static_folder='static', static_url_path='/ainavigator/static')
 
+# this sets rate limmit for entire blueprint, including static files
+# limiter.limit("1/minute")(bp)
+
 @bp.route('/forinrobot', methods=['POST', 'GET'])
+@limiter.limit('20/minute')
 def robot():
     openai.api_key = current_app.config['OPENAI_API_KEY']
     openai.api_base = current_app.config['OPENAI_BASE_ADDRESS']
@@ -22,6 +29,10 @@ def robot():
     user_prompt = request.form.to_dict()['input_query']
     if not user_prompt:
         return jsonify({'status': 'error', 'result': ''}), 400
+
+    if len(user_prompt) > 500:
+        return jsonify({'status': 'error',
+                        'result': 'Prompt too long, more than 500 characters.'}), 400
 
     prompt = f"""We will extract known values and organize them in classes. 
 
@@ -95,8 +106,9 @@ INPUT: list trades, fifty rows sort by direc field made by Clickherenow
 INPUT: {user_prompt}
 ["""
 
-    print('Promt: ' + user_prompt)
+    print('Prompt: ' + user_prompt)
 
+    user_identifier = str(getattr(current_user, 'id', 0))
     # Create a completion, return results streaming as they are generated.
     # Run with `python3 -u` to ensure unbuffered output.
     completion = openai.Completion.create(
@@ -105,19 +117,25 @@ INPUT: {user_prompt}
         max_tokens=50,
         temperature=temperature,
         stop=['INPUT:'],
+        user=user_identifier,
         stream=False)
 
     suggested_response = completion.choices[0].text.rstrip('INPUT:').strip().replace(' ', '')
     parts = {ct.split(']:')[0]: ct.split(']:')[1]
              for ct in suggested_response.replace('\n', '').split('[')}
 
-    if not parts.get('BASE'):
+    if request.referrer:
+        current_url = url_parse(request.referrer)
+        current_base = current_url.path.lstrip('/')
+
+    if not parts.get('BASE', current_base):
         return jsonify({'status': 'error', 'result': 'Try to explain better'}), 400
 
-    url = '/' + parts['BASE']
+    url = '/' + parts.get('BASE', current_base)
 
     hashpart = ''
-    if len(parts) > 1:
+    # if we have other parts that base url path
+    if len(parts) > (1 if parts.get('BASE') else 0):
         hashpart = '#datatable='
 
     if parts.get('LIMIT'):
