@@ -19,12 +19,12 @@ function submitRobotForm(form) {
                     window.location.reload();
                 }
             }
-            toastr.success('Check this out.', 'FOR IN navigator', {'positionclass': 'toast-top-center'});
+            toastr.success('Check this out.', 'FOR IN navigator', {'positionClass': 'toast-top-center'});
         },
         error: function (data) {
             console.log('Error:', data);
             jform.trigger("reset");
-            toastr.error('Try again with something similar.', 'FOR IN navigator', {'positionclass': 'toast-top-center'});
+            toastr.error(data.responseJSON['result'], 'FOR IN navigator', {'positionClass': 'toast-top-center'});
         }
     });
 }
