@@ -1,9 +1,11 @@
 from flask import request, Blueprint, jsonify, current_app
 from flask_login import current_user
 from datetime import datetime
-from api.utils.rate_limiter import limiter
 from werkzeug.urls import url_parse
 import openai
+from api.utils.rate_limiter import limiter
+from . import safety_classifier
+
 
 bp = Blueprint('ainavigator', __name__,
                template_folder='templates',
@@ -33,6 +35,11 @@ def robot():
     if len(user_prompt) > 500:
         return jsonify({'status': 'error',
                         'result': 'Prompt too long, more than 500 characters.'}), 400
+
+    # pre-request content filtering
+    content_safety_class = safety_classifier.classify(user_prompt)
+    if content_safety_class == '2':
+        return jsonify({'status': 'error', 'result': 'Can\'t do that'}), 400
 
     prompt = f"""We will extract known values and organize them in classes. 
 
@@ -121,6 +128,12 @@ INPUT: {user_prompt}
         stream=False)
 
     suggested_response = completion.choices[0].text.rstrip('INPUT:').strip().replace(' ', '')
+
+    # recommended content filtering
+    content_safety_class = safety_classifier.classify(suggested_response)
+    if content_safety_class == '2':
+        return jsonify({'status': 'error', 'result': 'Can\'t do that'}), 400
+
     parts = {ct.split(']:')[0]: ct.split(']:')[1]
              for ct in suggested_response.replace('\n', '').split('[')}
 
