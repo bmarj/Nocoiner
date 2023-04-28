@@ -14,13 +14,19 @@
 
             <div class="row mb-3">
                 <!-- Chart -->
-                <div class="col-12">
+                <div class="col-12 col-lg-6">
                     <div class="">
                         <div class="card-body" id="report2-chart"></div>
                     </div>
                 </div>
+                <div class="col-12 col-lg-6">
+                    <div class="">
+                        <div class="" id="mygraph"></div>
+                    </div>
+                </div>
             </div>
-
+        </div>
+        <div class="card mb-3">
             <div class="card-body">
               <!-- initialize with HTML only -->
               <table id="datatable" class="table table-bordered table-hover clickable-rows" width="100%"
@@ -38,6 +44,7 @@
 {% endblock content %}
 
 {% block extra_javascripts %}
+  <script type="text/javascript" src="https://unpkg.com/vis-graph3d@latest/dist/vis-graph3d.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="{{ url_for('reporting.static', filename='report_charts.js') }}"></script>
   <script>
@@ -47,6 +54,7 @@
         let vis = datatableGetVisibleColumns(tb);
         updateBubbleChart(chart2, json, "position_size", "change_entry_price", 'change_size', "position_desc",
                           ['take profit', 'enter long', 'take profit - short', 'enter short']);
+        drawVisualization(json);
         return json.data;
     }
     var dtConf_OL = reportDatatablesConfig;
@@ -76,7 +84,7 @@
 
     $(document).ready(function () {
       tb = initDatatable('#datatable', dtConf_OL);
-      chart2 = reportBubbleChartInit("#report2-chart", "Transaction sizes by position size and price", 
+      chart2 = reportBubbleChartInit("#report2-chart", "Transaction sizes\nby position size and price", 
                                      "Price in USDT", "Position size (negative value indicates short position)");
     });
   </script>

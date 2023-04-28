@@ -20,7 +20,8 @@
                     </div>
                 </div>
             </div>
-
+        </div>
+        <div class="card mb-3">
             <div class="card-body">
               <!-- initialize with HTML only -->
               <table id="datatable" class="table table-bordered table-hover clickable-rows" width="100%"
@@ -58,7 +59,7 @@
 
     $(document).ready(function () {
       tb = initDatatable('#datatable', dtConf_OL);
-      chart1 = reportBarChartInit("#report1-chart", "Traded value", "bar");
+      chart1 = coinTradedValueChartInit("#report1-chart", "Traded value", "bar");
     });
   </script>
 

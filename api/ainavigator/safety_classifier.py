@@ -3,6 +3,9 @@ import openai
 
 
 def classify(content_to_classify: str) -> str:
+    use_classifier = current_app.config.get('USE_SAFETY_CLASSIFIER', True)
+    if not use_classifier:
+        return "0"
     openai.api_key = current_app.config['OPENAI_API_KEY']
     openai.api_base = current_app.config['OPENAI_BASE_ADDRESS']
 

@@ -162,14 +162,14 @@ function reportAreaChartInit(chartDivId, caption, yCaption, xCaption, type='area
 function updateAreaChart(chart, json, xaxis, yaxis, sizeaxis, seriesColumn, orderedSeries=[]) {
     // extract series
     let series = orderedSeries
-    if (series.length == 0)
+    if (series.length === 0)
         series = [...new Set(json.data.flatMap( (c) => { return c[seriesColumn]; }))];
 
     // fill data for series and each category,
     // this way will ensure that dimension of all series is the same
     let allSeries = [];
     for (s of series){
-        let sData = json.data.flatMap( (c) => { return getValueForPath(c, seriesColumn)==s ? c : []; });
+        let sData = json.data.flatMap( (c) => { return getValueForPath(c, seriesColumn)===s ? c : []; });
         let seriesData = sData.map( (c) => { return [getValueForPath(c, xaxis),
                                                     getValueForPath(c, yaxis),
                                                     //Math.abs(getValueForPath(c, sizeaxis))
@@ -214,7 +214,9 @@ function reportBubbleChartInit(chartDivId, caption, yCaption, xCaption, type='bu
             //width: 580,
             height: 400,
             type: type,
-            foreColor: '#999999'
+            toolbar: {
+                show: false,
+            }
         },
         dataLabels: {
             enabled: false
@@ -234,7 +236,8 @@ function reportBubbleChartInit(chartDivId, caption, yCaption, xCaption, type='bu
                 text: xCaption
             },
             labels: {
-                rotate: -45
+                formatter: (v) => {return asMoney(v);},
+                rotate: -45,
             },
             //tickPlacement: 'on',
             type: "numeric",
@@ -281,14 +284,14 @@ function reportBubbleChartInit(chartDivId, caption, yCaption, xCaption, type='bu
 function updateBubbleChart(chart, json, xaxis, yaxis, sizeaxis, seriesColumn, orderedSeries=[]) {
     // extract series
     let series = orderedSeries
-    if (series.length == 0)
+    if (series.length === 0)
         series = [...new Set(json.data.flatMap( (c) => { return c[seriesColumn]; }))];
 
     // fill data for series and each category,
     // this way will ensure that dimension of all series is the same
     let allSeries = [];
     for (s of series){
-        let sData = json.data.flatMap( (c) => { return getValueForPath(c, seriesColumn)==s ? c : []; });
+        let sData = json.data.flatMap( (c) => { return getValueForPath(c, seriesColumn)===s ? c : []; });
         let seriesData = sData.map( (c) => { return [getValueForPath(c, xaxis),
                                                     getValueForPath(c, yaxis),
                                                     //Math.abs(getValueForPath(c, sizeaxis))
@@ -338,12 +341,25 @@ function reportBarChartInit(chartDivId, caption, type='bar') {
         title: {
             text: caption,
         },
-        // tooltip: {
-        //     enabled: true,
-        //     y: {
-        //         formatter: (v) => {return asMoney(v);}
-        //     },
-        // },
+        tooltip: {
+            enabled: true,
+            x: {
+                formatter: (v) => {return "Trade #" + v;}
+            },
+            y: {
+                formatter: (v) => {return asMoney(v);}
+            },
+        },
+        xaxis: {
+            labels: {
+                formatter: (v) => {return "#" + v;}
+            }
+        },
+        yaxis: {
+            labels: {
+                formatter: (v) => {return asMoney(v);}
+            }
+        },
         noData: {
           text: 'Loading...'
         },
@@ -383,6 +399,130 @@ function reportBarChartInit(chartDivId, caption, type='bar') {
       return chart;
 }
 
+function coinTradedValueChartInit(chartDivId, caption, type='bar') {
+    var options = {
+      chart: {
+        type: type,
+        stacked: true,
+        parentHeightOffset: 0,
+        height: 400
+      },
+      series: [],
+      title: {
+          text: caption,
+      },
+      tooltip: {
+          enabled: true,
+          y: {
+              formatter: (v) => {return asMoney(v);}
+          },
+      },
+      yaxis: {
+          labels: {
+              formatter: (v) => {return asMoney(v);}
+          }
+      },
+      noData: {
+        text: 'Loading...'
+      },
+      plotOptions: {
+          bar: {
+              columnWidth: '75%',
+              endingShape: 'rounded'
+          }
+      },
+      stroke: {
+          width: 1
+      },
+      fill: {
+          type: 'gradient',
+          gradient: {
+              shade: 'light',
+              type: "horizontal",
+              shadeIntensity: 0.25,
+              gradientToColors: undefined,
+              inverseColors: true,
+              opacityFrom: 0.85,
+              opacityTo: 0.85,
+              stops: [50, 0, 100]
+          },
+      },
+      dataLabels: {
+          enabled: false
+      },
+    };
+
+    let chart = new ApexCharts(
+      document.querySelector(chartDivId),
+      options
+    );
+    
+    chart.render();
+    return chart;
+}
+
+function coinNumberOfTradesChartInit(chartDivId, caption, type='bar') {
+    var options = {
+      chart: {
+        type: type,
+        stacked: true,
+        parentHeightOffset: 0,
+        height: 400
+      },
+      series: [],
+      title: {
+          text: caption,
+      },
+      tooltip: {
+          enabled: true,
+          y: {
+            title: "Trades",
+          },
+      },
+      xaxis: {
+          categories: ["Symbol"],
+          labels: {
+              formatter: (v) => {return "#" + v;}
+          }
+      },
+      noData: {
+        text: 'Loading...'
+      },
+      plotOptions: {
+          bar: {
+              columnWidth: '75%',
+              endingShape: 'rounded'
+          }
+      },
+      stroke: {
+          width: 1
+      },
+      fill: {
+          type: 'gradient',
+          gradient: {
+              shade: 'light',
+              type: "horizontal",
+              shadeIntensity: 0.25,
+              gradientToColors: undefined,
+              inverseColors: true,
+              opacityFrom: 0.85,
+              opacityTo: 0.85,
+              stops: [50, 0, 100]
+          },
+      },
+      dataLabels: {
+          enabled: false
+      },
+    };
+
+    let chart = new ApexCharts(
+      document.querySelector(chartDivId),
+      options
+    );
+    
+    chart.render();
+    return chart;
+}
 
 function updateBarChart(chart, json, xaxis, yaxis, seriesColumn, orderedSeries=[]) {
     let allSeries = []
@@ -392,7 +532,7 @@ function updateBarChart(chart, json, xaxis, yaxis, seriesColumn, orderedSeries=[
         let seriesData = json.data.filter( c => c[seriesColumn] == s);
         let slData = [];
         for (l of labels){
-            lblData = seriesData.filter(c => c[xaxis] == l).map( c => c[yaxis] );
+            lblData = seriesData.filter(c => c[xaxis] === l).map( c => c[yaxis] );
             slData = slData.concat( arrSumFlat(lblData) );
         }
         allSeries = allSeries.concat({name: s, data: slData});
@@ -415,4 +555,80 @@ function updateBarChart(chart, json, xaxis, yaxis, seriesColumn, orderedSeries=[
     }
 
     chart.updateOptions(options);
+}
+
+
+function mapToindex(json_data, fieldName){
+    let items = [...new Set(json_data.map( c => c[fieldName] ))];
+    itemMap = {};
+    let index = 1;
+    items.forEach(element => {
+        itemMap[element] = index;
+        index++;
+    });
+    return itemMap
+}
+
+// Called when the Visualization API is loaded.
+function drawVisualization(json) {
+  // Create and populate a data table.
+  var data = new vis.DataSet(0);
+
+  //symbolNumMap = mapToindex(json.data, 'symbol');
+
+
+  json.data.forEach(d => {
+    //if (d.symbol =='1000XECUSDT') 
+        // data.add({x: d.amount_change, y: d.change_size, z: d.position_size, style: d.position_size});
+    data.add({x: d.position_size, y: d.change_entry_price, z: d.change_size, style: d.change_size});
+    // data.add({x: d.position_size,
+    //           y: symbolNumMap[d.symbol],
+    //           z: d.change_entry_price,
+    //           style: moment(d.created_timestamp).unix()
+    // });
+    // data.add({x: d.entry_price,
+    //     y: d.change_entry_price,
+    //     z: d.change_size,
+    //     style: symbolNumMap[d.symbol]});
+    // data.add({x: d.change_entry_price,
+    //     y: d.last_price - d.entry_price,
+    //     z: d.change_size,
+    //     style: d.last_price - d.entry_price,
+    // });
+    // data.add({x: d.entry_price,
+    //     y: d.change_entry_price,
+    //     z: d.entry_price - d.change_entry_price,
+    //     style: d.change_size});
+  });
+
+  // specify options
+  var options = {
+    width:  '100%', //'600px',
+    height: '400px',
+    style: 'dot-color',
+    showPerspective: true,
+    showGrid: true,
+    showShadow: false,
+    keepAspectRatio: false,
+    dotSizeRatio: 0.01,
+    verticalRatio: 0.7,
+    showShadow: true,
+    //legendLabel: 'distance',
+    xLabel: 'Positions size',
+    yLabel: 'Trade entry price',
+    zLabel: 'Change size',
+    cameraPosition: {
+      horizontal: -0.35,
+      vertical: 0.22,
+      distance: 1.8
+    }
+  };
+
+  if (json.data.length === 0) {
+      data.add({x: 0, y: 0, z: 0, style: 0});
+  }
+
+  // create a graph3d
+  var container = document.getElementById('mygraph');
+  graph3d = new vis.Graph3d(container, data, options);
 }

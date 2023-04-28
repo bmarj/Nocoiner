@@ -114,3 +114,23 @@ def profitloss_data():
     rowTable = DataTables(request.args, query, response_schema)
     # returns what is needed by DataTable
     return jsonify(rowTable.output_result())
+
+
+@bp.route("/dashboard")
+def dashboard():
+
+    
+    return render_template("dashboard.jinja")
+
+@bp.route("/dashboard_data")
+def dashboard_data():
+    """Return server side data."""
+    # defining the initial query depending on your purpose
+    query = (m.Trade.query
+              .join(m.Leader))
+    response_schema = TradeSchema(many=True)
+
+    # instantiating a DataTable for the query and table needed
+    rowTable = DataTables(request.args, query, response_schema)
+    # returns what is needed by DataTable
+    return jsonify(rowTable.output_result())

@@ -975,8 +975,8 @@ function delay(callback, ms) {
 
 var defaultDatatablesDOM = 
     //"<'row'<'col-sm-12 offset-11 col-md-1'B>>" +
-    "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-4'B><'col-sm-12 col-md-4'f>>" +
-    "<'row'<'col-sm-12'tr>>" +
+    "<'row'<'col-8 col-sm-5 col-md-4'l><'col-2 col-sm-1 col-md-1'B><'col-12 col-sm-6 col-md-7'f>>" +
+    "<'row'<'col-12'tr>>" +
     "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>";
 let lengthMenuItems = [
     [10, 15, 20, 50, 100],
@@ -995,8 +995,9 @@ var defaultDatatablesConfig =
     buttons: [
         {
             extend: 'colvis',
-            class: 'btn btn-outline-secondary'
-            //collectionLayout: 'fixed two-column'
+            text: '<i class="fa fa-th text-secondary"></i>',
+            //class: 'btn btn-success'
+            collectionLayout: 'fixed one-column'
         }
     ],
     ajax: {
@@ -1016,7 +1017,7 @@ var defaultDatatablesConfig =
 var simpleDatatablesDOM = 
     //"<'row'<'col-sm-12 offset-11 col-md-1'B>>" +
     //"<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-4'B><'col-sm-12 col-md-4'f>>" +
-    "<'row'<'col-sm-12'tr>>" +
+    "<'row'<'col-12'tr>>" +
     "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>";
 var simpleDatatablesConfig =
 {
@@ -1042,10 +1043,10 @@ var simpleDatatablesConfig =
 
 var reportDatatablesDOM = 
     //"<'row'<'col-sm-12 offset-11 col-md-1'B>>" +
-    "<'row'<'col-sm-12 col-md-4'l><'col-sm-12 col-md-4'B><'col-sm-12 col-md-4'f>>" +
-    "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>" +
-    "<'row'<'col-sm-12'tr>>" +
+    "<'row'<'col-8 col-sm-5 col-md-4'l><'col-2 col-sm-1 col-md-1'B><'col-12 col-sm-6 col-md-7'f>>" +
+    "<'row'<'col-12'tr>>" +
     "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>";
+
 var reportDatatablesConfig =
 {
     processing: true, // for "Processing" message
@@ -1059,8 +1060,9 @@ var reportDatatablesConfig =
     buttons: [
         {
             extend: 'colvis',
-            class: 'btn btn-outline-secondary'
-            //collectionLayout: 'fixed two-column'
+            text: '<i class="fa fa-th text-secondary"></i>',
+            //class: 'btn btn-success'
+            collectionLayout: 'fixed one-column'
         }
     ],
     ajax: {
@@ -1097,6 +1099,12 @@ function initDatatable(datatableId, dtConf){
         conf.columns.forEach((t) => t.defaultContent === undefined ? t.defaultContent = "" : null);
     }
 
+    conf.language = {
+        "url": "/static/datatables/english.json"
+    },
+    // fold extra columns on small displays
+    conf.responsive = true;
+
     // if page opened with keepConditions link, these settings enable conditions to be applied
     if (window.location.href.includes("#datatable=")){
         conf.stateSave = false;
@@ -1107,9 +1115,10 @@ function initDatatable(datatableId, dtConf){
     let table = $(datatableId)
         .on('draw.dt', function(e, settings, data, xhr) {
             setupTable(datatableId);
+            //setupColvisButton(); // this works, but is noticeable
         } )
         .DataTable(conf);
-    setupColvisButton();
+    //setupColvisButton();
     var debounce = new searchDebounce(table, 500);
     return table;
 }

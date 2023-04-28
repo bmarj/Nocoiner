@@ -48,3 +48,36 @@ tr:not(.selected) .draggable a {
   width: 150%; 
   left: -25%;
 }
+
+/* #robotForm::after {
+  background: rgba(0, 0, 0, 0) url(https://visjs.github.io/vis-graph3d/docs/img/arrow.svg) no-repeat scroll 145px 0;
+  background-size: 27%;
+  content: "Just search it";
+  display: block;
+  padding: 40px 40px;
+  position: absolute;
+  width: 220px;
+  margin: 10px 0 0 20px;
+  color: black;
+  opacity: 0.4;
+}  */
+
+/* more space for query */
+#top-search.wider{
+  width: 400px!important;
+}
+
+/* div.dataTables_length{
+  float: left!important;
+}
+div.dt-buttons{
+  float: right!important;
+  padding-bottom: 0.375rem!important;
+}
+div.dataTables_filter{
+  float: left!important;
+} */
+
+div.dt-buttons{
+  padding-bottom: 0.375rem!important;
+}
