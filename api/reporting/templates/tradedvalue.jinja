@@ -1,0 +1,72 @@
+{% extends 'base.jinja' %}
+
+{% block content %}
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="caption uppercase">
+                    <i class="ti-layout-grid3-alt"></i> Coin activity analysis
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <!-- Chart -->
+                <div class="col-12">
+                    <div class="">
+                        <div class="card-body" id="report1-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-body">
+              <!-- initialize with HTML only -->
+              <table id="datatable" class="table table-bordered table-hover clickable-rows" width="100%"
+                data-settings="reportDatatablesConfig"
+                data-ajax-url="{{ url_for('.tradedvalue_data') }}"
+                data-ajax-datasrc="dataReceived" >
+                <thead class="thead-light">
+                </thead>
+              </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_javascripts %}
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="{{ url_for('reporting.static', filename='report_charts.js') }}"></script>
+  <script>
+    var chart1;
+    function dataReceived(json) {
+        //Make your callback here.
+        updateBarChart(chart1, json, "symbol", "sum_abs_change_size", "leader");
+        return json.data;
+    }
+    var dtConf_OL = reportDatatablesConfig;
+    dtConf_OL.columns = [
+        { data:"symbol", title:"Symbol" },
+        { data:"sum_abs_amount_change", title:"Amount traded", render: amount2, className: "text-right" },
+        { data:"sum_abs_change_size", title:"Value traded", render: money, className: "text-right" },
+        { data:"avg_abs_position_size", title:"Average Position size", render: money, className: "text-right" },
+        { data:"leader", title:"Trader" },
+    ];
+
+    $(document).ready(function () {
+      tb = initDatatable('#datatable', dtConf_OL);
+      chart1 = coinTradedValueChartInit("#report1-chart", "Traded value", "bar");
+    });
+  </script>
+
+{% endblock extra_javascripts %}
+
+{# additional features used on this page: #}
+{% block feature_javascripts %}
+  {% include '_feature_column_visibility.html' %}
+  {# {% include '_feature_column_filtering.html' %} #}
+{% endblock feature_javascripts %}

@@ -1,0 +1,28 @@
+{% extends 'form_base.jinja' %}
+{% from "_formhelpers.html" import render_field, render_form_header, render_form_footer %}
+
+{% block modalcontent %}
+
+    <div class="modal-content dialog-size-form">
+        {{ render_form_header(key) }}
+        <div class="modal-body">
+            <form class="validate {{ classes }}" action="" method="POST" novalidate>
+                <input type="hidden" name="key" value="{{ key }}">
+                {{ form.hidden_tag() }}
+                <div class="row">
+                <div class="form-group col-12">
+                    {{ render_field(form.name) }}
+                </div>
+                <div class="form-group col-12">
+                    {{ render_field(form.encrypted_uid) }}
+                </div>
+                <div class="form-group col-12">
+                    {{ render_field(form.is_active) }}
+                </div>
+                </div>
+            </form>
+        </div>
+        {{ render_form_footer(submit_target, form) }}
+    </div>
+
+{% endblock modalcontent %}

@@ -1,0 +1,60 @@
+{% extends 'base.jinja' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="caption uppercase">
+                    <i class="ti-layout-grid3-alt"></i> Traders
+                </div>
+                <div class="tools">
+                  {% from "_buttons.html" import add_button, edit_button, add, edit, action %}
+                  {{ add_button('.leader_add', 'trades', current_user) }}
+                  {# {{ edit_button('.leader_edit','trades', current_user) }} #}
+                  {{ edit('LeaderForm', 'trades', current_user) }} 
+                  {{ action('.process_leaders','trades', current_user, 'Fetch trades') }}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="datatable" class="table table-bordered table-hover clickable-rows" width="100%">
+                      <thead class="thead-light"></thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_javascripts %}
+  <script>
+    let dtConf = defaultDatatablesConfig;
+
+    dtConf.ajax.url = '{{ url_for('.traders_data') }}';
+
+    dtConf.columns = [
+        { data:"name", title:"Trader name" },
+        { data:"encrypted_uid", title:"UID" },
+        { data:"all_roi", title:"All ROI", render: $.fn.dataTable.render.number(',', '.', 2, '$'), className: "text-right" },
+        { data:"all_pnl", title:"All PNL", render: $.fn.dataTable.render.number(',', '.', 1, '','%'), className: "text-right" },
+        { data:"is_active", title:"Active" },
+    ];
+
+    $(document).ready(function () {
+      tb = initDatatable('#datatable', dtConf);
+      /* yadcf.init(tb, [
+        { column_number: 0, filter_type: "text", filter_match_mode: 'startsWith' },
+      ]); */
+    });
+  </script>
+
+{% endblock extra_javascripts %}
+
+{# additional features used on this page: #}
+{% block feature_javascripts %}
+  {% include '_feature_column_visibility.html' %}
+  {# {% include '_feature_column_filtering.html' %} #}
+{% endblock feature_javascripts %}

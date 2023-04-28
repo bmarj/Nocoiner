@@ -1,0 +1,173 @@
+{# from https://github.com/kvesteri/flask-jinjahelpers/blob/master/flask_jinjahelpers/templates/_formhelpers.html #}
+{% macro render_field(field) %}
+    <div class="control-group {% if field.errors %}error{% endif %}">
+        {{ field.label(class_="control-label", text=field.label.text|titlecase_label) }}
+        <div class="controls">
+            {{ field(class_="form-control", **kwargs)|safe }}
+            {% if field.errors %}
+                <p class="help-block mb-0">{{ field.errors|join(' ') }}</p>
+            {% endif %}
+            {% if field.description %}
+                <p class="help-block">{{ field.description }}</p>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro render_field3(field) %}
+  <dt>{{ field.label(**kwargs) }}
+  <dd>{{ field(**kwargs)|safe }}
+  {% if field.errors %}
+    <ul class=errors>
+    {% for error in field.errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  </dd>
+{% endmacro %}
+
+{% macro render_field2(field) %}
+  {# render the label tag associated with field #}
+  {{ field.label() }}
+
+  {# render the field itself #}
+  {{ field() }}
+
+  {# render the validation errors associated with the field #}
+  {% for error in field.errors %}
+      {{ error }}
+  {% endfor %}
+{% endmacro %}
+
+{% macro validation_summary(form) %}
+  
+  {% if form.validation_summary %}
+  <div class="mr-auto">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item ">
+        <span class="text-danger">{{ form.validation_summary }}</span>
+      </li>
+    </ul>  
+  </div>
+  {% endif %}
+
+{% endmacro %}
+
+{% macro validation_errors_summary(form) %}
+  
+  {% if form.validation_summary or form.errors %}
+  <div class="mr-auto">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item ">
+        {% if form.validation_summary %}
+          <span class="text-danger">{{ form.validation_summary }}</span>
+        {% else %}
+            <ul class="text-danger">
+            {% for fieldname, error in form.errors.items() %}
+              <li>{{ fieldname }}: {{ ' '.join(error) }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+      </li>
+    </ul>
+  </div>
+  {% endif %}
+
+{% endmacro %}
+
+{% macro render_form_fields(form) %}
+  {{ form.hidden_tag() }}
+  <div class="row">
+    {% for field in form if not field.flags.hidden %}
+      <div class="form-group col-12">
+          {{ render_field(field) }}
+      </div>
+    {% endfor %}
+  </div>
+{% endmacro %}
+
+{% macro render_form_header(key, caption) %}
+  <div class="modal-header">
+    <h5 class="modal-title" id="editModalLabel">
+        {% if caption %}
+            {{ caption }}
+        {% elif key %}
+            Edit
+        {% else %}
+            Add
+        {% endif %}
+    </h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{% endmacro %}
+
+{% macro render_card_header(key, caption, tabs) %}
+    <div class="caption">
+        {% if caption %}
+          <i class="ti-pencil-alt"></i>  {{ caption }}
+        {% elif key %}
+          <i class="ti-pencil-alt"></i>  Edit
+        {% else %}
+          <i class="ti-pencil-alt"></i>  Add
+        {% endif %}
+    </div>
+    <div class="tools">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="text-active">&times;</span>
+        </button>
+    </div>
+    {% if tabs %}
+      <ul class="nav nav-tabs card-header-tabs mt-3">
+        {% for tab in tabs%}
+          <li class="nav-item">
+            {% if loop.index == 1 %}
+              <a href="#tab{{ loop.index }}" data-toggle="tab" class="nav-link active">{{ tab }}</a>
+            {% else %}
+              <a href="#tab{{ loop.index }}" data-toggle="tab" class="nav-link">{{ tab }}</a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+{% endmacro %}
+
+{% macro render_form_footer(submit_target, form) %}
+  <div class="modal-footer">
+    {% if form and form.validation_summary %}
+    <div class="mr-auto">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item ">
+          <span class="text-danger">{{ form.validation_summary }}</span>
+        </li>
+      </ul>  
+    </div>
+    {% endif %}
+    <button id="btnUpdate" type="button" class="btn btn-primary"
+            onclick="submitModal(this,'{{ submit_target }}');">Save</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+  </div>
+{% endmacro %}
+
+{% macro render_footer(submit_target, form) %}
+    <div class="row">
+      <div class="text-left col-8">
+        {% if form and form.validation_summary %}
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item ">
+              <span class="text-danger">{{ form.validation_summary }}</span>
+            </li>
+          </ul>
+        {% endif %}
+      </div>
+      <div class="col-4">
+        <div class="tools">
+          <button id="btnUpdate" type="button" class="btn btn-primary"
+                  onclick="submitModal(this,'{{ submit_target }}');">Save</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+{% endmacro %}

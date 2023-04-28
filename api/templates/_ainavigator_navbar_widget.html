@@ -1,0 +1,16 @@
+<!-- BOF Header Search -->
+{% macro navbar_robot() %}
+<form id="robotForm" class="navbar-search" role="search" action="{{ url_for('ainavigator.robot') }}" style="display: block;">
+  <div class="input-group">
+      <div class="input-group-prepend">
+          <div class="input-group-text">
+            <img src="{{ url_for('static', filename='icons8-bot.gif') }}" alt="Robot" height="80%">
+            <!-- <i class="ti-target text-carolina"></i> -->
+          </div>
+      </div>
+      <input type="text" placeholder="I want to see..." class="form-control" name="input_query" maxlength="200"
+          id="top-search">
+  </div>
+</form>
+{% endmacro %}
+<!-- EOF Header Search -->

@@ -1,0 +1,83 @@
+
+.table-warning,
+.table-warning > th,
+.table-warning > td {
+  background-color: #ffeeca; }
+
+.table-warning th,
+.table-warning td,
+.table-warning thead th,
+.table-warning tbody + tbody {
+  border-color: #ffdf9c; }
+
+.table-hover .table-warning:hover {
+  background-color: #ffe6b1; }
+.table-hover .table-warning:hover > td,
+.table-hover .table-warning:hover > th {
+    background-color: #ffe6b1; }
+
+.table-warning .sorting_1 {
+    background-color: #ffeeca !important;
+}
+
+.table-warning .sorting_1:hover {
+    background-color: #ffe6b1 !important;
+}
+
+tr.selected .draggable a {
+    visibility: visible;
+}
+
+tr:not(.selected) .draggable a {
+    visibility: hidden;
+}
+
+/* hidden successful validation  */
+.form-control.is-valid, .was-validated .form-control:valid {
+    border-color: #495057;
+    background-image: initial;
+    padding-right: initial;
+}
+
+.dialog-size-grid{
+  width: 300%; 
+  left: -75%;
+}
+
+.dialog-size-form{
+  width: 150%; 
+  left: -25%;
+}
+
+/* #robotForm::after {
+  background: rgba(0, 0, 0, 0) url(https://visjs.github.io/vis-graph3d/docs/img/arrow.svg) no-repeat scroll 145px 0;
+  background-size: 27%;
+  content: "Just search it";
+  display: block;
+  padding: 40px 40px;
+  position: absolute;
+  width: 220px;
+  margin: 10px 0 0 20px;
+  color: black;
+  opacity: 0.4;
+}  */
+
+/* more space for query */
+#top-search.wider{
+  width: 400px!important;
+}
+
+/* div.dataTables_length{
+  float: left!important;
+}
+div.dt-buttons{
+  float: right!important;
+  padding-bottom: 0.375rem!important;
+}
+div.dataTables_filter{
+  float: left!important;
+} */
+
+div.dt-buttons{
+  padding-bottom: 0.375rem!important;
+}

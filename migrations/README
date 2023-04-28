@@ -1,0 +1,7 @@
+Single-database configuration for Flask.
+
+To generate new migration use:
+> flask db migrate
+
+Tu deploy migrations use
+> flask db upgrade

@@ -1,0 +1,127 @@
+{% macro render_menu(user) %}
+    <!-- sidebar-menu  -->
+    <div class="sidebar-menu">
+        <ul>
+            <li class="header-menu">
+                Categories
+            </li>
+            {% if user.any_permission('anonymous', 'trades', 'leaders') %}
+            <li class="maincat">
+                <a href="#">
+                    <i class="ti-bar-chart"></i>
+                    <span class="menu-text">Analytics</span>
+                </a>
+                {% if user.any_permission('anonymous', 'trades', 'leaders') %}
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="{{ url_for('reporting.profitloss') }}">Profit / loss</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('reporting.transactions') }}">Transactions</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('reporting.tradedvalue') }}">Coin traded value</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('reporting.tradeactivity') }}">Trades activity</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+            </li>
+            {% endif %}
+            {% if user.any_permission('anonymous', 'trades', 'leaders') %}
+            <li class="maincat">
+                <a href="#">
+                    <i class="ti-package"></i>
+                    <span class="menu-text">Trades and positions</span>
+                    {# <span class="badge badge-pill badge-danger">3</span> #}
+                </a>
+                {% if user.any_permission('anonymous', 'trades') %}
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="{{ url_for('trades.trades_view') }}">Trades</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+                {% if user.any_permission('anonymous', 'trades') %}
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="{{ url_for('trades.positions_view') }}">Positions</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+                {% if user.any_permission('anonymous', 'trades') %}
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="{{ url_for('trades.traders_view') }}">Traders</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+            </li>
+            {% endif %}
+            {% if user.any_permission('users') %}
+            <li class="maincat">
+                <a href="#">
+                    <i class="ti-user"></i>
+                    <span class="menu-text">User management</span>
+                    {# <span class="badge badge-pill badge-danger">3</span> #}
+                </a>
+                {% if user.has_permission('users') %}
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="/users">Users</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+                {% if user.has_permission('users') %}
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="/roles">Roles</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+                {% if user.has_permission('users') %}
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="/user-roles">Users - Roles</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+                {% if user.has_permission('users') %}
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="/role-permissions">Roles - Permissions</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+                {% if user.has_permission('users') %}
+                <div class="subcat">
+                    <ul>
+                        <li>
+                            <a href="/permissions">Permissions</a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+    <!-- sidebar-menu  -->
+{% endmacro %}

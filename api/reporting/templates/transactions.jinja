@@ -1,0 +1,98 @@
+{% extends 'base.jinja' %}
+
+{% block content %}
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="caption uppercase">
+                    <i class="ti-layout-grid3-alt"></i> Transaction analysis
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <!-- Chart -->
+                <div class="col-12 col-lg-6">
+                    <div class="">
+                        <div class="card-body" id="report2-chart"></div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="">
+                        <div class="" id="mygraph"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-3">
+            <div class="card-body">
+              <!-- initialize with HTML only -->
+              <table id="datatable" class="table table-bordered table-hover clickable-rows" width="100%"
+                data-settings="reportDatatablesConfig"
+                data-ajax-url="{{ url_for('.transactions_data') }}"
+                data-ajax-datasrc="dataReceived" >
+                <thead class="thead-light">
+                </thead>
+              </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_javascripts %}
+  <script type="text/javascript" src="https://unpkg.com/vis-graph3d@latest/dist/vis-graph3d.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="{{ url_for('reporting.static', filename='report_charts.js') }}"></script>
+  <script>
+    var chart1;
+    function dataReceived(json) {
+        //Make your callback here.
+        let vis = datatableGetVisibleColumns(tb);
+        updateBubbleChart(chart2, json, "position_size", "change_entry_price", 'change_size', "position_desc",
+                          ['take profit', 'enter long', 'take profit - short', 'enter short']);
+        drawVisualization(json);
+        return json.data;
+    }
+    var dtConf_OL = reportDatatablesConfig;
+    dtConf_OL.columns = [
+        { data:"symbol", title:"Symbol" },
+        { data:"direction", title:"Direction" },
+        { data:"position_desc", title:"Description", sortable: false },
+        { data:"change_entry_price", title:"Change entry price", render: exRate, className: "text-right" },
+        { data:"change_size", title:"Change size", render: money, className: "text-right" },
+        { data:"position_size", title:"New Position size", render: money, className: "text-right" },
+        { data:"entry_price", title:"Position entry price", render: exRate, className: "text-right" },
+        { data:"amount_change", title:"Amount change", render: amount4, className: "text-right" },
+        { data:"amount", title:"Amount", render: amount4, className: "text-right" },
+        { data:"leader.name", title:"Trader" },
+        // { data:"last_price", title:"Last price", render: exRate, className: "text-right", sortable: false },
+        // { data:"profit", title:"Profit", render: money, className: "text-right", sortable: false },
+        { data:"created_timestamp", title:"Time" },
+    ];
+
+    // custom row coloring
+    dtConf_OL.fnRowCallback = function( row, data, iDisplayIndex, iDisplayIndexFull ) {
+        data.position_size > 0 && data.change_size > 0 ? row.classList.add('text-success') : null;
+        data.position_size > 0 && data.change_size < 0 ? row.classList.add('text-danger') : null;
+        data.position_size < 0 && data.change_size < 0 ? row.classList.add('table-taffy','text-jade') : null;
+        data.position_size < 0 && data.change_size > 0 ? row.classList.add('table-taffy','text-imperial') : null;
+    };
+
+    $(document).ready(function () {
+      tb = initDatatable('#datatable', dtConf_OL);
+      chart2 = reportBubbleChartInit("#report2-chart", "Transaction sizes\nby position size and price", 
+                                     "Price in USDT", "Position size (negative value indicates short position)");
+    });
+  </script>
+
+{% endblock extra_javascripts %}
+
+{# additional features used on this page: #}
+{% block feature_javascripts %}
+  {% include '_feature_column_visibility.html' %}
+  {# {% include '_feature_column_filtering.html' %} #}
+{% endblock feature_javascripts %}

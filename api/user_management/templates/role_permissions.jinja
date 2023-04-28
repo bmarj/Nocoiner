@@ -1,0 +1,36 @@
+{% extends 'base.jinja' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="caption uppercase">
+                    <i class="ti-user"></i> Roles - Permission View
+                </div>
+                <div class="tools">
+                  {% from "_buttons.html" import add, add_inline, copy, edit, delete %}
+                  {{ add_inline('RolePermissionForm', 'users', current_user) }}
+                  {{ delete('RolePermissionForm', 'users', current_user) }}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <!-- initialize with HTML only -->
+                    <table id="datatable" class="table table-bordered table-hover clickable-rows" width="100%"
+                      data-settings="defaultDatatablesConfig"
+                      data-ajax="{{ url_for('.role_permissions_data') }}" >
+                      <thead class="thead-light">
+                        <tr>
+                          <th data-data="role.name">Role</th>
+                          <th data-data="permission.name">Permission</th>
+                        </tr>
+                      </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

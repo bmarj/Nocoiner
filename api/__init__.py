@@ -1,14 +1,15 @@
 import os
-import inspect
 from flask import Flask
-# from flask_sqlalchemy import SQLAlchemy
-# from flask_marshmallow import Marshmallow
-from api.config import config
 
-from api.models import db
-from api.simple_schema import ma
+from api.config import config
+from api.utils import template_filters
+from flask_migrate import Migrate
+from api.models.model_base import db
+from api.models.schema_base import ma
+from api.user_management import um
 # db = SQLAlchemy()
 # ma = Marshmallow()
+# login_manager = LoginManager()
 
 def create_app(test_config=None):
     """
@@ -27,7 +28,8 @@ def create_app(test_config=None):
     app.testing = False
 
     # check environment variables to see which config to load
-    env = os.environ.get("FLASK_ENV", "dev")
+    # setting default environment to production as a fail-safe
+    env = os.environ.get("FLASK_ENV", "production")
     # for configuration options, look at api/config.py
     if test_config:
         # purposely done so we can inject test configurations
@@ -41,25 +43,29 @@ def create_app(test_config=None):
         app.config.from_object(config[env])
 
     app.config.from_pyfile('config.ini')  # config dict is from api/config.py
+
+    template_filters.init_app(app)
+
     # Flask-SQLAlchemy must be initialized before Flask-Marshmallow.
     db.init_app(app)
     ma.init_app(app)
-
+    um.init_app(app)
     # attach routes and custom error pages here
 
-    from api.errors.blueprint import errors
-    app.register_blueprint(errors)
+    from api.utils.rate_limiter import limiter
+    limiter.init_app(app)
 
-    from api.checks.blueprint import checks
-    app.register_blueprint(checks, url_prefix='/checks')
+    from api import errors, monitor, trades, reporting, ainavigator
+    app.register_blueprint(errors.bp)
+    app.register_blueprint(monitor.bp, url_prefix='/monitor')
+    app.register_blueprint(trades.bp, url_prefix='/')
+    app.register_blueprint(reporting.bp, url_prefix='/')
+    app.register_blueprint(ainavigator.bp, url_prefix='/')
 
-    from api.orders.blueprint import orders
-    app.register_blueprint(orders, url_prefix='/orders')
+    if app.config.get('TRADE_POOLING_ENDPOINT'):
+        trades.start_scheduler(30, app.config.get('TRADE_POOLING_ENDPOINT'))
 
-    from api.fake_auth.blueprint import auth
-    app.register_blueprint(auth, url_prefix='/auth')
-
-    from api.fake_firebase.blueprint import firebase
-    app.register_blueprint(firebase, url_prefix='/firebase')
+    # enable migrations with Flask-migrate and Alembic
+    migrate = Migrate(app, db)
 
     return app

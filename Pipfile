@@ -5,14 +5,32 @@ name = "pypi"
 
 [packages]
 Flask = "*"
+SQLAlchemy = "*"
 Flask-SQLAlchemy = "*"
-flask-sqlacodegen = "*"
 pyodbc = "*"
 marshmallow-sqlalchemy = "*"
 flask-marshmallow = "*"
+# JSONMapper = "*"
+wtforms = "*"
+flask-wtf = "*"
+wtforms-alchemy = "*"
+python-dateutil = "*"
+dateutils = "*"
+pymssql = "*"
+flask-login = "*"
+docxtpl = "*"
+flask-migrate = "*"
+# gunicorn = "*"
+# waitress = "*"
+# psycopg2 = "*"
+requests = "*"
+apscheduler = "*"
+openai = "*"
+flask-limiter = "*"
 
 [dev-packages]
 flake8 = "*"
+flask-sqlacodegen = "*"
 
 [requires]
 python_version = "3.8"

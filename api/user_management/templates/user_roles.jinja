@@ -1,0 +1,54 @@
+{% extends 'base.jinja' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="caption uppercase">
+                    <i class="ti-user"></i> Users - Roles View
+                </div>
+                <div class="tools">
+                  {% from "_buttons.html" import add, add_inline, copy, edit, delete %}
+                  {{ add('UserRoleForm', 'users', current_user) }}
+                  {{ edit('UserRoleForm', 'users', current_user) }}
+                  {{ delete('UserRoleForm', 'users', current_user) }}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="datatable" class="table table-bordered table-hover clickable-rows" width="100%">
+                      <thead class="thead-light"></thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_javascripts %}
+  <script>
+    let dtConf = defaultDatatablesConfig;
+
+    dtConf.ajax.url = '{{ url_for('.user_roles_data') }}';
+
+    dtConf.columns = [
+        { data:"user.first_name", title:"First name" },
+        { data:"user.last_name", title:"Last name" },
+        { data:"user.username", title:"Username" },
+        { data:"user.email", title:"Email" },
+        { data:"role.name", title:"Role" }
+    ];
+
+    $(document).ready(function () {
+      initDatatable('#datatable', dtConf);
+    });
+  </script>
+
+{% endblock extra_javascripts %}
+
+{# additional features used on this page: #}
+{% block feature_javascripts %}
+{% endblock feature_javascripts %}
