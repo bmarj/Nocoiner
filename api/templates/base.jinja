@@ -13,9 +13,10 @@
 
     <link rel="stylesheet" href="/static/siqtheme.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.5/css/buttons.dataTables.min.css">
     {% block extra_stylesheets %} {% endblock extra_stylesheets %}
     <link rel="stylesheet" href="/static/app.css">
-    <link rel="apple-touch-icon" sizes="76x76" href="/static/img/apple-icon.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/apple-icon.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/static/favicon.ico">
     {#
     <link rel="stylesheet" href="/static/css/pages/dashboard1.css"> #}
@@ -36,7 +37,7 @@
             <div class="header-bar">
                 <div class="brand">
                     <a href="{{ url_for('trades.trades_view') }}" class="logo">NO<span class="text-carolina">COIN</span>ER</a>
-                    <a href="{{ url_for('trades.trades_view') }}" class="logo-sm text-carolina" style="display: none;">Trades</a>
+                    {# <a href="{{ url_for('trades.trades_view') }}" class="logo-sm text-carolina" style="display: none;">Trades</a> #}
                 </div>
                 <div class="btn-toggle">
                     <a href="#" class="toggle-sidebar-btn"><i class="ti-arrow-circle-right"></i></a>
@@ -45,15 +46,8 @@
                 <div class="navigation d-flex">
 
                     <!-- BOF Header Search -->
-                    {# <form class="navbar-search" role="search" method="post" action="#">
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text"><i class="ti-search"></i></div>
-                            </div>
-                            <input type="text" placeholder="Search for keywords" class="form-control" name="top-search"
-                                id="top-search">
-                        </div>
-                    </form> #}
+                    {% from "_ainavigator_navbar_widget.html" import navbar_robot %}
+                    {{ navbar_robot() }}
                     <!-- EOF Header Search -->
 
                     <!-- BOF Header Nav -->
@@ -212,7 +206,7 @@
     </div> <!-- END WRAPPER -->
 
     <script src="/static/siqtheme.js"></script>
-    <script src="/static/dataTables.keepConditions.min.js"></script>
+    <script src="/static/dataTables.keepConditions.js"></script>
     {% block feature_javascripts %} {% endblock feature_javascripts %}
     {# jQueryUI is optional, used for draggable modal #}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
@@ -223,6 +217,7 @@
             initDatatable('#datatable');
         });
     </script>
+    <script src="{{ url_for('ainavigator.static', filename='ainavigator.js') }}"></script>
 </body>
 
 </html>
