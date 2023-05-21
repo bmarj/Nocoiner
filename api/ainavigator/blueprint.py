@@ -41,11 +41,15 @@ def robot():
     if content_safety_class == '2':
         return jsonify({'status': 'error', 'result': 'Can\'t do that'}), 400
 
-    prompt = f"""We will extract known values and organize them in classes. 
+    prompt = f"""
+We will classify INPUT intent to range of known values and organize them in class parts:
+[BASE]
+[COLUMN]
+[DIRECTION]
+[LIMIT]
+[FILTER].
 
-Format is
-[CLASS]: [accepted values]
-and below is description of values that we are extracting.
+Purpose it to provide navigation parameters to be used in navigation to BASE page, operations on grid, filtering by content displayed in grid and < > operators for numeric values.
 
 [DIRECTION]: [oa, od]
 oa = order ascending (default value if ordering is specified)
@@ -105,7 +109,7 @@ INPUT:  profit visualization, 25 results, sorted by direction from lower to high
 [COLUMN]: direction
 [DIRECTION]: oa
 [LIMIT]: l25
-INPUT: list trades, fifty rows sort by direc field made by Clickherenow
+INPUT: list trades, fifty rows sort by direction field made by Clickherenow
 [BASE]: trades
 [COLUMN]: direction
 [LIMIT]: l50
@@ -121,13 +125,13 @@ INPUT: {user_prompt}
     completion = openai.Completion.create(
         engine=engine,
         prompt=prompt,
-        max_tokens=50,
+        max_tokens=100,
         temperature=temperature,
         stop=['INPUT:'],
         user=user_identifier,
         stream=False)
 
-    suggested_response = completion.choices[0].text.rstrip('INPUT:').strip().replace(' ', '')
+    suggested_response = completion.choices[0].text.strip().replace(' ', '')
 
     # recommended content filtering
     content_safety_class = safety_classifier.classify(suggested_response)
