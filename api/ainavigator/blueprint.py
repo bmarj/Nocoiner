@@ -2,7 +2,7 @@ from flask import request, Blueprint, jsonify, current_app
 from flask_login import current_user
 from datetime import datetime
 from werkzeug.urls import url_parse
-import openai
+from openai import OpenAI
 from api.utils.rate_limiter import limiter
 from . import safety_classifier
 
@@ -17,9 +17,8 @@ bp = Blueprint('ainavigator', __name__,
 @bp.route('/forinrobot', methods=['POST', 'GET'])
 @limiter.limit('20/minute')
 def robot():
-    openai.api_key = current_app.config['OPENAI_API_KEY']
-    openai.api_base = current_app.config['OPENAI_BASE_ADDRESS']
-    engine = current_app.config.get('OPENAI_DEFAULT_ENGINE', 'gpt-j-6b')
+    client = OpenAI(api_key=current_app.config['OPENAI_API_KEY'])
+    engine = current_app.config.get('OPENAI_DEFAULT_ENGINE', 'gpt-3.5-turbo')
     temperature = current_app.config.get('OPENAI_DEFAULT_TEMPERATURE', '0')
 
     # # List Engines (Models)
@@ -29,6 +28,8 @@ def robot():
     #     print(engine.id)
 
     user_prompt = request.form.to_dict()['input_query']
+    user_prompt = user_prompt.strip().replace('\n', ' ').replace('\r', '')
+
     if not user_prompt:
         return jsonify({'status': 'error', 'result': ''}), 400
 
@@ -41,8 +42,16 @@ def robot():
     if content_safety_class == '2':
         return jsonify({'status': 'error', 'result': 'Can\'t do that'}), 400
 
-    prompt = f"""
-We will classify INPUT intent to range of known values and organize them in class parts:
+    print('Prompt: ' + user_prompt)
+
+    user_identifier = str(getattr(current_user, 'id', 0))
+    # Create a completion, return results streaming as they are generated.
+    # Run with `python3 -u` to ensure unbuffered output.
+    completion = client.chat.completions.create(
+        model=engine,
+        messages=[
+{'role': 'system',
+ 'content': """We will classify INPUT intent to range of known values and organize them in class parts:
 [BASE]
 [COLUMN]
 [DIRECTION]
@@ -91,55 +100,69 @@ traders = List of trader profiles, players
 >100000 = huge
 ClickHereNow = trader name
 TradingHorse = trader name
-[TICKER] = acceptable value
-
-INPUT: show trade list for ADA
-[BASE]: trades
-[FILTER]: ADAUSDT
-INPUT: coin trader buy/sells analytics, ordered descending by symbol
-[BASE]: positions
+[TICKER] = acceptable value"""
+},
+{'role': 'user',
+ 'content': """show trade list for ADA"""
+},
+{'role': 'assistant',
+ 'content': 
+"""[BASE]: trades
+[FILTER]: ADAUSDT"""
+},
+{'role': 'user',
+ 'content': """coin trader buy/sells analytics, ordered descending by symbol"""
+},
+{'role': 'assistant',
+ 'content': """[BASE]: positions
 [COLUMN]: symbol
-[DIRECTION]: od
-INPUT:  coin trader buy/sells analytics, ordered ascending by symbol
-[BASE]: positions
+[DIRECTION]: od"""
+},
+{'role': 'user',
+ 'content': """coin trader buy/sells analytics, ordered ascending by symbol"""
+},
+{'role': 'assistant',
+ 'content': """[BASE]: positions
 [COLUMN]: symbol
-[DIRECTION]: od
-INPUT:  profit visualization, 25 results, sorted by direction from lower to higher
-[BASE]: profitloss
+[DIRECTION]: od"""
+},
+{'role': 'user',
+ 'content': """profit visualization, 25 results, sorted by direction from lower to higher"""
+},
+{'role': 'assistant',
+ 'content': """[BASE]: profitloss
 [COLUMN]: direction
 [DIRECTION]: oa
-[LIMIT]: l25
-INPUT: list trades, fifty rows sort by direction field made by Clickherenow
-[BASE]: trades
+[LIMIT]: l25"""
+},
+{'role': 'user',
+ 'content': """list trades, fifty rows sort by direction field made by Clickherenow"""
+},
+{'role': 'assistant',
+ 'content': """[BASE]: trades
 [COLUMN]: direction
 [LIMIT]: l50
-[FILTER]: Clickherenow
-INPUT: {user_prompt}
-["""
-
-    print('Prompt: ' + user_prompt)
-
-    user_identifier = str(getattr(current_user, 'id', 0))
-    # Create a completion, return results streaming as they are generated.
-    # Run with `python3 -u` to ensure unbuffered output.
-    completion = openai.Completion.create(
-        engine=engine,
-        prompt=prompt,
+[FILTER]: Clickherenow"""
+},
+{'role': 'user',
+ 'content': user_prompt
+},
+            ],
         max_tokens=100,
         temperature=temperature,
         stop=['INPUT:'],
         user=user_identifier,
         stream=False)
 
-    suggested_response = completion.choices[0].text.strip().replace(' ', '')
+    suggested_response = completion.choices[0].message.content.strip().replace(' ', '')
 
     # recommended content filtering
     content_safety_class = safety_classifier.classify(suggested_response)
     if content_safety_class == '2':
         return jsonify({'status': 'error', 'result': 'Can\'t do that'}), 400
 
-    parts = {ct.split(']:')[0]: ct.split(']:')[1]
-             for ct in suggested_response.replace('\n', '').split('[')}
+    parts = {ct.split(']:')[0].lstrip('['): ct.split(']:')[1]
+             for ct in suggested_response.split('\n')}
 
     if request.referrer:
         current_url = url_parse(request.referrer)
