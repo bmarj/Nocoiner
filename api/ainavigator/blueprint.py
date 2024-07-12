@@ -51,14 +51,15 @@ def robot():
         model=engine,
         messages=[
 {'role': 'system',
- 'content': """We will classify INPUT intent to range of known values and organize them in class parts:
-[BASE]
-[COLUMN]
-[DIRECTION]
-[LIMIT]
-[FILTER].
+ 'content': """You are a pattern following autocomplete, that will help to classify user input to range of known values and organize them in class parts"""
+},
+{'role': 'user',
+ 'content': """Complete the following, without any explanation:
+We will extract known values and organize them in classes. 
 
-Purpose it to provide navigation parameters to be used in navigation to BASE page, operations on grid, filtering by content displayed in grid and < > operators for numeric values.
+Format is
+[CLASS]: [accepted values]
+and below is description of values that we are extracting.
 
 [DIRECTION]: [oa, od]
 oa = order ascending (default value if ordering is specified)
@@ -70,7 +71,7 @@ l25 = 25 results
 l50 = 50 results
 l100 = 100 results
 
-[COLUMN]: [symbol, change_entry_price, change_size, amount_change, entry_price, amount, position_size, created_timestamp, direction]
+[COLUMN]: [symbol, change_entry_price, change_size, amount_change, entry_price, amount, position_size, update_time, direction]
 symbol = cryptocurrency exchange recognized name
 change_entry_price = price at which cryptocurrency is traded i current trade
 change_size = dollar value of current trade
@@ -78,7 +79,7 @@ amount_change = amount of crypto traded
 entry_price = position average price for a trader and cryptocurrency
 amount = position amount in cryptocurrency
 position_size = position size in dollars
-created_timestamp = time of recorded trade
+update_time = time of recorded trade
 direction = buy or sell direction of a trade
 
 [BASE]: [profitloss, transactions, tradedvalue, tradeactivity, positions, trades, traders]
@@ -100,54 +101,32 @@ traders = List of trader profiles, players
 >100000 = huge
 ClickHereNow = trader name
 TradingHorse = trader name
-[TICKER] = acceptable value"""
-},
-{'role': 'user',
- 'content': """show trade list for ADA"""
-},
-{'role': 'assistant',
- 'content': 
-"""[BASE]: trades
-[FILTER]: ADAUSDT"""
-},
-{'role': 'user',
- 'content': """coin trader buy/sells analytics, ordered descending by symbol"""
-},
-{'role': 'assistant',
- 'content': """[BASE]: positions
+[TICKER] = acceptable value
+
+INPUT: show trade list for ADA
+[BASE]: trades
+[FILTER]: ADAUSDT
+INPUT: coin trader buy/sells analytics, ordered descending by symbol
+[BASE]: positions
 [COLUMN]: symbol
-[DIRECTION]: od"""
-},
-{'role': 'user',
- 'content': """coin trader buy/sells analytics, ordered ascending by symbol"""
-},
-{'role': 'assistant',
- 'content': """[BASE]: positions
+[DIRECTION]: od
+INPUT:  coin trader buy/sells analytics, ordered ascending by symbol
+[BASE]: positions
 [COLUMN]: symbol
-[DIRECTION]: od"""
-},
-{'role': 'user',
- 'content': """profit visualization, 25 results, sorted by direction from lower to higher"""
-},
-{'role': 'assistant',
- 'content': """[BASE]: profitloss
+[DIRECTION]: od
+INPUT:  profit visualization, 25 results, sorted by direction from lower to higher
+[BASE]: profitloss
 [COLUMN]: direction
 [DIRECTION]: oa
-[LIMIT]: l25"""
-},
-{'role': 'user',
- 'content': """list trades, fifty rows sort by direction field made by Clickherenow"""
-},
-{'role': 'assistant',
- 'content': """[BASE]: trades
+[LIMIT]: l25
+INPUT: list trades, fifty rows sort by direc field made by Clickherenow
+[BASE]: trades
 [COLUMN]: direction
 [LIMIT]: l50
-[FILTER]: Clickherenow"""
-},
-{'role': 'user',
- 'content': user_prompt
-},
-            ],
+[FILTER]: Clickherenow
+INPUT: """ + user_prompt
+}
+],
         max_tokens=100,
         temperature=temperature,
         stop=['INPUT:'],
