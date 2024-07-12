@@ -61,6 +61,13 @@ Format is
 [CLASS]: [accepted values]
 and below is description of values that we are extracting.
 
+Classes are:
+[BASE]
+[COLUMN]
+[DIRECTION]
+[LIMIT]
+[FILTER].
+
 [DIRECTION]: [oa, od]
 oa = order ascending (default value if ordering is specified)
 od = order descending
@@ -79,7 +86,7 @@ amount_change = amount of crypto traded
 entry_price = position average price for a trader and cryptocurrency
 amount = position amount in cryptocurrency
 position_size = position size in dollars
-update_time = time of recorded trade
+created_timestamp = time of recorded trade
 direction = buy or sell direction of a trade
 
 [BASE]: [profitloss, transactions, tradedvalue, tradeactivity, positions, trades, traders]
@@ -124,8 +131,15 @@ INPUT: list trades, fifty rows sort by direc field made by Clickherenow
 [COLUMN]: direction
 [LIMIT]: l50
 [FILTER]: Clickherenow
-INPUT: """ + user_prompt
-}
+INPUT: newest trades 
+[BASE]: trades
+[COLUMN]: created_timestamp
+[DIRECTION]: od
+"""
+},
+{'role': 'user',
+ 'content': user_prompt
+},
 ],
         max_tokens=100,
         temperature=temperature,
@@ -140,8 +154,12 @@ INPUT: """ + user_prompt
     if content_safety_class == '2':
         return jsonify({'status': 'error', 'result': 'Can\'t do that'}), 400
 
-    parts = {ct.split(']:')[0].lstrip('['): ct.split(']:')[1]
-             for ct in suggested_response.split('\n')}
+    parts = {}
+    try:
+        parts = {ct.split(']:')[0].lstrip('['): ct.split(']:')[1]
+                for ct in suggested_response.split('\n')}
+    except:
+        raise Exception("Cannot process response: " + completion.choices[0].message.content)
 
     if request.referrer:
         current_url = url_parse(request.referrer)
