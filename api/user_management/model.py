@@ -20,8 +20,6 @@ class Role(db.Model):
 
     id              = Column(Integer, primary_key=True)
     name            = Column(String(64), unique=True, nullable=False)
-    #permissions = relationship("Permission")
-    #role_permissions = relationship("RolePermission", uselist=True)
 
     def __repr__(self):
         return self.name

@@ -9,6 +9,7 @@ class BootstrapCheckboxInput(Input):
     The ``checked`` HTML attribute is set if the field's data is a non-false value.
     """
     input_type = 'checkbox'
+    validation_attrs = ["required", "disabled"]
 
     def __call__(self, field, **kwargs):
         if getattr(field, 'checked', field.data):
@@ -18,7 +19,6 @@ class BootstrapCheckboxInput(Input):
             <label>
                 {cb}
                 <span class="checkmark"><i class="fa fa-check"></i></span>
-                is {label}
             </label>
         </div>""".format(cb=super().__call__(field, **kwargs), 
                          label=field.label.text.replace('_',' '))

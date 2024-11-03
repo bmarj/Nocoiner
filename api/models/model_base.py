@@ -1,5 +1,6 @@
 # coding: utf-8
-from flask_sqlalchemy import SQLAlchemy, BaseQuery
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import Query as BaseQuery
 from sqlalchemy.dialects import postgresql
 from sqlalchemy import desc, types, NUMERIC
 from sqlalchemy.dialects.mssql import (BIT, DECIMAL,

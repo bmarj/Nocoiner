@@ -1,6 +1,5 @@
 from datetime import datetime
 from flask import current_app, Blueprint, session, jsonify, url_for, request, render_template, flash
-from flask_sqlalchemy import orm
 from marshmallow import EXCLUDE
 import requests
 import json

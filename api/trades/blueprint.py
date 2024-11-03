@@ -1,5 +1,4 @@
 from flask import Blueprint, session, jsonify, url_for, request, render_template, flash
-from flask_sqlalchemy import orm
 from marshmallow import EXCLUDE
 import requests
 # from marshmallow.exceptions import ValidationError

@@ -1,28 +1,33 @@
 from marshmallow_sqlalchemy import fields
-from wtforms_components import StringField, IntegerField
-from wtforms import PasswordField, BooleanField
+from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, ValidationError
-from wtforms_alchemy import QuerySelectField
+from wtforms_sqlalchemy.fields import QuerySelectField
 from flask_wtf import FlaskForm
-from api.models.form_base import ModelForm, FormMeta
+from api.models.form_base import ModelForm, FormMeta, create_model_form
 from .business import query_permissions, query_roles, query_users
 from . import model as m
 
 
 class LoginForm(FlaskForm):
-    # class Meta(FormMeta):
+    class Meta(FormMeta):
     #     model = m.User
-    #     only = ['username', 'password']
+        only = ['username', 'password']
     #     # set/override labels manually
     #     #field_args = {'ship_country': {'label': 'Country'} }
     username = StringField(validators=[DataRequired("Please enter username")])
     password = PasswordField(validators=[DataRequired("Please enter password")])
     remember_me = BooleanField()
 
+# # define model by factory function
+# RoleForm = create_model_form(
+#     m.Role, 
+#     only=['name']
+# )
 
 class RoleForm(ModelForm):
     class Meta(FormMeta):
         model = m.Role
+        only = ['name']
 
 class PermissionForm(ModelForm):
     class Meta(FormMeta):

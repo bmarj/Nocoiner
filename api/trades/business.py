@@ -1,8 +1,7 @@
 from typing import List
-from sqlalchemy.sql.elements import not_
+from sqlalchemy.sql.expression import not_
 from api.trades.schemas import KnownPositions
 from sqlalchemy.sql import func, join
-from flask_sqlalchemy import orm
 # import contains_eager, joinedload, subquery, raiseload
 from marshmallow import EXCLUDE
 from sqlalchemy.sql.expression import true

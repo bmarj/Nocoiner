@@ -5,16 +5,16 @@ def generic_add(form_class, template, submit_target=None):
     obj = form_class.Meta.model()
 
     if request.method == 'GET':
-        form = form_class(obj=obj)
+        form = form_class.form(obj=obj)
     else:
-        form = form_class(request.values)
+        form = form_class.form(request.values)
 
-    if form.validate_on_submit():
-        form.populate_obj(obj)
-        obj.query.session.add(obj)
-        obj.query.session.commit()
-        flash('Data saved', category="Success")
-        return render_template("form_success.jinja")
+        if form.validate():
+            form.populate_obj(obj)
+            obj.query.session.add(obj)
+            obj.query.session.commit()
+            flash('Data saved', category="Success")
+            return render_template("form_success.jinja")
 
     return render_template(template, form=form, key=None, form_type=form_class.__name__, submit_target=submit_target,
                            classes=("was-validated" if request.method == 'POST' else ''))
@@ -31,11 +31,11 @@ def generic_edit(form_class, template, submit_target=None, id=None, **kwargs):
         if request.values.get("action") == "copy":
             obj.id = None
             object_id = None
-        form = form_class(obj=obj)
+        form = form_class.form(obj=obj)
     else:
         # use this way to prevent unique validation error while editing
-        form = form_class(obj=obj)
-        # form = form_class(request.values)
+        form = form_class.form(obj=obj)
+        # form = form_class.form(request.values)
         form.populate_obj(obj)
 
     if form.validate_on_submit():

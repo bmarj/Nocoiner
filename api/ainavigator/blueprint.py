@@ -1,7 +1,7 @@
 from flask import request, Blueprint, jsonify, current_app
 from flask_login import current_user
 from datetime import datetime
-from werkzeug.urls import url_parse
+from urllib.parse import urlparse
 from openai import OpenAI
 from api.utils.rate_limiter import limiter
 from . import safety_classifier

@@ -11,8 +11,8 @@
                 <div class="tools">
                   {% from "_buttons.html" import add_button, edit_button, add, edit, action %}
                   {{ add_button('.leader_add', 'trades', current_user) }}
-                  {# {{ edit_button('.leader_edit','trades', current_user) }} #}
-                  {{ edit('LeaderForm', 'trades', current_user) }} 
+                  {{ edit_button('.leader_edit','trades', current_user) }}
+                  {# {{ edit('LeaderForm', 'trades', current_user) }}  #}
                   {{ action('.process_leaders','trades', current_user, 'Fetch trades') }}
                 </div>
             </div>

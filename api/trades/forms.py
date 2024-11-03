@@ -3,7 +3,7 @@ from wtforms import BooleanField
 from wtforms.validators import DataRequired, ValidationError
 # from flask_wtf import FlaskForm
 from api import models as m
-from api.models.form_base import ModelForm, FormMeta
+from api.models.form_base import ModelForm, FormMeta, BootstrapCheckboxInput
 
 class TradeForm(ModelForm):
     class Meta(FormMeta):
