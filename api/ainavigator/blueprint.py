@@ -59,6 +59,7 @@ def robot():
 [FILTER].
 
 Purpose it to provide navigation parameters to be used in navigation to BASE page, operations on grid, filtering by content displayed in grid and < > operators for numeric values.
+Do not explain or ask questions! Sorting and filtering is optional.
 
 [DIRECTION]: [oa, od]
 oa = order ascending (default value if ordering is specified)
@@ -165,7 +166,7 @@ TradingHorse = trader name
              for ct in suggested_response.split('\n')}
 
     if request.referrer:
-        current_url = url_parse(request.referrer)
+        current_url = urlparse(request.referrer)
         current_base = current_url.path.lstrip('/')
 
     if not parts.get('BASE', current_base):

@@ -59,7 +59,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV TZ=Europe/Moscow
 RUN TZ="America/New_York" apt-get update && apt-get install gettext nano vim -y 
 # add sample code
-RUN mkdir /web
+#RUN mkdir /web
 ADD . /web
 WORKDIR /web
 
