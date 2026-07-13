@@ -36,7 +36,7 @@
         <div class="header">
             <div class="header-bar">
                 <div class="brand">
-                    <a href="{{ url_for('trades.trades_view') }}" class="logo">NO<span class="text-carolina">COIN</span>ER</a>
+                    <a href="{{ url_for('user_management.homepage') }}" class="logo">NO<span class="text-carolina">COIN</span>ER</a>
                     {# <a href="{{ url_for('trades.trades_view') }}" class="logo-sm text-carolina" style="display: none;">Trades</a> #}
                 </div>
                 <div class="btn-toggle">
@@ -214,7 +214,9 @@
     {% block extra_javascripts %} {% endblock extra_javascripts %}
     <script>
         $(document).ready(function () {
-            initDatatable('#datatable');
+            if (document.querySelector('#datatable')) {
+                initDatatable('#datatable');
+            }
         });
     </script>
     <script src="{{ url_for('ainavigator.static', filename='ainavigator.js') }}"></script>

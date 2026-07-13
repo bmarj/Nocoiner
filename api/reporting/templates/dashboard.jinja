@@ -1,96 +1,470 @@
 {% extends 'base.jinja' %}
 
+{% block extra_stylesheets %}
+<style>
+  /* ---- dashboard layout ---------------------------------------- */
+  .dash-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    flex-wrap: wrap; gap: 8px; margin: 4px 2px 14px;
+  }
+  .dash-head h4 { margin: 0; font-weight: 600; }
+  .dash-head .dash-sub { color: #898781; font-size: 13px; margin-top: 2px; }
+  .dash-live {
+    font-size: 11px; letter-spacing: .08em; color: #898781;
+    display: inline-flex; align-items: center; gap: 7px; flex-wrap: wrap;
+    line-height: 1.45;
+  }
+  .dash-live .status-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #2a78d6;
+  }
+  .dash-alert {
+    display: none; padding: 11px 14px; margin-bottom: 15px;
+    border-left: 3px solid #d03b3b; background: rgba(208, 59, 59, .08);
+    color: #8b2727; font-size: 13px;
+  }
+  body.theme-dark .dash-alert { color: #f0a0a0; }
+  @media (max-width: 575.98px) {
+    .dash-head { align-items: flex-start; }
+    .dash-live { width: 100%; font-size: 10px; gap: 5px; }
+  }
+
+  /* ---- KPI tiles ------------------------------------------------ */
+  .kpi-grid {
+    display: grid; gap: 15px; margin-bottom: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  }
+  .kpi-tile { padding: 16px 18px 8px; margin-bottom: 0; }
+  .kpi-label { font-size: 13px; color: #52514e; margin-bottom: 6px; }
+  .kpi-value { font-size: 30px; font-weight: 600; line-height: 1.15; color: #212529; }
+  .kpi-delta { font-size: 12.5px; margin-top: 3px; color: #52514e; }
+  .kpi-delta .up   { color: #006300; font-weight: 600; }
+  .kpi-delta .down { color: #d03b3b; font-weight: 600; }
+  .kpi-spark { margin: 2px -8px -4px; min-height: 42px; }
+
+  body.theme-dark .kpi-label,
+  body.theme-dark .kpi-delta { color: #adb5bd; }
+  body.theme-dark .kpi-value { color: #f8f9fa; }
+  body.theme-dark .kpi-delta .up   { color: #0ca30c; }
+  body.theme-dark .kpi-delta .down { color: #e66767; }
+
+  /* ---- chart cards ---------------------------------------------- */
+  .dash-fill { height: calc(100% - 16px); } /* equalize card heights per row */
+  .dash-card-sub { font-size: 12px; color: #898781; font-weight: 400; margin-left: 8px; }
+  .dash-table-link { font-size: 12px; float: right; }
+  .dash-chart { padding: 8px 12px 4px; }
+
+  /* ---- recent trades feed ---------------------------------------- */
+  .feed-list { list-style: none; margin: 0; padding: 4px 0; }
+  .feed-item {
+    display: flex; align-items: center; gap: 11px;
+    padding: 8.5px 18px; border-bottom: 1px solid rgba(0,0,0,.06);
+  }
+  .feed-item:last-child { border-bottom: none; }
+  body.theme-dark .feed-item { border-bottom-color: rgba(255,255,255,.07); }
+  .feed-dot {
+    flex: none; width: 9px; height: 9px; border-radius: 50%;
+    box-shadow: 0 0 0 2px #fff;
+  }
+  body.theme-dark .feed-dot { box-shadow: 0 0 0 2px #212529; }
+  .feed-dot.long  { background: #2a78d6; }
+  .feed-dot.short { background: #e34948; }
+  body.theme-dark .feed-dot.long  { background: #3987e5; }
+  body.theme-dark .feed-dot.short { background: #e66767; }
+  .feed-main { flex: 1 1 auto; min-width: 0; }
+  .feed-sym { font-weight: 600; font-size: 13px; }
+  .feed-desc { font-size: 12px; color: #898781; margin-left: 6px; }
+  .feed-sub { font-size: 11.5px; color: #898781; margin-top: 1px; }
+  .feed-val { text-align: right; font-size: 12.5px; white-space: nowrap; }
+  .feed-empty { padding: 28px 18px; color: #898781; font-size: 13px; }
+  .feed-profit.up   { color: #006300; font-weight: 600; }
+  .feed-profit.down { color: #d03b3b; font-weight: 600; }
+  body.theme-dark .feed-profit.up   { color: #0ca30c; }
+  body.theme-dark .feed-profit.down { color: #e66767; }
+</style>
+{% endblock extra_stylesheets %}
+
 {% block content %}
 
+<div class="dash-head">
+  <div>
+    <h4>Market overview</h4>
+    <div class="dash-sub">Estimated activity across tracked Binance leaders &mdash; 90 days ending at the latest database record</div>
+  </div>
+  <span class="dash-live"><span class="status-dot"></span>DATA THROUGH <span id="data-as-of">&hellip;</span> &middot; <span id="live-traders">&hellip;</span> ACTIVE LEADERS &middot; <span id="live-positions">&hellip;</span> OPEN POSITIONS</span>
+</div>
+
+<div class="dash-alert" id="dashboard-error" role="alert"></div>
+
+<div class="kpi-grid">
+  <div class="card kpi-tile">
+    <div class="kpi-label">Realized P&amp;L, last 30 days</div>
+    <div class="kpi-value" id="kpi-pnl">&ndash;</div>
+    <div class="kpi-delta" id="kpi-pnl-delta"></div>
+    <div class="kpi-spark" id="spark-pnl"></div>
+  </div>
+  <div class="card kpi-tile">
+    <div class="kpi-label">Traded value, last 30 days</div>
+    <div class="kpi-value" id="kpi-volume">&ndash;</div>
+    <div class="kpi-delta" id="kpi-volume-delta"></div>
+    <div class="kpi-spark" id="spark-volume"></div>
+  </div>
+  <div class="card kpi-tile">
+    <div class="kpi-label">Trades, last 30 days</div>
+    <div class="kpi-value" id="kpi-trades">&ndash;</div>
+    <div class="kpi-delta" id="kpi-trades-delta"></div>
+    <div class="kpi-spark" id="spark-trades"></div>
+  </div>
+  <div class="card kpi-tile">
+    <div class="kpi-label">Win rate, last 30 days</div>
+    <div class="kpi-value" id="kpi-winrate">&ndash;</div>
+    <div class="kpi-delta" id="kpi-winrate-delta"></div>
+    <div class="kpi-spark" id="spark-winrate"></div>
+  </div>
+</div>
 
 <div class="row">
-    <div class="col-lg-12">
-        <div class="card mb-3">
-            <div class="card-header">
-                <div class="caption uppercase">
-                    <i class="ti-layout-grid3-alt"></i> Profit / loss analysis
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <!-- Chart -->
-                <div class="col-12">
-                    <div class="">
-                        <div class="card-body" id="report1-chart"></div>
-                    </div>
-                </div>
-                {# <div class="col-12">
-                    <div class="">
-                        <div class="card-body" id="report2-chart"></div>
-                    </div>
-                </div> #}
-            </div>
+  <div class="col-lg-8">
+    <div class="card mb-3 dash-fill">
+      <div class="card-header">
+        <div class="caption uppercase">
+          <i class="ti-stats-up"></i> Cumulative estimated P&amp;L
+          <span class="dash-card-sub">all tracked leaders, 90 days</span>
+          <a class="dash-table-link" href="{{ url_for('reporting.profitloss') }}">View as table &rarr;</a>
         </div>
-        <div class="card mb-3">
-            <div class="card-body">
-              <!-- initialize with HTML only -->
-              <table id="datatable" class="table table-bordered table-hover clickable-rows" width="100%"
-                data-settings="reportDatatablesConfig"
-                data-ajax-url="{{ url_for('.profitloss_data') }}"
-                data-ajax-datasrc="dataReceived" >
-                <thead class="thead-light">
-                </thead>
-              </table>
-            </div>
-        </div>
+      </div>
+      <div class="dash-chart" id="chart-pnl"></div>
     </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card mb-3 dash-fill">
+      <div class="card-header">
+        <div class="caption uppercase">
+          <i class="ti-pulse"></i> Latest trades
+          <a class="dash-table-link" href="{{ url_for('reporting.transactions') }}">All &rarr;</a>
+        </div>
+      </div>
+      <ul class="feed-list" id="recent-feed"></ul>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-6">
+    <div class="card mb-3">
+      <div class="card-header">
+        <div class="caption uppercase">
+          <i class="ti-cup"></i> Estimated P&amp;L by trader
+          <span class="dash-card-sub">90 days</span>
+          <a class="dash-table-link" href="{{ url_for('trades.traders_view') }}">View traders &rarr;</a>
+        </div>
+      </div>
+      <div class="dash-chart" id="chart-traders"></div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card mb-3">
+      <div class="card-header">
+        <div class="caption uppercase">
+          <i class="ti-bar-chart"></i> Traded value by coin
+          <span class="dash-card-sub">90 days</span>
+          <a class="dash-table-link" href="{{ url_for('reporting.tradedvalue') }}">View as table &rarr;</a>
+        </div>
+      </div>
+      <div class="dash-chart" id="chart-symbols"></div>
+    </div>
+  </div>
 </div>
 
 {% endblock content %}
 
 {% block extra_javascripts %}
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <script src="{{ url_for('reporting.static', filename='report_charts.js') }}"></script>
-  <script>
-    var chart1;
-    function dataReceived(json) {
-        //Make your callback here.
-        //let vis = datatableGetVisibleColumns(tb);
-        updateBarChart(chart1, json, "id", 'profit', "position_desc",
-                          ['take profit', 'take profit - short']);
-        return json.data;
-    }
-    var dtConf_OL = reportDatatablesConfig;
-    dtConf_OL.columns = [
-        { data:"id", title:"Trade&nbsp;#" },
-        { data:"symbol", title:"Symbol" },
-        { data:"direction", title:"Direction" },
-        { data:"position_desc", title:"Description", sortable: false },
-        //{ data:"change_entry_price", title:"Change entry price", render: exRate, className: "text-right" },
-        { data:"change_size", title:"Change size", render: money, className: "text-right" },
-        //{ data:"position_size", title:"New Position size", render: money, className: "text-right" },
-        { data:"amount_change", title:"Amount change", render: amount4, className: "text-right" },
-        //{ data:"amount", title:"Amount", render: amount4, className: "text-right" },
-        { data:"entry_price", title:"Position entry price", render: exRate, className: "text-right" },
-        { data:"last_price", title:"Estimated realized price", render: exRate, className: "text-right", sortable: false },
-        { data:"profit", title:"Estimated profit", render: money, className: "text-right", sortable: false },
-        { data:"leader.name", title:"Trader" },
-        { data:"created_timestamp", title:"Time" },
-    ];
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+(function () {
+  'use strict';
 
-    // custom row coloring
-    dtConf_OL.fnRowCallback = function( row, data, iDisplayIndex, iDisplayIndexFull ) {
-        data.position_size > 0 && data.change_size > 0 ? row.classList.add('text-success') : null;
-        data.position_size > 0 && data.change_size < 0 ? row.classList.add('text-danger') : null;
-        data.position_size < 0 && data.change_size < 0 ? row.classList.add('table-taffy','text-jade') : null;
-        data.position_size < 0 && data.change_size > 0 ? row.classList.add('table-taffy','text-imperial') : null;
+  /* palette per theme — validated for CVD + contrast (see dataviz method) */
+  function palette() {
+    var dark = document.body.classList.contains('theme-dark');
+    return dark ? {
+      dark: true, blue: '#3987e5', red: '#e66767',
+      ink: '#c3c2b7', muted: '#898781', grid: '#32383e', surface: '#212529',
+      washTo: 'rgba(57,135,229,0)'
+    } : {
+      dark: false, blue: '#2a78d6', red: '#e34948',
+      ink: '#52514e', muted: '#898781', grid: '#e1e0d9', surface: '#ffffff',
+      washTo: 'rgba(42,120,214,0)'
     };
+  }
 
-    $(document).ready(function () {
-      tb = initDatatable('#datatable', dtConf_OL);
-      chart1 = reportBarChartInit("#report1-chart", "Profit / loss by trade", "bar");
+  function money(v, signed) {
+    var a = Math.abs(v), s;
+    if      (a >= 1e6) s = (a / 1e6).toFixed(a >= 1e7 ? 0 : 1) + 'M';
+    else if (a >= 1e3) s = (a / 1e3).toFixed(a >= 1e5 ? 0 : 1) + 'K';
+    else               s = a.toFixed(0);
+    return (v < 0 ? '−' : (signed && v > 0 ? '+' : '')) + '$' + s;
+  }
+
+  function timeAgo(iso, relativeTo) {
+    var end = relativeTo ? new Date(relativeTo).getTime() : Date.now();
+    var mins = Math.max(0, (end - new Date(iso).getTime()) / 60000);
+    if (mins < 1)      return 'just now';
+    if (mins < 60)     return Math.round(mins) + 'm ago';
+    if (mins < 1440)   return Math.round(mins / 60) + 'h ago';
+    return Math.round(mins / 1440) + 'd ago';
+  }
+
+  function asOfLabel(iso) {
+    if (!iso) return 'NO TRADES';
+    return new Intl.DateTimeFormat(undefined, {
+      year: 'numeric', month: 'short', day: '2-digit',
+      hour: '2-digit', minute: '2-digit'
+    }).format(new Date(iso));
+  }
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function countUp(el, target, format) {
+    if (reduceMotion) { el.textContent = format(target); return; }
+    var t0 = null, DUR = 650;
+    function step(ts) {
+      if (!t0) t0 = ts;
+      var p = Math.min((ts - t0) / DUR, 1), eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = format(target * eased);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function deltaHtml(delta, format, suffix) {
+    var cls = delta >= 0 ? 'up' : 'down';
+    var arrow = delta >= 0 ? '▲' : '▼';
+    return '<span class="' + cls + '">' + arrow + ' ' + format(delta) +
+           '</span> ' + suffix;
+  }
+
+  var charts = [];
+  function mount(el, options) {
+    var chart = new ApexCharts(document.querySelector(el), options);
+    chart.render();
+    charts.push(chart);
+    return chart;
+  }
+
+  function baseChart(P, type, height) {
+    return {
+      chart: {
+        type: type, height: height, fontFamily: 'inherit',
+        toolbar: { show: false }, zoom: { enabled: false },
+        foreColor: P.muted, background: 'transparent',
+        animations: { enabled: !reduceMotion, speed: 700 }
+      },
+      grid: { borderColor: P.grid, strokeDashArray: 0 },
+      dataLabels: { enabled: false },
+      tooltip: { theme: P.dark ? 'dark' : 'light' },
+      noData: { text: 'Loading…' }
+    };
+  }
+
+  function sparkline(el, days, values, P, format) {
+    var opts = {
+      chart: {
+        type: 'area', height: 46, sparkline: { enabled: true },
+        animations: { enabled: false }
+      },
+      series: [{ name: '', data: values }],
+      stroke: { width: 2, curve: 'straight' },
+      colors: [P.muted],
+      fill: { type: 'solid', opacity: 0.08 },
+      markers: {
+        size: 0, strokeColors: P.surface, strokeWidth: 2,
+        discrete: [{ seriesIndex: 0, dataPointIndex: values.length - 1,
+                     fillColor: P.blue, strokeColor: P.surface, size: 3.5 }]
+      },
+      tooltip: {
+        theme: P.dark ? 'dark' : 'light',
+        x: { formatter: function (i) { return days[i - 1] || ''; } },
+        y: { formatter: format }, marker: { show: false }
+      }
+    };
+    mount(el, opts);
+  }
+
+  function renderKpis(k, meta) {
+    document.getElementById('data-as-of').textContent = asOfLabel(meta.as_of);
+    document.getElementById('live-traders').textContent = k.active_traders;
+    document.getElementById('live-positions').textContent = k.open_positions;
+
+    countUp(document.getElementById('kpi-pnl'), k.pnl_30d,
+            function (v) { return money(v, true); });
+    document.getElementById('kpi-pnl-delta').innerHTML =
+      deltaHtml(k.pnl_delta, function (v) { return money(v, true); }, 'vs prior 30 days');
+
+    countUp(document.getElementById('kpi-volume'), k.volume_30d, money);
+    document.getElementById('kpi-volume-delta').innerHTML =
+      deltaHtml(k.volume_delta, function (v) { return money(v, true); }, 'vs prior 30 days');
+
+    countUp(document.getElementById('kpi-trades'), k.trades_30d,
+            function (v) { return Math.round(v).toLocaleString(); });
+    document.getElementById('kpi-trades-delta').innerHTML =
+      '<span class="up">▲ ' + k.trades_24h + '</span> in the last 24 hours';
+
+    countUp(document.getElementById('kpi-winrate'), k.win_rate_30d,
+            function (v) { return v.toFixed(1) + '%'; });
+    document.getElementById('kpi-winrate-delta').innerHTML =
+      deltaHtml(k.win_rate_delta,
+                function (v) { return (v > 0 ? '+' : '') + v.toFixed(1) + ' pts'; },
+                'across ' + k.closes_30d + ' closed trades');
+  }
+
+  function renderCharts(data) {
+    var P = palette();
+
+    /* cumulative P&L — single-series area, 2px line, 10% wash */
+    var pnlOpts = baseChart(P, 'area', 430);
+    pnlOpts.series = [{
+      name: 'Cumulative est. P&L',
+      data: data.cum_pnl.dates.map(function (d, i) {
+        return [new Date(d).getTime(), data.cum_pnl.values[i]];
+      })
+    }];
+    pnlOpts.colors = [P.blue];
+    pnlOpts.stroke = { width: 2, curve: 'straight', lineCap: 'round' };
+    pnlOpts.fill = {
+      type: 'gradient',
+      gradient: { shadeIntensity: 0, opacityFrom: 0.14, opacityTo: 0.01 }
+    };
+    pnlOpts.markers = { size: 0, strokeColors: P.surface, strokeWidth: 2,
+                        hover: { size: 5 } };
+    pnlOpts.xaxis = {
+      type: 'datetime',
+      axisBorder: { color: P.grid }, axisTicks: { color: P.grid },
+      labels: { style: { colors: P.muted } }
+    };
+    pnlOpts.yaxis = {
+      labels: { style: { colors: P.muted },
+                formatter: function (v) { return money(v); } }
+    };
+    pnlOpts.annotations = {
+      yaxis: [{ y: 0, borderColor: P.muted, strokeDashArray: 0, opacity: 0.4 }]
+    };
+    pnlOpts.tooltip.x = { format: 'dd MMM yyyy' };
+    pnlOpts.tooltip.y = { formatter: function (v) { return money(v, true); } };
+    mount('#chart-pnl', pnlOpts);
+
+    /* P&L by trader — horizontal bars, diverging blue/red by sign */
+    var traderOpts = baseChart(P, 'bar', 330);
+    traderOpts.series = [{
+      name: 'Est. P&L',
+      data: data.by_trader.map(function (r) { return { x: r.name, y: r.pnl }; })
+    }];
+    traderOpts.colors = [function (ctx) {
+      return ctx.value >= 0 ? P.blue : P.red;
+    }];
+    traderOpts.plotOptions = {
+      bar: { horizontal: true, barHeight: '52%', borderRadius: 4,
+             borderRadiusApplication: 'end' }
+    };
+    traderOpts.xaxis = {
+      axisBorder: { color: P.grid }, axisTicks: { color: P.grid },
+      labels: { style: { colors: P.muted },
+                formatter: function (v) { return money(v); } }
+    };
+    traderOpts.yaxis = { labels: { style: { colors: P.ink } } };
+    traderOpts.tooltip.y = { formatter: function (v) { return money(v, true); } };
+    mount('#chart-traders', traderOpts);
+
+    /* traded value by coin — one hue, magnitude ranked */
+    var symbolOpts = baseChart(P, 'bar', 330);
+    symbolOpts.series = [{
+      name: 'Traded value',
+      data: data.by_symbol.map(function (r) { return { x: r.symbol, y: r.volume }; })
+    }];
+    symbolOpts.colors = [P.blue];
+    symbolOpts.plotOptions = {
+      bar: { horizontal: true, barHeight: '52%', borderRadius: 4,
+             borderRadiusApplication: 'end' }
+    };
+    symbolOpts.xaxis = {
+      axisBorder: { color: P.grid }, axisTicks: { color: P.grid },
+      labels: { style: { colors: P.muted },
+                formatter: function (v) { return money(v); } }
+    };
+    symbolOpts.yaxis = { labels: { style: { colors: P.ink } } };
+    symbolOpts.tooltip.y = { formatter: function (v) { return money(v); } };
+    mount('#chart-symbols', symbolOpts);
+
+    /* KPI sparklines — 14 days, de-emphasis hue, accent on today */
+    sparkline('#spark-pnl', data.sparks.days, data.sparks.pnl, P,
+              function (v) { return money(v, true); });
+    sparkline('#spark-volume', data.sparks.days, data.sparks.volume, P, money);
+    sparkline('#spark-trades', data.sparks.days, data.sparks.trades, P,
+              function (v) { return v + ' trades'; });
+    sparkline('#spark-winrate', data.sparks.days, data.sparks.winrate, P,
+              function (v) { return v.toFixed(1) + '% running'; });
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
-  </script>
+  }
 
+  function renderFeed(recent, asOf) {
+    if (!recent.length) {
+      document.getElementById('recent-feed').innerHTML =
+        '<li class="feed-empty">No trades are available in this database.</li>';
+      return;
+    }
+    var html = recent.map(function (t) {
+      var profit = '';
+      if (t.profit !== null && t.profit !== undefined) {
+        profit = '<div class="feed-profit ' + (t.profit >= 0 ? 'up' : 'down') +
+                 '">' + money(t.profit, true) + '</div>';
+      }
+      return '<li class="feed-item">' +
+        '<span class="feed-dot ' + (t.is_long ? 'long' : 'short') + '"></span>' +
+        '<div class="feed-main">' +
+          '<span class="feed-sym">' + esc(t.symbol) + '</span>' +
+          '<span class="feed-desc">' + esc(t.desc || '') + '</span>' +
+          '<div class="feed-sub">' + esc(t.trader) + ' · ' +
+            timeAgo(t.time, asOf) + '</div>' +
+        '</div>' +
+        '<div class="feed-val"><div>' + money(t.change_size) + '</div>' +
+          profit + '</div>' +
+      '</li>';
+    }).join('');
+    document.getElementById('recent-feed').innerHTML = html;
+  }
+
+  var cachedData = null;
+
+  function renderAll(data) {
+    cachedData = data;
+    charts.forEach(function (c) { c.destroy(); });
+    charts = [];
+    renderKpis(data.kpis, data.meta);
+    renderCharts(data);
+    renderFeed(data.recent, data.meta.as_of);
+  }
+
+  /* re-skin charts when the user flips the light/dark theme */
+  new MutationObserver(function () {
+    if (cachedData) renderAll(cachedData);
+  }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+  fetch('{{ url_for(".dashboard_data") }}')
+    .then(function (r) {
+      if (!r.ok) throw new Error('The dashboard data request failed (' + r.status + ').');
+      return r.json();
+    })
+    .then(renderAll)
+    .catch(function (e) {
+      console.error('dashboard load failed', e);
+      var alert = document.getElementById('dashboard-error');
+      alert.textContent = 'Dashboard data could not be loaded. Check the database connection and try again.';
+      alert.style.display = 'block';
+    });
+})();
+</script>
 {% endblock extra_javascripts %}
-
-{# additional features used on this page: #}
-{% block feature_javascripts %}
-  {% include '_feature_column_visibility.html' %}
-  {# {% include '_feature_column_filtering.html' %} #}
-{% endblock feature_javascripts %}
